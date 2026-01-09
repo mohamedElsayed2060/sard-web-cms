@@ -1,0 +1,165 @@
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root {
+  --background: #f3f0eb;
+  --foreground: #171717;
+}
+@import "@splidejs/react-splide/css";
+@import "swiper/css";
+@import "swiper/css/navigation";
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+@layer utilities {
+  .bg-primary {
+    background-color: #881d40;
+  }
+  .text-primary {
+    color: #881d40;
+  }
+  .bg-secondary {
+    background-color: #4f001a;
+  }
+}
+
+@media (max-width: 1024px) {
+  .bg-section {
+  }
+}
+
+@media (min-width: 320px) {
+  .hidden-xs {
+    display: none;
+  }
+  .show-xs {
+    display: flex;
+  }
+}
+@media (min-width: 768px) {
+  .hidden-xs {
+    display: flex;
+  }
+  .show-xs {
+    display: none;
+  }
+}
+html,
+body {
+  scroll-behavior: smooth !important;
+}
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Poppins", sans-serif;
+}
+@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+body * {
+  font-family: "Nunito", sans-serif;
+  letter-spacing: 0.5px;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+} /* WebKit */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+/* new */
+.typewriter {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 1s steps(24, end);
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+.scrollbar-none {
+  -ms-overflow-style: none; /* IE و Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Chrome و Safari */
+}
+
+html[data-transitioning] #app-shell {
+  filter: blur(10px);
+  transform: scale(0.995);
+  transition: filter 250ms ease, transform 250ms ease;
+}
+
+html[data-transitioning] {
+  overflow: hidden; /* يمنع السكرول أثناء الترانزيشن */
+}
+
+/* ======= Paper / Grainy background ======= */
+.paper-noise {
+  position: relative;
+  background-color: var(--paper-bg, #f4e8d7);
+  /* background-image: url("../src/assets/marim-bg.png"); */
+  /* overflow: hidden; */
+}
+
+.paper-noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  /* نقط عشوائية شبيهة بالورق */
+  background-image: radial-gradient(
+      circle at 10% 20%,
+      rgba(0, 0, 0, 0.721) 0.5px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 80% 30%,
+      rgba(0, 0, 0, 0.632) 0.6px,
+      transparent 2.4px
+    ),
+    radial-gradient(
+      circle at 20% 80%,
+      rgba(0, 0, 0, 0.632) 0.6px,
+      transparent 2.2px
+    ),
+    radial-gradient(
+      circle at 70% 75%,
+      rgba(0, 0, 0, 0.632) 0.6px,
+      transparent 2.3px
+    ),
+    radial-gradient(
+      circle at 50% 40%,
+      rgba(0, 0, 0, 0.632) 0.6px,
+      transparent 2.5px
+    );
+
+  background-size: 120px 120px, 180px 180px, 200px 200px, 260px 260px,
+    220px 220px;
+
+  opacity: 0.35; /* لو حاسسها تقيلة قلّلها لـ 0.25 مثلاً */
+  mix-blend-mode: multiply;
+}
+
+/* عشان المحتوى مايبقاش تحت الـ ::before */
+.paper-noise > * {
+  position: relative;
+  z-index: 1;
+}
