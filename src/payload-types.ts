@@ -719,6 +719,17 @@ export interface SiteHeader {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Icons will show in the menu footer
+   */
+  social?:
+    | {
+        label?: string | null;
+        href: string;
+        icon: string | Media;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1043,6 +1054,14 @@ export interface SiteHeaderSelect<T extends boolean = true> {
     | {
         label?: T;
         href?: T;
+        id?: T;
+      };
+  social?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+        icon?: T;
         id?: T;
       };
   updatedAt?: T;

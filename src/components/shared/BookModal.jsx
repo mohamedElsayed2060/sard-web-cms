@@ -1,13 +1,13 @@
-"use client";
+'use client'
 
-import { useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 
-import marimBg from "@/assets/marim-bg.png";
-import dalImg from "@/assets/brand-mark.svg";
+import marimBg from '@/assets/marim-bg.png'
+import dalImg from '@/assets/brand-mark.svg'
 
-const EASE = [0.19, 1, 0.22, 1];
+const EASE = [0.19, 1, 0.22, 1]
 
 export default function BookModal({
   open,
@@ -21,117 +21,136 @@ export default function BookModal({
   closeMs = 850, // مدة قفل الباب عند الإغلاق
 
   // visuals
-  paperBg = "#F4E8D7",
+  paperBg = '#F4E8D7',
   maxWidth = 980,
   maxHeight = 640,
-}) {
-  const [mounted, setMounted] = useState(false);
-  const [phase, setPhase] = useState("idle"); // idle | boot | opening | fading | shown | closing
-  const [canClose, setCanClose] = useState(false);
 
-  const bgUrl = useMemo(() => `url(${marimBg?.src || marimBg})`, []);
-  const dalUrl = useMemo(() => dalImg?.src || dalImg, []);
+  // content scroll
+  contentClassName = '', // optional extra classes for content wrapper
+}) {
+  const [mounted, setMounted] = useState(false)
+  const [phase, setPhase] = useState('idle') // idle | boot | opening | fading | shown | restore | closing
+  const [canClose, setCanClose] = useState(false)
+
+  const bgUrl = useMemo(() => `url(${marimBg?.src || marimBg})`, [])
+  const dalUrl = useMemo(() => dalImg?.src || dalImg, [])
 
   // door states (نفس doubleDoor)
-  const CLOSED_LEFT = { rotateY: 0, z: 0 };
-  const CLOSED_RIGHT = { rotateY: 0, z: 0 };
-  const OPEN_LEFT = { rotateY: 105, z: -40 };
-  const OPEN_RIGHT = { rotateY: -105, z: -40 };
+  const CLOSED_LEFT = { rotateY: 0, z: 0 }
+  const CLOSED_RIGHT = { rotateY: 0, z: 0 }
+  const OPEN_LEFT = { rotateY: 105, z: -40 }
+  const OPEN_RIGHT = { rotateY: -105, z: -40 }
 
-  // helper
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
-  // open sequence
+  // open/close sequence
   useEffect(() => {
-    let cancelled = false;
+    let cancelled = false
 
     async function runOpen() {
-      setMounted(true);
-      setCanClose(false);
+      setMounted(true)
+      setCanClose(false)
 
-      // يبدأ مقفول + حرف (د)
-      setPhase("boot");
-      await sleep(introMs);
-      if (cancelled) return;
+      setPhase('boot')
+      await sleep(introMs)
+      if (cancelled) return
 
-      // فتح
-      setPhase("opening");
-      await sleep(openMs);
-      if (cancelled) return;
+      setPhase('opening')
+      await sleep(openMs)
+      if (cancelled) return
 
-      // اختفاء الدرفتين تدريجيًا
-      setPhase("fading");
-      await sleep(fadeMs);
-      if (cancelled) return;
+      setPhase('fading')
+      await sleep(fadeMs)
+      if (cancelled) return
 
-      setPhase("shown");
-      setCanClose(true);
+      setPhase('shown')
+      setCanClose(true)
     }
 
     async function runClose() {
-      setCanClose(false);
+      setCanClose(false)
 
-      // 1) رجّع الدرفتين تظهر (لو كانت مختفية)
-      setPhase("restore");
-      await sleep(180); // مدة قصيرة لإظهار الدرفتين
-      if (cancelled) return;
+      setPhase('restore')
+      await sleep(180)
+      if (cancelled) return
 
-      // 2) اقفل الباب بهدوء
-      setPhase("closing");
-      await sleep(closeMs);
-      if (cancelled) return;
+      setPhase('closing')
+      await sleep(closeMs)
+      if (cancelled) return
 
-      setPhase("idle");
-      setMounted(false);
+      setPhase('idle')
+      setMounted(false)
     }
 
-    if (open) runOpen();
-    else if (mounted) runClose();
+    if (open) runOpen()
+    else if (mounted) runClose()
 
     return () => {
-      cancelled = true;
-    };
+      cancelled = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open])
+
+  // ✅ stop page scroll while modal is mounted (prevents background scroll)
+  useEffect(() => {
+    if (!mounted) return
+
+    const body = document.body
+    const html = document.documentElement
+
+    const prevBodyOverflow = body.style.overflow
+    const prevBodyPaddingRight = body.style.paddingRight
+    const prevHtmlOverflow = html.style.overflow
+
+    // avoid layout shift when scrollbar disappears
+    const scrollbarW = window.innerWidth - document.documentElement.clientWidth
+    body.style.overflow = 'hidden'
+    html.style.overflow = 'hidden'
+    if (scrollbarW > 0) body.style.paddingRight = `${scrollbarW}px`
+
+    return () => {
+      body.style.overflow = prevBodyOverflow
+      body.style.paddingRight = prevBodyPaddingRight
+      html.style.overflow = prevHtmlOverflow
+    }
+  }, [mounted])
 
   // ESC close
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted) return
 
     const onKey = (e) => {
-      if (e.key === "Escape") onClose?.();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [mounted, onClose]);
+      if (e.key === 'Escape') onClose?.()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [mounted, onClose])
 
-  if (!mounted) return null;
+  if (!mounted) return null
 
-  const isBoot = phase === "boot";
-  const isOpening = phase === "opening";
-  const isFading = phase === "fading";
-  const isShown = phase === "shown";
-  const isClosing = phase === "closing";
+  const isBoot = phase === 'boot'
+  const isOpening = phase === 'opening'
+  const isFading = phase === 'fading'
+  const isShown = phase === 'shown'
+  const isClosing = phase === 'closing'
+  const isRestore = phase === 'restore'
 
-  // الدرفتين: امتى تبقى مفتوحة/مقفولة
-  const leftDoorTarget = isBoot || isClosing ? CLOSED_LEFT : OPEN_LEFT;
-
-  const rightDoorTarget = isBoot || isClosing ? CLOSED_RIGHT : OPEN_RIGHT;
-  const isRestore = phase === "restore";
+  const leftDoorTarget = isBoot || isClosing ? CLOSED_LEFT : OPEN_LEFT
+  const rightDoorTarget = isBoot || isClosing ? CLOSED_RIGHT : OPEN_RIGHT
 
   // شفافية الدرفتين: بعد الفتح تختفي، وعند القفل ترجع تظهر
-  const doorsOpacityTarget = isFading ? 0 : isShown ? 0 : isRestore ? 1 : 1;
+  const doorsOpacityTarget = isFading ? 0 : isShown ? 0 : isRestore ? 1 : 1
 
-  // خلفية سوداء تمنع “فلاش” أثناء boot/closing فقط
-  const solidBackdropTarget = isBoot || isClosing || isRestore ? 1 : 0;
+  // خلفية سوداء تمنع “فلاش” أثناء boot/closing/restore فقط
+  const solidBackdropTarget = isBoot || isClosing || isRestore ? 1 : 0
 
-  // حرف (د): يظهر في boot (وممكن كمان أول opening لو حبيت)
-  const dalOpacityTarget = isBoot ? 1 : 0;
+  // حرف (د)
+  const dalOpacityTarget = isBoot ? 1 : 0
 
   const modalSizeStyle = {
     width: `min(${maxWidth}px, 92vw)`,
     height: `min(${maxHeight}px, 85vh)`,
-  };
+  }
 
   return createPortal(
     <AnimatePresence>
@@ -158,23 +177,31 @@ export default function BookModal({
           className="relative overflow-hidden rounded-2xl"
           style={modalSizeStyle}
           initial={{ opacity: 0, y: 18, scale: 0.98 }}
-          animate={{
-            opacity: 1,
-            y: 0,
-            scale: 1,
-          }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 18, scale: 0.98 }}
           transition={{ duration: 0.5, ease: EASE }}
         >
-          {/* الكونتنت (يكون ظاهر والباب بيفتح) */}
+          {/* ✅ الكونتنت: سكرول داخلي Y يظهر فقط لو محتاج */}
           <div className="absolute inset-0" style={{ background: paperBg }}>
-            {children}
+            <div
+              className={[
+                'h-full w-full overflow-y-auto overscroll-contain',
+                // optional padding if you want
+                // 'p-4 md:p-6',
+                contentClassName,
+              ].join(' ')}
+            >
+              {children}
+            </div>
           </div>
 
           {/* طبقة الباب */}
           <motion.div
             className="absolute inset-0"
-            style={{ perspective: 1400 }}
+            style={{
+              perspective: 1400,
+              pointerEvents: isShown ? 'none' : 'auto', // ✅ مهم
+            }}
           >
             {/* solid backdrop أثناء boot/closing فقط */}
             <motion.div
@@ -192,17 +219,13 @@ export default function BookModal({
               transition={{ duration: 0.4, ease: EASE }}
               style={{ zIndex: 30 }}
             >
-              <img
-                src={dalUrl}
-                alt="Dal"
-                style={{ width: 100, height: "auto" }}
-              />
+              <img src={dalUrl} alt="Dal" style={{ width: 100, height: 'auto' }} />
             </motion.div>
 
             {/* الدرفتين */}
             <motion.div
               className="absolute inset-0 flex"
-              style={{ transformStyle: "preserve-3d", zIndex: 20 }}
+              style={{ transformStyle: 'preserve-3d', zIndex: 20 }}
               initial={{ opacity: 1 }}
               animate={{ opacity: doorsOpacityTarget }}
               transition={{
@@ -214,25 +237,24 @@ export default function BookModal({
               <motion.div
                 className="h-full w-1/2"
                 style={{
-                  transformOrigin: "0% 50%",
-                  backfaceVisibility: "hidden",
-                  transformStyle: "preserve-3d",
+                  transformOrigin: '0% 50%',
+                  backfaceVisibility: 'hidden',
+                  transformStyle: 'preserve-3d',
                   backgroundImage: bgUrl,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  boxShadow: "inset -40px 0 70px rgba(0,0,0,0.35)",
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  boxShadow: 'inset -40px 0 70px rgba(0,0,0,0.35)',
                 }}
-                // مهم: في boot يبدأ مقفول، في غيره يبدأ مفتوح (عشان ما يفلّش)
                 initial={isBoot ? CLOSED_LEFT : OPEN_LEFT}
                 animate={leftDoorTarget}
                 transition={{
                   duration: isBoot
                     ? 0
                     : isOpening
-                    ? openMs / 1000
-                    : isClosing
-                    ? closeMs / 1000
-                    : 0.6,
+                      ? openMs / 1000
+                      : isClosing
+                        ? closeMs / 1000
+                        : 0.6,
                   ease: EASE,
                 }}
               />
@@ -241,13 +263,13 @@ export default function BookModal({
               <motion.div
                 className="h-full w-1/2"
                 style={{
-                  transformOrigin: "100% 50%",
-                  backfaceVisibility: "hidden",
-                  transformStyle: "preserve-3d",
+                  transformOrigin: '100% 50%',
+                  backfaceVisibility: 'hidden',
+                  transformStyle: 'preserve-3d',
                   backgroundImage: bgUrl,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  boxShadow: "inset 40px 0 70px rgba(0,0,0,0.35)",
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  boxShadow: 'inset 40px 0 70px rgba(0,0,0,0.35)',
                 }}
                 initial={isBoot ? CLOSED_RIGHT : OPEN_RIGHT}
                 animate={rightDoorTarget}
@@ -255,10 +277,10 @@ export default function BookModal({
                   duration: isBoot
                     ? 0
                     : isOpening
-                    ? openMs / 1000
-                    : isClosing
-                    ? closeMs / 1000
-                    : 0.6,
+                      ? openMs / 1000
+                      : isClosing
+                        ? closeMs / 1000
+                        : 0.6,
                   ease: EASE,
                 }}
               />
@@ -274,7 +296,7 @@ export default function BookModal({
             />
           </motion.div>
 
-          {/* زر إغلاق (اختياري) */}
+          {/* زر إغلاق */}
           <button
             type="button"
             className="absolute right-3 top-3 z-[100] rounded-full bg-black/40 px-3 py-2 text-xs text-white hover:bg-black/60"
@@ -285,6 +307,6 @@ export default function BookModal({
         </motion.div>
       </motion.div>
     </AnimatePresence>,
-    document.body
-  );
+    document.body,
+  )
 }

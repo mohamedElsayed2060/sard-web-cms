@@ -35,6 +35,7 @@ export default function MainHeader({ header, bgImage }) {
 
   const logoLargeAlt = header?.logoLargeAlt || 'Sard'
   const logoSmallAlt = header?.logoSmallAlt || 'Menu'
+  const socialLinks = header?.social || []
 
   const toggleMenu = () => setMenuOpen((v) => !v)
   const closeMenu = () => setMenuOpen(false)
@@ -149,6 +150,7 @@ export default function MainHeader({ header, bgImage }) {
         open={menuOpen}
         onClose={closeMenu}
         navLinks={navLinks}
+        socialLinks={socialLinks} // ✅
         logoLargeSrc={logoLargeSrc}
         logoLargeAlt={logoLargeAlt}
         variant={OVERLAY_VARIANT}
@@ -164,6 +166,7 @@ function HeaderMenuOverlay({
   open,
   onClose,
   navLinks,
+  socialLinks = [],
   logoLargeSrc,
   logoLargeAlt,
   variant = 'circle',
@@ -204,6 +207,27 @@ function HeaderMenuOverlay({
   const MENU_CARD_H = 92
   const PEEK = 64
   const OFFSET = MENU_CARD_H - PEEK - 8
+  useEffect(() => {
+    if (!open) return
+
+    const body = document.body
+    const html = document.documentElement
+
+    const prevBodyOverflow = body.style.overflow
+    const prevBodyPaddingRight = body.style.paddingRight
+    const prevHtmlOverflow = html.style.overflow
+
+    const scrollbarW = window.innerWidth - document.documentElement.clientWidth
+    body.style.overflow = 'hidden'
+    html.style.overflow = 'hidden'
+    if (scrollbarW > 0) body.style.paddingRight = `${scrollbarW}px`
+
+    return () => {
+      body.style.overflow = prevBodyOverflow
+      body.style.paddingRight = prevBodyPaddingRight
+      html.style.overflow = prevHtmlOverflow
+    }
+  }, [open])
 
   return (
     <AnimatePresence>
@@ -219,7 +243,7 @@ function HeaderMenuOverlay({
             className="absolute inset-0 bg-[#F4E8D7] text-black"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mx-auto flex h-full max-w-[1490px] flex-col justify-between">
+            <div className="mx-auto flex h-full max-w-[1490px] flex-col ">
               {/* Header */}
               <div className="flex items-center justify-between md:px-10 px-6 rounded-[22px] border border-black/10 h-[92px] shadow-[0_16px_40px_rgba(0,0,0,0.18)]">
                 {logoLargeSrc && (
@@ -244,7 +268,7 @@ function HeaderMenuOverlay({
               </div>
 
               {/* Stacked Menu List */}
-              <motion.ul className="mt-16 w-full">
+              <motion.ul className="mt-16 w-full flex-1 min-h-0 overflow-y-auto overscroll-contain pb-10">
                 {navLinks.map((link, i) => {
                   const href = link.href || '#'
                   const active = isActiveHref(href)
@@ -300,8 +324,36 @@ function HeaderMenuOverlay({
 
               {/* Footer */}
               <div className="h-[92px] shadow-[0_16px_40px_rgba(0,0,0,0.18)] flex items-center justify-between text-[11px] uppercase tracking-[0.25em] text-black/60 md:px-10 px-6 rounded-[22px] border border-black/10">
-                <span>Sard · Rooms</span>
-                <span>Storytelling Studio</span>
+                <div className="flex items-center justify-center gap-3">
+                  {socialLinks?.map((s, idx) => {
+                    const iconSrc = s?.icon ? imgUrl(s.icon) : null
+                    const href = s?.href || '#'
+                    const label = s?.label || 'Social'
+
+                    return (
+                      <a
+                        key={s?.id || href || idx}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={label}
+                        className="h-10 w-10 flex items-center justify-center transition"
+                      >
+                        {iconSrc ? (
+                          <Image
+                            src={iconSrc}
+                            alt={label}
+                            width={18}
+                            height={18}
+                            className="h-4 w-4 object-contain opacity-80"
+                          />
+                        ) : (
+                          <span className="text-[10px] tracking-normal">•</span>
+                        )}
+                      </a>
+                    )
+                  })}
+                </div>
               </div>
             </div>
           </motion.div>

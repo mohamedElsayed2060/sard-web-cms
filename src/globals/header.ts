@@ -4,23 +4,17 @@ import type { GlobalConfig } from 'payload'
 const SiteHeader: GlobalConfig = {
   slug: 'site-header',
   label: 'Site Header',
-  access: {
-    read: () => true, // الهيدر متاح للفرونت
-  },
+  access: { read: () => true },
   fields: [
     {
       name: 'logoLarge',
       label: 'Main Logo (left)',
       type: 'upload',
-      relationTo: 'media', // عدّل لو اسم كولكشن الصور مختلف
+      relationTo: 'media',
       required: true,
     },
-    {
-      name: 'logoLargeAlt',
-      label: 'Main Logo Alt Text',
-      type: 'text',
-      defaultValue: 'Sard',
-    },
+    { name: 'logoLargeAlt', label: 'Main Logo Alt Text', type: 'text', defaultValue: 'Sard' },
+
     {
       name: 'logoSmall',
       label: 'Menu Icon (right)',
@@ -28,36 +22,49 @@ const SiteHeader: GlobalConfig = {
       relationTo: 'media',
       required: false,
     },
-    {
-      name: 'logoSmallAlt',
-      label: 'Menu Icon Alt Text',
-      type: 'text',
-      defaultValue: 'Menu',
-    },
+    { name: 'logoSmallAlt', label: 'Menu Icon Alt Text', type: 'text', defaultValue: 'Menu' },
+
     {
       name: 'links',
       label: 'Navigation Links',
       type: 'array',
-      labels: {
-        singular: 'Link',
-        plural: 'Links',
-      },
+      labels: { singular: 'Link', plural: 'Links' },
+      fields: [
+        { name: 'label', label: 'Label', type: 'text', required: true },
+        { name: 'href', label: 'URL / Path', type: 'text', required: true, defaultValue: '/' },
+      ],
+    },
+
+    // ✅ NEW: Social
+    {
+      name: 'social',
+      label: 'Social Links',
+      type: 'array',
+      labels: { singular: 'Social Link', plural: 'Social Links' },
+      admin: { description: 'Icons will show in the menu footer' },
       fields: [
         {
           name: 'label',
-          label: 'Label',
+          label: 'Label (optional)',
+          type: 'text',
+          required: false,
+        },
+        {
+          name: 'href',
+          label: 'URL',
           type: 'text',
           required: true,
         },
         {
-          name: 'href',
-          label: 'URL / Path',
-          type: 'text',
+          name: 'icon',
+          label: 'Icon',
+          type: 'upload',
+          relationTo: 'media',
           required: true,
-          defaultValue: '/',
         },
       ],
     },
   ],
 }
+
 export default SiteHeader
