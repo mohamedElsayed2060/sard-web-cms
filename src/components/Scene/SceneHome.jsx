@@ -1,38 +1,38 @@
 // src/components/Scene/SceneHome.jsx
-"use client";
+'use client'
 
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
-import { imgUrl } from "@/lib/cms";
-import PageContentReveal from "../PageContentReveal";
-import { useTransitionUI } from "../transition/TransitionProvider";
+import Image from 'next/image'
+import { usePathname, useRouter } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { imgUrl } from '@/lib/cms'
+import PageContentReveal from '../PageContentReveal'
+import { useTransitionUI } from '../transition/TransitionProvider'
 
 export default function SceneHome({ scene, hotspots }) {
-  const router = useRouter();
-  const pathname = usePathname();
+  const router = useRouter()
+  const pathname = usePathname()
 
-  const { runSequence } = useTransitionUI();
-  const bg = scene ? imgUrl(scene.backgroundImage) : null;
+  const { runSequence } = useTransitionUI()
+  const bg = scene ? imgUrl(scene.backgroundImage) : null
 
-  const [isMobile, setIsMobile] = useState(false);
-  const [hoveredId, setHoveredId] = useState(null);
+  const [isMobile, setIsMobile] = useState(false)
+  const [hoveredId, setHoveredId] = useState(null)
   const go = (href) => {
-    const target = (href || "/").split("?")[0].split("#")[0];
-    if (target === pathname) return; // ✅ نفس الصفحة
+    const target = (href || '/').split('?')[0].split('#')[0]
+    if (target === pathname) return // ✅ نفس الصفحة
 
     return runSequence({
       onNavigate: async () => router.push(href),
       timings: { closeMs: 750, logoMs: 650, openMs: 1250, fadeMs: 650 },
-    });
-  };
+    })
+  }
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   return (
     // موبايل: scroll + سنتر | ديسكتوب: مفيش scroll
@@ -46,12 +46,12 @@ export default function SceneHome({ scene, hotspots }) {
           md:w-full md:h-[100dvh]
         "
       >
-        {" "}
+        {' '}
         {/* الصورة */}
         {bg && (
           <Image
             src={bg}
-            alt={scene?.title || "Sard scene"}
+            alt={scene?.title || 'Sard scene'}
             fill
             priority
             className="object-contain object-center"
@@ -59,20 +59,20 @@ export default function SceneHome({ scene, hotspots }) {
         )}
         {/* الهوت سبوتس */}
         {hotspots?.map((spot, index) => {
-          const left = isMobile && spot.xMobile != null ? spot.xMobile : spot.x;
-          const top = isMobile && spot.yMobile != null ? spot.yMobile : spot.y;
-          const isActive = hoveredId === spot.id;
+          const left = isMobile && spot.xMobile != null ? spot.xMobile : spot.x
+          const top = isMobile && spot.yMobile != null ? spot.yMobile : spot.y
+          const isActive = hoveredId === spot.id
 
-          const pulseDelay = (index % 5) * 0.6;
+          const pulseDelay = (index % 5) * 0.6
           const handleHotspotClick = () => {
             if (isMobile) {
               // في الموبايل: بس افتح/اقفل التولتيب
-              setHoveredId((prev) => (prev === spot.id ? null : spot.id));
+              setHoveredId((prev) => (prev === spot.id ? null : spot.id))
             } else {
               // في الديسكتوب: روح على الصفحة علطول
-              go(spot.targetPath || "/");
+              go(spot.targetPath || '/')
             }
-          };
+          }
           return (
             <div
               key={spot.id}
@@ -80,7 +80,7 @@ export default function SceneHome({ scene, hotspots }) {
               style={{
                 left: `${left}%`,
                 top: `${top}%`,
-                transform: "translate(-50%, -50%)",
+                transform: 'translate(-50%, -50%)',
               }}
             >
               <div
@@ -111,7 +111,7 @@ export default function SceneHome({ scene, hotspots }) {
                             duration: 3.2,
                             repeat: Infinity,
                             repeatDelay: 1.2,
-                            ease: "easeOut",
+                            ease: 'easeOut',
                             delay: pulseDelay,
                           }
                     }
@@ -135,24 +135,22 @@ export default function SceneHome({ scene, hotspots }) {
                       <button
                         type="button"
                         className="pointer-events-auto rounded-full border border-white/60 bg-black/80 px-3 py-1 text-[11px] leading-tight text-white shadow-[0_8px_20px_rgba(0,0,0,0.5)]"
-                        onClick={() => go(spot.targetPath || "/")}
+                        onClick={() => go(spot.targetPath || '/')}
                       >
-                        <span className="typewriter whitespace-nowrap">
-                          {spot.label}
-                        </span>
+                        <span className="typewriter whitespace-nowrap">{spot.label}</span>
                       </button>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
             </div>
-          );
+          )
         })}
         {/* الهنت تحت */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-sm text-white/80">
-          {scene?.hint || "Explore Sard by tapping the glowing points."}
+          {scene?.hint || 'Explore Sard by tapping the glowing points.'}
         </div>
       </PageContentReveal>
     </div>
-  );
+  )
 }

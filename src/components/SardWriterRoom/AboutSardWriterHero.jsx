@@ -1,4 +1,4 @@
-// src/components/AboutSard/AboutSardHero.jsx
+// src/components/AboutSard/AboutSardProductionHero.jsx
 'use client'
 
 import Image from 'next/image'
@@ -122,7 +122,7 @@ export function RichColumn({ value, textColor }) {
   return <>{nodes.map(renderNode)}</>
 }
 
-export default function AboutSardHero({ data, bgImage }) {
+export default function AboutSardWriterHero({ data, bgImage }) {
   if (!data) return null
 
   const portraitSrc = data.portrait ? imgUrl(data.portrait) : null
@@ -178,8 +178,12 @@ export default function AboutSardHero({ data, bgImage }) {
                 </div>
 
                 {/* عمودين باراجرافس من الـ richText */}
-                <div className="grid gap-6 md:grid-cols-2 md:gap-8">
-                  <div className="space-y-4">
+                <div
+                  className={`grid gap-6 ${data?.rightColumn?.root?.children[0]?.children?.length ? 'md:grid-cols-2' : ''} md:gap-8`}
+                >
+                  <div
+                    className={`space-y-4 ${data?.rightColumn?.root?.children[0]?.children?.length ? '' : 'md:w-[70%]'}`}
+                  >
                     <RichColumn value={data.leftColumn} />
                   </div>
                   <div className="space-y-4">

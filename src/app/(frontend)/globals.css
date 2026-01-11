@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,16 +6,18 @@
   --background: #f3f0eb;
   --foreground: #171717;
 }
-@import "@splidejs/react-splide/css";
-@import "swiper/css";
-@import "swiper/css/navigation";
+@import '@splidejs/react-splide/css';
+@import 'swiper/css';
+@import 'swiper/css/navigation';
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
-@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -31,11 +33,6 @@
   }
   .bg-secondary {
     background-color: #4f001a;
-  }
-}
-
-@media (max-width: 1024px) {
-  .bg-section {
   }
 }
 
@@ -62,11 +59,10 @@ body {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
-@import url("https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 body * {
-  font-family: "Nunito", sans-serif;
+  font-family: 'Nunito', sans-serif;
   letter-spacing: 0.5px;
 }
 .no-scrollbar::-webkit-scrollbar {
@@ -103,7 +99,9 @@ body * {
 html[data-transitioning] #app-shell {
   filter: blur(10px);
   transform: scale(0.995);
-  transition: filter 250ms ease, transform 250ms ease;
+  transition:
+    filter 50ms ease,
+    transform 50ms ease;
 }
 
 html[data-transitioning] {
@@ -119,39 +117,24 @@ html[data-transitioning] {
 }
 
 .paper-noise::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
 
   /* نقط عشوائية شبيهة بالورق */
-  background-image: radial-gradient(
-      circle at 10% 20%,
-      rgba(0, 0, 0, 0.721) 0.5px,
-      transparent 2px
-    ),
-    radial-gradient(
-      circle at 80% 30%,
-      rgba(0, 0, 0, 0.632) 0.6px,
-      transparent 2.4px
-    ),
-    radial-gradient(
-      circle at 20% 80%,
-      rgba(0, 0, 0, 0.632) 0.6px,
-      transparent 2.2px
-    ),
-    radial-gradient(
-      circle at 70% 75%,
-      rgba(0, 0, 0, 0.632) 0.6px,
-      transparent 2.3px
-    ),
-    radial-gradient(
-      circle at 50% 40%,
-      rgba(0, 0, 0, 0.632) 0.6px,
-      transparent 2.5px
-    );
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(0, 0, 0, 0.721) 0.5px, transparent 2px),
+    radial-gradient(circle at 80% 30%, rgba(0, 0, 0, 0.632) 0.6px, transparent 2.4px),
+    radial-gradient(circle at 20% 80%, rgba(0, 0, 0, 0.632) 0.6px, transparent 2.2px),
+    radial-gradient(circle at 70% 75%, rgba(0, 0, 0, 0.632) 0.6px, transparent 2.3px),
+    radial-gradient(circle at 50% 40%, rgba(0, 0, 0, 0.632) 0.6px, transparent 2.5px);
 
-  background-size: 120px 120px, 180px 180px, 200px 200px, 260px 260px,
+  background-size:
+    120px 120px,
+    180px 180px,
+    200px 200px,
+    260px 260px,
     220px 220px;
 
   opacity: 0.35; /* لو حاسسها تقيلة قلّلها لـ 0.25 مثلاً */
@@ -162,4 +145,84 @@ html[data-transitioning] {
 .paper-noise > * {
   position: relative;
   z-index: 1;
+}
+/* =========================================================
+   GalleryCarousel (scoped) - لا يؤثر على أي Splide آخر
+========================================================= */
+
+.galleryCarousel .splide__track {
+  overflow: visible;
+}
+
+.galleryCarousel .splide__slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.galleryCarousel .galleryCard {
+  transform-origin: center center;
+  will-change: transform, opacity;
+  transition:
+    transform 140ms cubic-bezier(0.19, 1, 0.22, 1),
+    opacity 140ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* ✅ لحظات الـ loop wrap بس */
+.galleryCarousel .galleryCard--noTrans {
+  transition: none !important;
+}
+
+/* =========================
+   TALL / PRODUCTION VARIANT
+   ✅ شيلنا/قللنا padding بتاع wrapper عشان مايكبرش الأطراف
+   وبقينا نعتمد على Splide padding في options
+========================= */
+
+.galleryCarousel--tall {
+  padding-inline: 0; /* ✅ كان 18px وده كان بيكبر الأطراف */
+  box-sizing: border-box;
+}
+
+.galleryCarousel--tall .splide__slide {
+  width: 360px;
+}
+
+@media (max-width: 1536px) {
+  .galleryCarousel--tall .splide__slide {
+    width: 340px;
+  }
+}
+@media (max-width: 1280px) {
+  .galleryCarousel--tall .splide__slide {
+    width: 320px;
+  }
+}
+@media (max-width: 1024px) {
+  .galleryCarousel--tall .splide__slide {
+    width: 290px;
+  }
+}
+
+@media (max-width: 768px) {
+  .galleryCarousel--tall .splide__slide {
+    width: 82vw; /* ✅ أقل شوية من الشاشة => يطلع جزء من اللي بعده */
+  }
+}
+
+/* افتراضيًا مخفي */
+.galleryCarousel .galleryPlayBtn {
+  opacity: 0;
+  transform: scale(0.92);
+  transition:
+    opacity 400ms cubic-bezier(0.19, 1, 0.22, 1),
+    transform 400ms cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+}
+
+/* يظهر فقط على السلايد الاكتف */
+.galleryCarousel .splide__slide.is-active .galleryPlayBtn {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
 }

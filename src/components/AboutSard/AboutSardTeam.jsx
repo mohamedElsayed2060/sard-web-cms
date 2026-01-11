@@ -1,38 +1,38 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import { useMemo, useState } from "react";
-import { imgUrl } from "@/lib/cms";
-import PageContentReveal from "@/components/PageContentReveal";
-import BookModal from "@/components/shared/BookModal";
-import { RichColumn } from "./AboutSardHero";
+import Image from 'next/image'
+import { useMemo, useState } from 'react'
+import { imgUrl } from '@/lib/cms'
+import PageContentReveal from '@/components/PageContentReveal'
+import BookModal from '@/components/shared/BookModal'
+import { RichColumn } from './AboutSardHero'
 
 // لو عندك Splide (زي ما كنت بتستخدم قبل كده)
-import { Splide, SplideSlide } from "@splidejs/react-splide";
-import "@splidejs/react-splide/css";
-import SectionReveal from "../motion/SectionReveal";
+import { Splide, SplideSlide } from '@splidejs/react-splide'
+import '@splidejs/react-splide/css'
+import SectionReveal from '../motion/SectionReveal'
 
 /** استخراج نص بسيط من Lexical/Array عشان نعمل excerpt سطرين في الكارت */
 function plainTextFromRich(value) {
-  const nodes = Array.isArray(value) ? value : value?.root?.children || [];
+  const nodes = Array.isArray(value) ? value : value?.root?.children || []
 
   const walk = (n) => {
-    if (!n) return "";
-    if (Array.isArray(n)) return n.map(walk).join(" ");
-    if (n.type === "text") return n.text || n.content || "";
-    if (n.type === "linebreak") return "\n";
-    if (n.children) return walk(n.children);
-    return "";
-  };
+    if (!n) return ''
+    if (Array.isArray(n)) return n.map(walk).join(' ')
+    if (n.type === 'text') return n.text || n.content || ''
+    if (n.type === 'linebreak') return '\n'
+    if (n.children) return walk(n.children)
+    return ''
+  }
 
-  return walk(nodes).replace(/\s+/g, " ").trim();
+  return walk(nodes).replace(/\s+/g, ' ').trim()
 }
 
 export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
-  const list = useMemo(() => members || [], [members]);
-  const [active, setActive] = useState(null);
+  const list = useMemo(() => members || [], [members])
+  const [active, setActive] = useState(null)
 
-  if (!list.length) return null;
+  if (!list.length) return null
 
   return (
     <SectionReveal variant="fadeUp" delay={0.1}>
@@ -40,7 +40,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
         <PageContentReveal
           variant="slideUp"
           paperColor="#F4E8D7"
-          className="rounded-[24px] px-3 py-7 md:px-10 md:py-10 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+          className="rounded-[24px] px-3 py-7 md:py-18 md:px-18 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
           bgImage={bgImage}
         >
           {/* Header */}
@@ -61,14 +61,14 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
               <Splide
                 className="w-full"
                 options={{
-                  type: "slide",
-                  gap: "1rem",
+                  type: 'slide',
+                  gap: '1rem',
                   pagination: false,
                   arrows: false,
-                  drag: "free",
+                  drag: 'free',
                   perPage: 3.5,
                   // perMove: 1,
-                  focus: "end",
+                  focus: 'end',
                   // trimSpace: false,
                   breakpoints: {
                     1024: { perPage: 2 },
@@ -85,17 +85,14 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
                 }}
               >
                 {list.map((m, i) => {
-                  const photoSrc = imgUrl(m?.photo);
-                  const badgeSrc = imgUrl(m?.badgeIcon);
+                  const photoSrc = imgUrl(m?.photo)
+                  const badgeSrc = imgUrl(m?.badgeIcon)
 
-                  const excerpt = plainTextFromRich(m?.details || "").slice(
-                    0,
-                    220
-                  );
+                  const excerpt = plainTextFromRich(m?.details || '').slice(0, 220)
 
                   // alternating rounded: الأول round ناحية، التاني عكسه...
-                  const roundTL = i % 2 === 1; // odd => round top-left
-                  const roundTR = i % 2 === 0; // even => round top-right
+                  const roundTL = i % 2 === 1 // odd => round top-left
+                  const roundTR = i % 2 === 0 // even => round top-right
 
                   return (
                     <SplideSlide key={m?.id || i}>
@@ -108,16 +105,16 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
                           {/* Photo */}
                           <div
                             className={[
-                              "relative w-full h-[260px] md:h-[290px] ",
+                              'relative w-full h-[260px] md:h-[290px] ',
                               // rounded only on one corner (زي التصميم)
-                              roundTR ? "rounded-tr-[28px]" : "",
-                              roundTL ? "rounded-tl-[28px]" : "",
-                            ].join(" ")}
+                              roundTR ? 'rounded-tr-[28px]' : '',
+                              roundTL ? 'rounded-tl-[28px]' : '',
+                            ].join(' ')}
                           >
                             {photoSrc ? (
                               <Image
                                 src={photoSrc}
-                                alt={m?.name || "Team member"}
+                                alt={m?.name || 'Team member'}
                                 fill
                                 sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 25vw"
                                 className="object-cover rounded-lg rounded-tl-3xl"
@@ -134,16 +131,14 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
                           <div
                             className="pt-5 px-1"
                             style={{
-                              backgroundImage: bgImage?.src
-                                ? `url('${bgImage.src}')`
-                                : undefined,
-                              backgroundSize: "cover",
-                              backgroundPosition: "center",
+                              backgroundImage: bgImage?.src ? `url('${bgImage.src}')` : undefined,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
                             }}
                           >
                             <div className="flex items-center gap-3">
                               <h3 className="italic text-2xl md:text-3xl font-semibold text-[#252525] leading-none">
-                                {m?.name || "Team member"}
+                                {m?.name || 'Team member'}
                               </h3>
 
                               {badgeSrc ? (
@@ -163,10 +158,10 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
                             <p
                               className="text-sm text-[#252525]/80"
                               style={{
-                                display: "-webkit-box",
+                                display: '-webkit-box',
                                 WebkitLineClamp: 2,
-                                WebkitBoxOrient: "vertical",
-                                overflow: "hidden",
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
                               }}
                             >
                               {excerpt}
@@ -175,7 +170,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
                         </div>
                       </button>
                     </SplideSlide>
-                  );
+                  )
                 })}
               </Splide>
             </div>
@@ -193,11 +188,9 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
             <div
               className="p-6 md:p-10"
               style={{
-                backgroundImage: bgImage?.src
-                  ? `url('${bgImage.src}')`
-                  : undefined,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
+                backgroundImage: bgImage?.src ? `url('${bgImage.src}')` : undefined,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
               }}
             >
               <div className="grid gap-6 md:grid-cols-2">
@@ -206,7 +199,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
                   {active?.photo ? (
                     <Image
                       src={imgUrl(active.photo)}
-                      alt={active?.name || "Team member"}
+                      alt={active?.name || 'Team member'}
                       width={900}
                       height={900}
                       className="w-full h-[340px] md:h-[520px] object-cover"
@@ -220,9 +213,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
                 {/* Content */}
                 <div className="text-[#252525]">
                   <div className="flex items-center gap-3">
-                    <h3 className="italic text-3xl md:text-5xl font-semibold">
-                      {active?.name}
-                    </h3>
+                    <h3 className="italic text-3xl md:text-5xl font-semibold">{active?.name}</h3>
 
                     {active?.badgeIcon ? (
                       <Image
@@ -238,10 +229,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
                   <div className="h-px bg-black/35 mt-4 mb-5" />
 
                   {active?.details ? (
-                    <RichColumn
-                      value={active.details}
-                      textColor="text-[#252525]"
-                    />
+                    <RichColumn value={active.details} textColor="text-[#252525]" />
                   ) : null}
                 </div>
               </div>
@@ -250,5 +238,5 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
         </PageContentReveal>
       </section>
     </SectionReveal>
-  );
+  )
 }

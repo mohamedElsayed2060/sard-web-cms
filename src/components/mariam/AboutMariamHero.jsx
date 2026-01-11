@@ -1,111 +1,105 @@
 // src/components/mariam/AboutMariamHero.jsx
-"use client";
+'use client'
 
-import Image from "next/image";
-import PageContentReveal from "@/components/PageContentReveal";
-import { imgUrl } from "@/lib/cms";
-import SectionReveal from "../motion/SectionReveal";
+import Image from 'next/image'
+import PageContentReveal from '@/components/PageContentReveal'
+import { imgUrl } from '@/lib/cms'
+import SectionReveal from '../motion/SectionReveal'
 
 function RichColumn({ value }) {
-  let nodes = [];
+  let nodes = []
 
   // 1) لو Array (شكل Slate أو شكل مبسط)
   if (Array.isArray(value)) {
-    nodes = value;
+    nodes = value
   }
   // 2) لو Lexical: { root: { children: [...] } }
   else if (value?.root?.children) {
-    nodes = value.root.children;
+    nodes = value.root.children
   }
 
-  if (!nodes || nodes.length === 0) return null;
+  if (!nodes || nodes.length === 0) return null
 
-  const paragraphs = nodes.filter((node) => node?.type === "paragraph");
+  const paragraphs = nodes.filter((node) => node?.type === 'paragraph')
 
-  if (paragraphs.length === 0) return null;
+  if (paragraphs.length === 0) return null
 
   const renderChildren = (children) => {
-    if (!Array.isArray(children)) return null;
+    if (!Array.isArray(children)) return null
 
     return children.map((child, idx) => {
       // نص عادي مع فورمات
-      if (child.type === "text") {
-        const text = child.text || child.content || "";
-        if (!text) return null;
+      if (child.type === 'text') {
+        const text = child.text || child.content || ''
+        if (!text) return null
 
         // شوية احتمالات للبولد/إيطاليك بناءً على شكل الداتا
-        const format = child.format;
+        const format = child.format
         const isBold =
           child.bold ||
-          format === "bold" ||
-          (typeof format === "string" && format.includes("bold")) ||
-          (typeof format === "number" && (format & 1) === 1); // Lexical: 1 = BOLD
+          format === 'bold' ||
+          (typeof format === 'string' && format.includes('bold')) ||
+          (typeof format === 'number' && (format & 1) === 1) // Lexical: 1 = BOLD
 
         const isItalic =
           child.italic ||
-          format === "italic" ||
-          (typeof format === "string" && format.includes("italic")) ||
-          (typeof format === "number" && (format & 2) === 2); // Lexical: 2 = ITALIC
+          format === 'italic' ||
+          (typeof format === 'string' && format.includes('italic')) ||
+          (typeof format === 'number' && (format & 2) === 2) // Lexical: 2 = ITALIC
 
-        let content = text;
+        let content = text
 
         // نلفّ النص بالترتيب محتفظين بكل حاجة
         if (isItalic) {
-          content = <em>{content}</em>;
+          content = <em>{content}</em>
         }
         if (isBold) {
-          content = <strong>{content}</strong>;
+          content = <strong>{content}</strong>
         }
 
-        return <span key={idx}>{content}</span>;
+        return <span key={idx}>{content}</span>
       }
 
       // لينك
-      if (child.type === "link") {
-        const href =
-          child.fields?.url || child.url || child.fields?.href || "#";
+      if (child.type === 'link') {
+        const href = child.fields?.url || child.url || child.fields?.href || '#'
 
         return (
           <a
             key={idx}
             href={href}
             className="underline underline-offset-2 decoration-black/40 hover:decoration-black"
-            target={child.newTab ? "_blank" : undefined}
-            rel={child.newTab ? "noopener noreferrer" : undefined}
+            target={child.newTab ? '_blank' : undefined}
+            rel={child.newTab ? 'noopener noreferrer' : undefined}
           >
             {renderChildren(child.children || [])}
           </a>
-        );
+        )
       }
 
       // لو فيه nested nodes تانيين
       if (child.children) {
-        return <span key={idx}>{renderChildren(child.children)}</span>;
+        return <span key={idx}>{renderChildren(child.children)}</span>
       }
 
-      return null;
-    });
-  };
+      return null
+    })
+  }
 
   return paragraphs.map((node, idx) => (
-    <p
-      key={idx}
-      className="text-sm leading-relaxed text-black/80 mb-4 last:mb-0"
-    >
+    <p key={idx} className="text-sm leading-relaxed text-black/80 mb-4 last:mb-0">
       {renderChildren(node.children || [])}
     </p>
-  ));
+  ))
 }
 
 export default function AboutMariamHero({ data, bgImage }) {
-  console.log(data);
+  if (!data) return null
 
-  if (!data) return null;
-
-  const portraitSrc = data.portrait ? imgUrl(data.portrait) : null;
+  const portraitSrc = data.portrait ? imgUrl(data.portrait) : null
 
   return (
-    <SectionReveal variant="fadeUp" delay={0.8}>
+    <SectionReveal variant="fadeUp" delay={0.08} duration={0.8}>
       <section className="bg-black pt-5 px-3 pb-5 max-w-[1490px] mx-auto ">
         <PageContentReveal
           variant="slideUp"
@@ -115,12 +109,12 @@ export default function AboutMariamHero({ data, bgImage }) {
         >
           <div className="grid gap-8 md:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)] md:gap-10">
             {/* صورة مريم من الـ CMS */}
-            <SectionReveal variant="slideRight" delay={1.8}>
+            <SectionReveal variant="slideRight" delay={1} duration={0.8}>
               <div className="relative overflow-hidden rounded-[24px] ">
                 {portraitSrc ? (
                   <Image
                     src={portraitSrc}
-                    alt={data.displayName || "Mariam Naoum"}
+                    alt={data.displayName || 'Mariam Naoum'}
                     width={400}
                     height={400}
                     className="w-full h-auto object-cover"
@@ -134,13 +128,13 @@ export default function AboutMariamHero({ data, bgImage }) {
               </div>
             </SectionReveal>
             {/* النص */}
-            <SectionReveal variant="slideLeft" delay={1.8}>
+            <SectionReveal variant="slideLeft" delay={1} duration={0.8}>
               <div className="space-y-8 text-[#252525]">
                 {/* All About + الخط */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">
                     <span className="text-lg italic font-bold   text-black whitespace-nowrap">
-                      {data.allAboutLabel || "All About"}
+                      {data.allAboutLabel || 'All About'}
                     </span>
                     <div className="h-px flex-1 bg-black" />
                   </div>
@@ -148,7 +142,7 @@ export default function AboutMariamHero({ data, bgImage }) {
                   {/* MARIAM + الخط الصغير */}
                   <div className="space-y-2">
                     <h1 className="italic text-2xl md:text-3xl lg:text-4xl font-semibold tracking-[0.20em]">
-                      {data.displayName || "MARIAM  NAOUM"}
+                      {data.displayName || 'MARIAM  NAOUM'}
                     </h1>
                     <div className=" w-full h-px bg-black" />
                   </div>
@@ -169,5 +163,5 @@ export default function AboutMariamHero({ data, bgImage }) {
         </PageContentReveal>
       </section>
     </SectionReveal>
-  );
+  )
 }

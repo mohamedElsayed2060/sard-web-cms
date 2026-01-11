@@ -88,14 +88,27 @@ export async function getTeamMembers(section = 'aboutSard') {
 
   return res?.docs ?? []
 }
+
+// ===== Galleries (Reusable carousel data) =====
+export async function getGalleryBySlug(slug) {
+  if (!slug) return null
+  const safe = encodeURIComponent(slug)
+  const res = await fetchJSON(`/api/galleries?depth=2&limit=1&where[slug][equals]=${safe}`)
+  return res?.docs?.[0] ?? null
+}
+
 export async function getAboutSardPageData() {
-  const [hero, sardAboutSard, visionMission, awardsRes, team] = await Promise.all([
-    fetchJSON('/api/globals/sard-milestones-about?depth=2'),
-    fetchJSON('/api/about-sard-milestones?depth=2&limit=50&sort=sortOrder'),
-    fetchJSON('/api/globals/sard-vision-mission?depth=2'),
-    fetchJSON('/api/about-sard-awards?depth=2&limit=50&sort=sortOrder'),
-    getTeamMembers('aboutSard'),
-  ])
+  const [hero, sardAboutSard, visionMission, awardsRes, team, newestProduction] = await Promise.all(
+    [
+      fetchJSON('/api/globals/sard-milestones-about?depth=2'),
+      fetchJSON('/api/about-sard-milestones?depth=2&limit=50&sort=sortOrder'),
+      fetchJSON('/api/globals/sard-vision-mission?depth=2'),
+      fetchJSON('/api/about-sard-awards?depth=2&limit=50&sort=sortOrder'),
+      getTeamMembers('aboutSard'),
+      // ✅ Reusable gallery doc slug (create it from Payload admin)
+      getGalleryBySlug('about-sard-newest-production'),
+    ],
+  )
 
   return {
     hero,
@@ -103,5 +116,36 @@ export async function getAboutSardPageData() {
     visionMission,
     awards: awardsRes?.docs ?? [],
     team,
+    newestProduction,
+  }
+}
+export async function getSardProductionPageData() {
+  const [header, footer, gallery, hero] = await Promise.all([
+    fetchJSON('/api/globals/site-header?depth=2'),
+    fetchJSON('/api/globals/site-footer?depth=2'),
+    getGalleryBySlug('sard-production-gallery'),
+    fetchJSON('/api/globals/sard-production-about-hero?depth=2'),
+  ])
+
+  return {
+    header,
+    footer,
+    gallery,
+    hero,
+  }
+}
+export async function getSardWriterRoomPageData() {
+  const [header, footer, gallery, hero] = await Promise.all([
+    fetchJSON('/api/globals/site-header?depth=2'),
+    fetchJSON('/api/globals/site-footer?depth=2'),
+    getGalleryBySlug('sard-writer-room-gallery'),
+    fetchJSON('/api/globals/sard-writer-about-hero?depth=2'),
+  ])
+
+  return {
+    header,
+    footer,
+    gallery,
+    hero,
   }
 }

@@ -75,6 +75,7 @@ export interface Config {
     'about-sard-milestones': AboutSardMilestone;
     'about-sard-awards': AboutSardAward;
     'team-members': TeamMember;
+    galleries: Gallery;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -89,6 +90,7 @@ export interface Config {
     'about-sard-milestones': AboutSardMilestonesSelect<false> | AboutSardMilestonesSelect<true>;
     'about-sard-awards': AboutSardAwardsSelect<false> | AboutSardAwardsSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    galleries: GalleriesSelect<false> | GalleriesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -104,6 +106,8 @@ export interface Config {
     'learning-about': LearningAbout;
     'sard-milestones-about': SardMilestonesAbout;
     'sard-vision-mission': SardVisionMission;
+    'sard-production-about-hero': SardProductionAboutHero;
+    'sard-writer-about-hero': SardWriterAboutHero;
   };
   globalsSelect: {
     'site-header': SiteHeaderSelect<false> | SiteHeaderSelect<true>;
@@ -113,6 +117,8 @@ export interface Config {
     'learning-about': LearningAboutSelect<false> | LearningAboutSelect<true>;
     'sard-milestones-about': SardMilestonesAboutSelect<false> | SardMilestonesAboutSelect<true>;
     'sard-vision-mission': SardVisionMissionSelect<false> | SardVisionMissionSelect<true>;
+    'sard-production-about-hero': SardProductionAboutHeroSelect<false> | SardProductionAboutHeroSelect<true>;
+    'sard-writer-about-hero': SardWriterAboutHeroSelect<false> | SardWriterAboutHeroSelect<true>;
   };
   locale: null;
   user: User & {
@@ -375,6 +381,36 @@ export interface TeamMember {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "galleries".
+ */
+export interface Gallery {
+  id: string;
+  title: string;
+  /**
+   * Use this slug in the frontend (e.g. about-sard-newest-production).
+   */
+  slug: string;
+  isActive?: boolean | null;
+  sectionTitle?: string | null;
+  sectionDescription?: string | null;
+  items?:
+    | {
+        title: string;
+        description?: string | null;
+        background: string | Media;
+        /**
+         * YouTube link or direct mp4/webm link. If empty, play button can be hidden.
+         */
+        videoUrl?: string | null;
+        sortOrder?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -411,6 +447,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'team-members';
         value: string | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'galleries';
+        value: string | Gallery;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -604,6 +644,29 @@ export interface TeamMembersSelect<T extends boolean = true> {
   displayOn?: T;
   isActive?: T;
   sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "galleries_select".
+ */
+export interface GalleriesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  isActive?: T;
+  sectionTitle?: T;
+  sectionDescription?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        background?: T;
+        videoUrl?: T;
+        sortOrder?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -884,6 +947,90 @@ export interface SardVisionMission {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sard-production-about-hero".
+ */
+export interface SardProductionAboutHero {
+  id: string;
+  portrait: string | Media;
+  allAboutLabel?: string | null;
+  displayName: string;
+  leftColumn: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  rightColumn?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sard-writer-about-hero".
+ */
+export interface SardWriterAboutHero {
+  id: string;
+  portrait: string | Media;
+  allAboutLabel?: string | null;
+  displayName: string;
+  leftColumn: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  rightColumn?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-header_select".
  */
 export interface SiteHeaderSelect<T extends boolean = true> {
@@ -1001,6 +1148,34 @@ export interface SardVisionMissionSelect<T extends boolean = true> {
         title?: T;
         body?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sard-production-about-hero_select".
+ */
+export interface SardProductionAboutHeroSelect<T extends boolean = true> {
+  portrait?: T;
+  allAboutLabel?: T;
+  displayName?: T;
+  leftColumn?: T;
+  rightColumn?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sard-writer-about-hero_select".
+ */
+export interface SardWriterAboutHeroSelect<T extends boolean = true> {
+  portrait?: T;
+  allAboutLabel?: T;
+  displayName?: T;
+  leftColumn?: T;
+  rightColumn?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

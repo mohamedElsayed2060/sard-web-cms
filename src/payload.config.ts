@@ -28,6 +28,9 @@ import SardMilestonesAbout from './globals/SardMilestonesAbout'
 import SardVisionMission from './globals/SardVisionMission'
 import AboutSardAwards from './collections/AboutSardAwards'
 import TeamMembers from './collections/TeamMembers'
+import Galleries from './collections/Galleries'
+import SardProductionAbout from './globals/sardProductionHero'
+import SardWriterAbout from './globals/sardWriterHero'
 
 export default buildConfig({
   globals: [
@@ -38,6 +41,8 @@ export default buildConfig({
     learningAbout,
     SardMilestonesAbout,
     SardVisionMission,
+    SardProductionAbout,
+    SardWriterAbout,
   ],
   admin: {
     user: Users.slug,
@@ -54,6 +59,7 @@ export default buildConfig({
     AboutSardMilestones,
     AboutSardAwards,
     TeamMembers,
+    Galleries,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

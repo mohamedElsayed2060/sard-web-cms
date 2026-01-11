@@ -1,32 +1,75 @@
 // src/components/layout/MainFooter.jsx
-"use client";
+'use client'
 
-import Image from "next/image";
-import Link from "next/link";
-import PageContentReveal from "../PageContentReveal";
-import { imgUrl } from "@/lib/cms";
-import TransitionLink from "../transition/TransitionLink";
+import { useEffect } from 'react'
+import Image from 'next/image'
+import { usePathname } from 'next/navigation'
+import { motion, useReducedMotion } from 'framer-motion'
+
+import PageContentReveal from '../PageContentReveal'
+import { imgUrl } from '@/lib/cms'
+import TransitionLink from '../transition/TransitionLink'
+import { useTransitionUI } from '../transition/TransitionProvider'
+
+const EASE = [0.19, 1, 0.22, 1]
 
 export default function MainFooter({ footer, bgImage }) {
-  const links = footer?.links || [];
-  const leftLogoSrc = footer?.logoLeft ? imgUrl(footer.logoLeft) : null;
-  const rightLogoSrc = footer?.logoRight ? imgUrl(footer.logoRight) : null;
-  const leftAlt = footer?.logoLeftAlt || "Sard";
-  const rightAlt = footer?.logoRightAlt || "Sard icon";
-  const copyright = footer?.copyright || "Copyright © 2025";
+  const pathname = usePathname()
+  const reduce = useReducedMotion()
+  const { ui } = useTransitionUI()
+
+  // ✅ نفس منطق الهيدر: يظهر من opening (مش يستنى idle)
+  const phase = ui?.phase || 'idle'
+  const showFooter = phase === 'opening' || phase === 'fading' || phase === 'idle'
+
+  // لو بتلاحظ أي glitch عند تغيير الصفحات، ده يساعد
+  useEffect(() => {}, [pathname])
+
+  const links = footer?.links || []
+  const leftLogoSrc = footer?.logoLeft ? imgUrl(footer.logoLeft) : null
+  const rightLogoSrc = footer?.logoRight ? imgUrl(footer.logoRight) : null
+  const leftAlt = footer?.logoLeftAlt || 'Sard'
+  const rightAlt = footer?.logoRightAlt || 'Sard icon'
+  const copyright = footer?.copyright || 'Copyright © 2025'
+
+  const footerVariants = reduce
+    ? {
+        hidden: { opacity: 1 },
+        show: { opacity: 1 },
+      }
+    : {
+        hidden: { opacity: 0, y: 16, filter: 'blur(10px)' },
+        show: { opacity: 1, y: 0, filter: 'blur(0px)' },
+      }
+
   return (
-    <footer className="bg-black pt-5 px-3 pb-5 max-w-[1490px] mx-auto">
+    <motion.footer
+      key={pathname}
+      className={[
+        'bg-black pt-5 px-3 pb-5 max-w-[1490px] mx-auto',
+        showFooter ? '' : 'pointer-events-none',
+      ].join(' ')}
+      variants={footerVariants}
+      initial="hidden"
+      animate={showFooter ? 'show' : 'hidden'}
+      transition={{
+        duration: reduce ? 0 : 0.55,
+        ease: EASE,
+        // ✅ سنة صغيرة يخليه يطلع مع المحتوى أو قبله
+        delay: showFooter && phase === 'opening' ? 0.06 : 0,
+      }}
+      style={{ willChange: 'transform, opacity, filter' }}
+    >
       <PageContentReveal
         variant="slideUp"
         paperColor="#F4E8D7"
         className="rounded-[24px] px-6 md:px-18 py-10 space-y-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
         bgImage={bgImage}
       >
-        {/* الصف اللي فوق: صورتين شمال ويمين زي الهيدر */}
+        {/* الصف اللي فوق: لوجو شمال + أيقونة يمين */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {leftLogoSrc ? (
-              // نقدر نخليها برضه ترجع للهوم عادي لو حابب
               <TransitionLink href="/" aria-label="Sard Home">
                 <Image
                   src={leftLogoSrc}
@@ -62,9 +105,7 @@ export default function MainFooter({ footer, bgImage }) {
         <nav className="flex flex-wrap justify-center gap-6 text-sm text-[#252525] font-bold">
           {links.map((link) => (
             <div className="md:w-auto w-full" key={link.id || link.href}>
-              <TransitionLink href={link.href || "#"}>
-                {link.label}
-              </TransitionLink>
+              <TransitionLink href={link.href || '#'}>{link.label}</TransitionLink>
             </div>
           ))}
         </nav>
@@ -76,6 +117,6 @@ export default function MainFooter({ footer, bgImage }) {
           <span>{copyright}</span>
         </div>
       </PageContentReveal>
-    </footer>
-  );
+    </motion.footer>
+  )
 }

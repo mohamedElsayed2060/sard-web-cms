@@ -1,47 +1,82 @@
 // src/components/layout/MainHeader.jsx
-"use client";
+'use client'
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import PageContentReveal from "../PageContentReveal";
-import { imgUrl } from "@/lib/cms";
-import TransitionLink from "../transition/TransitionLink";
-import { usePathname } from "next/navigation";
-// ================================
-// إعدادات سهلة تغيّر بيها السلوك
-// ================================
-const USE_DROPDOWN_MENU = false;
-// ⬅️ خليها true عشان تستخدم الدروب داون بدل الـ overlay
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import { usePathname } from 'next/navigation'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
-const OVERLAY_VARIANT = "circle";
-// options: "circle" | "slideUp" | "fade"
+import PageContentReveal from '../PageContentReveal'
+import { imgUrl } from '@/lib/cms'
+import TransitionLink from '../transition/TransitionLink'
+import { useTransitionUI } from '../transition/TransitionProvider'
 
-const DROPDOWN_VARIANT = "slideDown";
-// options: "fade" | "scale" | "slideDown"
+// نفس الـ easing بتاع المشروع
+const EASE = [0.19, 1, 0.22, 1]
 
-// ================================
+// تقدر تغيّرها لو حبيت
+const OVERLAY_VARIANT = 'circle' // currently only "circle"
 
 export default function MainHeader({ header, bgImage }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname()
+  const reduce = useReducedMotion()
+  const { ui } = useTransitionUI()
 
-  const logoLargeSrc = header?.logoLarge ? imgUrl(header.logoLarge) : null;
-  const logoSmallSrc = header?.logoSmall ? imgUrl(header.logoSmall) : null;
-  const navLinks = header?.links || [];
+  const [menuOpen, setMenuOpen] = useState(false)
 
-  const toggleMenu = () => setMenuOpen((v) => !v);
-  const closeMenu = () => setMenuOpen(false);
+  // اقفل المنيو تلقائيًا لو الصفحة اتغيرت لأي سبب
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [pathname])
 
-  const logoLargeAlt = header?.logoLargeAlt || "Sard";
-  const logoSmallAlt = header?.logoSmallAlt || "Menu";
+  const logoLargeSrc = header?.logoLarge ? imgUrl(header.logoLarge) : null
+  const logoSmallSrc = header?.logoSmall ? imgUrl(header.logoSmall) : null
+  const navLinks = header?.links || []
+
+  const logoLargeAlt = header?.logoLargeAlt || 'Sard'
+  const logoSmallAlt = header?.logoSmallAlt || 'Menu'
+
+  const toggleMenu = () => setMenuOpen((v) => !v)
+  const closeMenu = () => setMenuOpen(false)
+
+  /**
+   * ✅ المهم: الهيدر يظهر من "opening" (مش بعد idle)
+   * - boot/closing/logo => مخفي
+   * - opening/fading/idle => ظاهر
+   */
+  const phase = ui?.phase || 'idle'
+  const showHeader = phase === 'opening' || phase === 'fading' || phase === 'idle'
+
+  const headerVariants = reduce
+    ? {
+        hidden: { opacity: 1 },
+        show: { opacity: 1 },
+      }
+    : {
+        hidden: { opacity: 0, y: -14, filter: 'blur(10px)' },
+        show: { opacity: 1, y: 0, filter: 'blur(0px)' },
+      }
 
   return (
     <>
-      {/* الهيدر الأساسي */}
-      <section className="bg-black pt-5 px-3 max-w-[1490px] mx-auto relative z-30">
+      {/* ✅ الهيدر الأساسي + انيميشن synchronized مع opening */}
+      <motion.section
+        className={[
+          'bg-black pt-5 px-3 max-w-[1490px] mx-auto relative z-30',
+          showHeader ? '' : 'pointer-events-none',
+        ].join(' ')}
+        variants={headerVariants}
+        initial="hidden"
+        animate={showHeader ? 'show' : 'hidden'}
+        transition={{
+          duration: reduce ? 0 : 0.55,
+          ease: EASE,
+          // سنة صغيرة تخليه يسبق/يمشي مع أول سيكشن
+          delay: showHeader && phase === 'opening' ? 0.12 : 0,
+        }}
+        style={{ willChange: 'transform, opacity, filter' }}
+      >
         <PageContentReveal
-          variant="slideUp"
           paperColor="#F4E8D7"
           className="rounded-[24px] px-3 py-5 md:px-18 md:py-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
           bgImage={bgImage}
@@ -65,23 +100,6 @@ export default function MainHeader({ header, bgImage }) {
               )}
             </div>
 
-            {/* Nav وسط – ديسكتوب فقط (ممكن نطوره بعدين) */}
-
-            {/* <nav className="hidden md:flex items-center gap-7 text-sm text-black/70">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.id || link.href}
-                  href={link.href || "#"}
-                  className="relative group overflow-hidden"
-                >
-                  <span className="transition-colors duration-200 group-hover:text-black">
-                    {link.label}
-                  </span>
-                  <span className="pointer-events-none absolute inset-x-0 -bottom-1 h-px origin-left scale-x-0 bg-black/80 transition-transform duration-200 group-hover:scale-x-100" />
-                </Link>
-              ))}
-            </nav> */}
-
             {/* أيكون المنيو – يمين */}
             <div className="relative">
               <motion.button
@@ -90,6 +108,7 @@ export default function MainHeader({ header, bgImage }) {
                 whileTap={{ scale: 0.94 }}
                 className="relative flex h-10 w-10 items-center justify-center rounded-full cursor-pointer text-[#F4E8D7] overflow-hidden"
                 aria-label="Open menu"
+                aria-expanded={menuOpen}
               >
                 {logoSmallSrc ? (
                   <Image
@@ -123,24 +142,23 @@ export default function MainHeader({ header, bgImage }) {
             </div>
           </div>
         </PageContentReveal>
-      </section>
+      </motion.section>
 
-      {/* لو وضع overlay، نعرض الـ Overlay Menu */}
-      {!USE_DROPDOWN_MENU && (
-        <HeaderMenuOverlay
-          open={menuOpen}
-          onClose={closeMenu}
-          navLinks={navLinks}
-          logoLargeSrc={logoLargeSrc}
-          logoLargeAlt={logoLargeAlt}
-          variant={OVERLAY_VARIANT}
-        />
-      )}
+      {/* ✅ Overlay Menu */}
+      <HeaderMenuOverlay
+        open={menuOpen}
+        onClose={closeMenu}
+        navLinks={navLinks}
+        logoLargeSrc={logoLargeSrc}
+        logoLargeAlt={logoLargeAlt}
+        variant={OVERLAY_VARIANT}
+      />
     </>
-  );
+  )
 }
+
 /* ============================
-   Overlay Menu Variants
+   Overlay Menu
    ============================ */
 function HeaderMenuOverlay({
   open,
@@ -148,53 +166,50 @@ function HeaderMenuOverlay({
   navLinks,
   logoLargeSrc,
   logoLargeAlt,
-  variant = "circle",
+  variant = 'circle',
 }) {
-  const pathname = usePathname();
+  const pathname = usePathname()
+  const reduce = useReducedMotion()
 
-  // إعدادات المسافات
-  const CARD_H = 70; // الارتفاع الكلي للكارت
-  const PEEK = 40; // الجزء اللي عايزينه يبان من الكارت اللي تحته
-  const OFFSET = CARD_H - PEEK; // المسافة اللي الكارت هيتحركها لفوق عشان يغطي اللي قبله
-
-  const normalizePath = (p = "") => {
-    const clean = p.split("?")[0].split("#")[0];
-    const withSlash = clean.startsWith("/") ? clean : "/" + clean;
-    return withSlash !== "/" ? withSlash.replace(/\/+$/, "") : "/";
-  };
+  const normalizePath = (p = '') => {
+    const clean = p.split('?')[0].split('#')[0]
+    const withSlash = clean.startsWith('/') ? clean : '/' + clean
+    return withSlash !== '/' ? withSlash.replace(/\/+$/, '') : '/'
+  }
 
   const isActiveHref = (href) => {
-    if (!href || href === "#") return false;
-    const target = normalizePath(href);
-    const current = normalizePath(pathname);
-    return current === target || current.startsWith(target + "/");
-  };
+    if (!href || href === '#') return false
+    const target = normalizePath(href)
+    const current = normalizePath(pathname)
+    return current === target || current.startsWith(target + '/')
+  }
 
   const overlayVariantsMap = {
     circle: {
-      hidden: { clipPath: "circle(0% at 95% 10%)" },
+      hidden: { clipPath: 'circle(0% at 95% 10%)' },
       visible: {
-        clipPath: "circle(150% at 95% 10%)",
+        clipPath: 'circle(150% at 95% 10%)',
         transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
       },
       exit: {
-        clipPath: "circle(0% at 95% 10%)",
+        clipPath: 'circle(0% at 95% 10%)',
         transition: { duration: 0.6, ease: [0.65, 0, 0.35, 1] },
       },
     },
-    // ... بقية الـ variants كما هي
-  };
+  }
 
-  const bgVariants = overlayVariantsMap[variant] || overlayVariantsMap.circle;
+  const bgVariants = overlayVariantsMap[variant] || overlayVariantsMap.circle
+
+  // ✅ إعدادات شكل الفيجما (مرة واحدة بدل تكرار)
+  const MENU_CARD_H = 92
+  const PEEK = 64
+  const OFFSET = MENU_CARD_H - PEEK - 8
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div className="fixed inset-0 z-40">
-          <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-md"
-            onClick={onClose}
-          />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={onClose} />
 
           <motion.div
             variants={bgVariants}
@@ -206,7 +221,7 @@ function HeaderMenuOverlay({
           >
             <div className="mx-auto flex h-full max-w-[1490px] flex-col justify-between">
               {/* Header */}
-              <div className="flex items-center justify-between  md:px-10 px-6 rounded-[22px] border border-black/10 h-[92px] shadow-[0_16px_40px_rgba(0,0,0,0.18)] ">
+              <div className="flex items-center justify-between md:px-10 px-6 rounded-[22px] border border-black/10 h-[92px] shadow-[0_16px_40px_rgba(0,0,0,0.18)]">
                 {logoLargeSrc && (
                   <Image
                     src={logoLargeSrc}
@@ -216,10 +231,13 @@ function HeaderMenuOverlay({
                     className="h-9 w-auto md:h-11 object-contain"
                   />
                 )}
+
                 <motion.button
+                  type="button"
                   onClick={onClose}
                   whileTap={{ scale: 0.9 }}
                   className="flex h-10 w-10 items-center justify-center rounded-full border border-black/20 bg-black text-[#F4E8D7]"
+                  aria-label="Close menu"
                 >
                   ✕
                 </motion.button>
@@ -228,29 +246,22 @@ function HeaderMenuOverlay({
               {/* Stacked Menu List */}
               <motion.ul className="mt-16 w-full">
                 {navLinks.map((link, i) => {
-                  const href = link.href || "#";
-                  const active = isActiveHref(href);
-
-                  // ✅ إعدادات شكل الفيجما
-                  const CARD_H = 92; // ارتفاع الكارت (زوّده لو عايز الكروت “أكبر”)
-                  const PEEK = 64; // الجزء الظاهر من الكارت اللي تحته (زوّده عشان يبان أكتر)
-                  const OFFSET = CARD_H - PEEK - 8; // قد ايه الكارت يغطي اللي فوقه
+                  const href = link.href || '#'
+                  const active = isActiveHref(href)
 
                   return (
                     <motion.li
                       key={link.id || href}
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={reduce ? false : { opacity: 0, y: 16 }}
+                      animate={reduce ? {} : { opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.06 }}
                       className="relative w-full"
                       style={{
-                        // ✅ مهم: آخر واحد يبقى فوق (هو اللي ظاهر كامل)
                         zIndex: i + 1,
                         marginTop: i === 0 ? 0 : `-${OFFSET}px`,
                       }}
                     >
                       <motion.div
-                        // ✅ مفيش scale نهائي
                         initial={false}
                         animate={{ y: active ? -14 : 0 }}
                         whileHover={{ y: -14 }}
@@ -259,46 +270,36 @@ function HeaderMenuOverlay({
                           ease: [0.22, 1, 0.36, 1],
                         }}
                         className={[
-                          "relative overflow-hidden rounded-[22px]",
-                          "border border-black/10",
-                          "bg-[#F4E8D7]",
-                          "shadow-[0_16px_40px_rgba(0,0,0,0.18)]",
-                          "hover:shadow-[0_22px_55px_rgba(0,0,0,0.22)]",
-                          "transition-shadow",
-                        ].join(" ")}
+                          'relative overflow-hidden rounded-[22px]',
+                          'border border-black/10',
+                          'bg-[#F4E8D7]',
+                          'shadow-[0_16px_40px_rgba(0,0,0,0.18)]',
+                          'hover:shadow-[0_22px_55px_rgba(0,0,0,0.22)]',
+                          'transition-shadow',
+                        ].join(' ')}
                       >
                         <TransitionLink
                           href={href}
                           onClick={onClose}
                           className={[
-                            "flex items-center justify-between",
-                            "px-6 md:px-10",
-                            `h-[${CARD_H}px]`,
-                            "text-[20px] md:text-[22px] italic",
-                            "text-black/80 hover:text-black",
-                            "group",
-                          ].join(" ")}
+                            'flex items-center justify-between',
+                            'px-6 md:px-10',
+                            'text-[20px] md:text-[22px] italic',
+                            'text-black/80 hover:text-black',
+                            'group',
+                          ].join(' ')}
+                          style={{ height: MENU_CARD_H }}
                         >
-                          <span className="tracking-[0.02em]">
-                            {link.label}
-                          </span>
-
-                          {/* دائرة يمين زي الفيجما */}
-                          {/* <span className="h-10 w-10 rounded-full border border-black/15 grid place-items-center">
-                            <span className="h-2.5 w-2.5 rounded-full bg-black/30" />
-                          </span> */}
+                          <span className="tracking-[0.02em]">{link.label}</span>
                         </TransitionLink>
                       </motion.div>
                     </motion.li>
-                  );
+                  )
                 })}
               </motion.ul>
 
               {/* Footer */}
-              <div
-                className="
-                h-[92px] shadow-[0_16px_40px_rgba(0,0,0,0.18)] flex items-center justify-between text-[11px] uppercase tracking-[0.25em] text-black/60 md:px-10 px-6 rounded-[22px] border border-black/10"
-              >
+              <div className="h-[92px] shadow-[0_16px_40px_rgba(0,0,0,0.18)] flex items-center justify-between text-[11px] uppercase tracking-[0.25em] text-black/60 md:px-10 px-6 rounded-[22px] border border-black/10">
                 <span>Sard · Rooms</span>
                 <span>Storytelling Studio</span>
               </div>
@@ -307,5 +308,5 @@ function HeaderMenuOverlay({
         </motion.div>
       )}
     </AnimatePresence>
-  );
+  )
 }
