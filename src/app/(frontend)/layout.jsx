@@ -9,8 +9,19 @@ import TransitionBridge from '@/components/transition/TransitionBridge'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'Sard',
-  description: 'Cinematic storytelling universe',
+  title: {
+    default: 'Sard',
+    template: '%s | Sard',
+  },
+  description:
+    'Sard is a storytelling studio and writers’ room developing socially relevant narratives, training new talents, and producing world-class Arabic content.',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.png', type: 'image/png' },
+    ],
+    // apple: [{ url: '/apple-touch-icon.png' }],
+  },
 }
 
 export default function RootLayout({ children }) {

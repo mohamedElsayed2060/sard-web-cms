@@ -15,7 +15,7 @@ export default function AboutSardVisionMission({ data, bgImage }) {
         <PageContentReveal
           variant="slideUp"
           paperColor="#F4E8D7"
-          className="rounded-[24px] py-7 md:py-18 md:px-18 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+          className="rounded-[24px] p-3 py-7 md:py-18 md:px-18 shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
           bgImage={bgImage}
         >
           {/* Title + lines */}

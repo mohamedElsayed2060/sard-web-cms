@@ -1,76 +1,76 @@
 // src/components/mariam/MariamWorksSection.jsx
-"use client";
+'use client'
 
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import PageContentReveal from "@/components/PageContentReveal";
-import Image from "next/image";
-import { Splide, SplideSlide } from "@splidejs/react-splide";
-import { imgUrl } from "@/lib/cms";
-import BookModal from "@/components/shared/BookModal";
-import SectionReveal from "../motion/SectionReveal";
+import { useEffect, useRef, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import PageContentReveal from '@/components/PageContentReveal'
+import Image from 'next/image'
+import { Splide, SplideSlide } from '@splidejs/react-splide'
+import { imgUrl } from '@/lib/cms'
+import BookModal from '@/components/shared/BookModal'
+import SectionReveal from '../motion/SectionReveal'
+import clsx from 'clsx'
 
 export default function MariamWorksSection({ works, bgImage }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isMounted, setIsMounted] = useState(false); // ✅ عشان نمنع مشاكل الـ SSR
-  const [modalOpen, setModalOpen] = useState(false);
-  const [activeMedia, setActiveMedia] = useState(null);
-  const tabsSplideRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [isMounted, setIsMounted] = useState(false) // ✅ عشان نمنع مشاكل الـ SSR
+  const [modalOpen, setModalOpen] = useState(false)
+  const [activeMedia, setActiveMedia] = useState(null)
+  const tabsSplideRef = useRef(null)
 
   const openMedia = (item) => {
-    setActiveMedia(item);
-    setModalOpen(true);
-  };
+    setActiveMedia(item)
+    setModalOpen(true)
+  }
 
   const closeMedia = () => {
-    setModalOpen(false);
+    setModalOpen(false)
     // سيبها بعد الانيميشن لو تحب، بس مش ضروري
-    setActiveMedia(null);
-  };
+    setActiveMedia(null)
+  }
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
-  if (!works || works.length === 0) return null;
+  if (!works || works.length === 0) return null
 
-  const safeIndex =
-    activeIndex >= 0 && activeIndex < works.length ? activeIndex : 0;
-  const activeWork = works[safeIndex];
+  const safeIndex = activeIndex >= 0 && activeIndex < works.length ? activeIndex : 0
+  const activeWork = works[safeIndex]
 
   const handleTabClick = (index) => {
-    setActiveIndex(index);
+    setActiveIndex(index)
 
     // نحرك التابز لو فيه overflow
-    const inst = tabsSplideRef.current?.splide || tabsSplideRef.current || null;
-    if (inst && inst.go) inst.go(index);
-  };
+    const inst = tabsSplideRef.current?.splide || tabsSplideRef.current || null
+    if (inst && inst.go) inst.go(index)
+  }
 
-  const posterSrc = activeWork.poster ? imgUrl(activeWork.poster) : null;
-  const mediaItems = activeWork.media ?? [];
-  const castItems = (activeWork.cast ?? []).map((c) => c.name || c);
+  const posterSrc = activeWork.poster ? imgUrl(activeWork.poster) : null
+  const mediaItems = activeWork.media ?? []
+  const castItems = (activeWork.cast ?? []).map((c) => c.name || c)
   const renderVideo = (url) => {
-    if (!url) return null;
+    if (!url) return null
 
-    const u = url.trim();
+    const u = url.trim()
 
     // YouTube
-    const isYouTube = /youtube\.com\/watch\?v=|youtu\.be\//i.test(u);
+    const isYouTube = /youtube\.com\/watch\?v=|youtu\.be\//i.test(u)
 
     if (isYouTube) {
-      let id = "";
+      let id = ''
       try {
-        const parsed = new URL(u);
-        if (parsed.hostname.includes("youtu.be")) {
-          id = parsed.pathname.replace("/", "");
+        const parsed = new URL(u)
+        if (parsed.hostname.includes('youtu.be')) {
+          id = parsed.pathname.replace('/', '')
         } else {
-          id = parsed.searchParams.get("v") || "";
+          id = parsed.searchParams.get('v') || ''
         }
       } catch {
         // fallback بسيط
-        id = (u.split("v=")[1] || "").split("&")[0];
+        id = (u.split('v=')[1] || '').split('&')[0]
       }
 
-      const embed = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&playsinline=1&rel=0`;
+      const embed = `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&playsinline=1&rel=0`
 
       return (
         <div className="relative h-full w-full">
@@ -82,20 +82,12 @@ export default function MariamWorksSection({ works, bgImage }) {
             title="Video"
           />
         </div>
-      );
+      )
     }
 
     // direct video file (mp4/webm/...)
-    return (
-      <video
-        src={u}
-        controls
-        autoPlay
-        playsInline
-        className="h-full w-full object-contain"
-      />
-    );
-  };
+    return <video src={u} controls autoPlay playsInline className="h-full w-full object-contain" />
+  }
 
   return (
     <SectionReveal variant="fadeUp" delay={0.1}>
@@ -109,35 +101,35 @@ export default function MariamWorksSection({ works, bgImage }) {
                   ref={tabsSplideRef}
                   aria-label="Works tabs"
                   options={{
-                    type: "slide",
+                    type: 'slide',
                     pagination: false,
-                    gap: "0.75rem",
+                    gap: '0.75rem',
                     arrows: works.length > 3,
-                    drag: "free",
+                    drag: 'free',
                     autoWidth: true,
                   }}
                 >
                   {works.map((work, index) => {
-                    const isActive = index === safeIndex;
+                    const isActive = index === safeIndex
 
                     return (
                       <SplideSlide key={work.id}>
                         <button
-                          style={{ minWidth: "180px" }}
+                          style={{ minWidth: '180px' }}
                           type="button"
                           onClick={() => handleTabClick(index)}
                           className={[
-                            "px-6 py-3 text-sm whitespace-nowrap transition-all",
-                            "rounded-tl-[20px] rounded-b-none",
+                            'px-6 py-3 text-sm whitespace-nowrap transition-all',
+                            'rounded-tl-[20px] rounded-b-none',
                             isActive
-                              ? "bg-[#871D3F] text-white shadow-[0_30px_25px_rgba(0,0,0,0.45)]"
-                              : "bg-[#871D3F] text-white/75 hover:bg-[#680020] shadow-[inset_0_-10px_5px_rgba(0,0,0,0.3)]",
-                          ].join(" ")}
+                              ? 'bg-[#871D3F] text-white shadow-[0_30px_25px_rgba(0,0,0,0.45)]'
+                              : 'bg-[#871D3F] text-white/75 hover:bg-[#680020] shadow-[inset_0_-10px_5px_rgba(0,0,0,0.3)]',
+                          ].join(' ')}
                         >
                           {work.title}
                         </button>
                       </SplideSlide>
-                    );
+                    )
                   })}
                 </Splide>
               </div>
@@ -153,9 +145,9 @@ export default function MariamWorksSection({ works, bgImage }) {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeWork.id}
-                initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -10, filter: "blur(6px)" }}
+                initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
                 transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
                 className="mt-2 space-y-6 md:mt-0"
               >
@@ -188,14 +180,14 @@ export default function MariamWorksSection({ works, bgImage }) {
                           aria-label="Selected stills"
                           className="w-full"
                           options={{
-                            type: "slide",
-                            gap: "1rem",
+                            type: 'slide',
+                            gap: '1rem',
                             pagination: false,
                             arrows: false,
-                            drag: "free",
+                            drag: 'free',
                             perPage: 3.5,
                             // perMove: 1,
-                            focus: "end",
+                            focus: 'end',
                             // trimSpace: false,
                             breakpoints: {
                               1024: { perPage: 2 },
@@ -212,9 +204,7 @@ export default function MariamWorksSection({ works, bgImage }) {
                           }}
                         >
                           {mediaItems.map((item) => {
-                            const thumbSrc = item.thumb
-                              ? imgUrl(item.thumb)
-                              : null;
+                            const thumbSrc = item.thumb ? imgUrl(item.thumb) : null
 
                             return (
                               <SplideSlide key={item.id}>
@@ -234,22 +224,33 @@ export default function MariamWorksSection({ works, bgImage }) {
                                     />
                                   ) : (
                                     <div className="flex h-full items-center justify-center text-xs text-white/45">
-                                      {item.type === "video"
-                                        ? "Video"
-                                        : "Image"}
+                                      {item.type === 'video' ? 'Video' : 'Image'}
                                     </div>
                                   )}
 
                                   {/* badge صغير */}
-                                  <div className="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[11px] text-white backdrop-blur">
-                                    {item.type === "video" ? "Video" : "Image"}
+                                  <div className="absolute left-[50%] top-[50%] -translate-[50%] text-[11px] ">
+                                    {item.type === 'video' ? (
+                                      <span
+                                        className={clsx(
+                                          'galleryPlayBtn',
+                                          'h-14 w-14 rounded-full bg-black/15 backdrop-blur',
+                                          'border border-black/25 flex items-center justify-center',
+                                          'hover:bg-white/20 transition',
+                                        )}
+                                      >
+                                        <span className="ml-[2px] inline-block h-0 w-0 border-y-[10px] border-y-transparent border-l-[16px] border-l-white" />
+                                      </span>
+                                    ) : (
+                                      'Image'
+                                    )}
                                   </div>
 
                                   {/* overlay hover */}
                                   <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />
                                 </button>
                               </SplideSlide>
-                            );
+                            )
                           })}
                         </Splide>
                       )}
@@ -264,12 +265,8 @@ export default function MariamWorksSection({ works, bgImage }) {
                         </div>
 
                         <div className="flex flex-wrap items-baseline gap-3 text-sm md:text-lg">
-                          <span className="italic font-semibold">
-                            {activeWork.title}
-                          </span>
-                          <span className="italic text-[#F0EADB]/70">
-                            {activeWork.year}
-                          </span>
+                          <span className="italic font-semibold">{activeWork.title}</span>
+                          <span className="italic text-[#F0EADB]/70">{activeWork.year}</span>
                         </div>
 
                         <div className="h-px w-full bg-[#F0EADB]/30" />
@@ -279,9 +276,7 @@ export default function MariamWorksSection({ works, bgImage }) {
                             <span key={i}>
                               {name}
                               {i < castItems.length - 1 && (
-                                <span className="mx-1 text-[#F0EADB]/40">
-                                  |
-                                </span>
+                                <span className="mx-1 text-[#F0EADB]/40">|</span>
                               )}
                             </span>
                           ))}
@@ -294,14 +289,9 @@ export default function MariamWorksSection({ works, bgImage }) {
             </AnimatePresence>
           </PageContentReveal>
         </div>
-        <BookModal
-          open={modalOpen}
-          onClose={closeMedia}
-          maxWidth={1100}
-          maxHeight={720}
-        >
+        <BookModal open={modalOpen} onClose={closeMedia} maxWidth={1100} maxHeight={720}>
           <div className="h-full w-full bg-black">
-            {activeMedia?.type === "video" ? (
+            {activeMedia?.type === 'video' ? (
               activeMedia?.videoUrl ? (
                 renderVideo(activeMedia.videoUrl)
               ) : (
@@ -321,9 +311,7 @@ export default function MariamWorksSection({ works, bgImage }) {
                     priority
                   />
                 ) : (
-                  <div className="grid h-full place-items-center text-white/80">
-                    No image
-                  </div>
+                  <div className="grid h-full place-items-center text-white/80">No image</div>
                 )}
               </div>
             )}
@@ -331,5 +319,5 @@ export default function MariamWorksSection({ works, bgImage }) {
         </BookModal>
       </section>
     </SectionReveal>
-  );
+  )
 }

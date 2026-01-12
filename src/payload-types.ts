@@ -76,6 +76,7 @@ export interface Config {
     'about-sard-awards': AboutSardAward;
     'team-members': TeamMember;
     galleries: Gallery;
+    'contact-submissions': ContactSubmission;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -91,6 +92,7 @@ export interface Config {
     'about-sard-awards': AboutSardAwardsSelect<false> | AboutSardAwardsSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     galleries: GalleriesSelect<false> | GalleriesSelect<true>;
+    'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -411,6 +413,20 @@ export interface Gallery {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions".
+ */
+export interface ContactSubmission {
+  id: string;
+  name: string;
+  email: string;
+  subject?: string | null;
+  message: string;
+  company?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -451,6 +467,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'galleries';
         value: string | Gallery;
+      } | null)
+    | ({
+        relationTo: 'contact-submissions';
+        value: string | ContactSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -667,6 +687,19 @@ export interface GalleriesSelect<T extends boolean = true> {
         sortOrder?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions_select".
+ */
+export interface ContactSubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  subject?: T;
+  message?: T;
+  company?: T;
   updatedAt?: T;
   createdAt?: T;
 }

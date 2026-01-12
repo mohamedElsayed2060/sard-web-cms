@@ -15,7 +15,11 @@ import AboutSardVisionMission from '@/components/AboutSard/AboutSardVisionMissio
 import AboutSardAwards from '@/components/AboutSard/AboutSardAwards'
 import AboutSardTeam from '@/components/AboutSard/AboutSardTeam'
 import AboutSardNewestProduction from '@/components/AboutSard/AboutSardNewestProduction'
-
+export const metadata = {
+  title: 'About Sard',
+  description:
+    'Learn about Sard’s vision, mission, milestones, and awards as a leading Arab storytelling hub.',
+}
 export const revalidate = 0
 
 export default async function AboutSardPage() {

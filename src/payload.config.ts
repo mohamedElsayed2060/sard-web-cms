@@ -17,6 +17,7 @@ import Footer from './globals/footer'
 import Header from './globals/header'
 
 import Scene from './globals/scene'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 
 import SceneHotspots from './collections/SceneHotspots'
 import MariamAbout from './globals/mariamAbout'
@@ -31,6 +32,9 @@ import TeamMembers from './collections/TeamMembers'
 import Galleries from './collections/Galleries'
 import SardProductionAbout from './globals/sardProductionHero'
 import SardWriterAbout from './globals/sardWriterHero'
+import { ContactSubmissions } from './collections/ContactSubmissions'
+// import AdminLogo from "./assets/favicon.png"
+// import AdminIcon from "./assets/favicon.png"
 
 export default buildConfig({
   globals: [
@@ -49,6 +53,16 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    // components: {
+    //   graphics: {
+    //     Logo: './assets/favicon.png',
+    //     Icon: './assets/favicon.png',
+    //   },
+    // },
+    meta: {
+      titleSuffix: '— Sard CMS',
+      icons: '/favicon.png',
+    },
   },
   collections: [
     Users,
@@ -60,7 +74,23 @@ export default buildConfig({
     AboutSardAwards,
     TeamMembers,
     Galleries,
+    ContactSubmissions,
   ],
+  email: nodemailerAdapter({
+    defaultFromAddress:
+      process.env.CONTACT_FROM_EMAIL || process.env.SMTP_USER || 'no-reply@sard-eg.com',
+    defaultFromName: 'Sard Website',
+    transportOptions: {
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT || 587),
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+      secure: Number(process.env.SMTP_PORT || 587) === 465,
+    },
+  }),
+
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

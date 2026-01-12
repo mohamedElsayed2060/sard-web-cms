@@ -7,6 +7,12 @@ import MainFooter from '@/components/layout/MainFooter'
 import AboutSardWriterHero from '@/components/SardWriterRoom/AboutSardWriterHero'
 import { getSardWriterRoomPageData } from '@/lib/cms'
 import SardWriterRoomGallerySection from '@/components/SardWriterRoom/SardWriterRoomGallerySection'
+
+export const metadata = {
+  title: "Sard Writer's Room",
+  description: "Sard Writer's Room.",
+}
+
 export default async function SardWriterRoomPage() {
   const { header, footer, gallery, hero } = await getSardWriterRoomPageData()
   console.log('Sard Writer Room Hero Data:', gallery)

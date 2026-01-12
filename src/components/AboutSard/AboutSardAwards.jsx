@@ -173,7 +173,7 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                                   animate={{ opacity: 1 }}
                                   exit={{ opacity: 0 }}
                                   transition={{ duration: 0.18 }}
-                                  className="text-[11px] text-[#252525]/60 whitespace-nowrap rotate-[-90deg] italic"
+                                  className="text-[14px] font-bold text-[#252525]/60 whitespace-nowrap rotate-[-90deg] italic"
                                 >
                                   {item?.title || 'Award'}
                                 </motion.span>
@@ -196,7 +196,7 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                   className="rounded-[22px] overflow-hidden shadow-[0_12px_25px_rgba(0,0,0,0.22)]"
                   style={{ backgroundImage: `url('${bgImage?.src}')` }}
                 >
-                  <motion.div layout className="p-5 pr-[70px] min-h-[220px]">
+                  <motion.div layout className="p-5 pr-[70px] min-h-[230px]">
                     <AnimatePresence mode="wait">
                       {showContent && (
                         <motion.div
@@ -213,13 +213,15 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                           {/* ✅ IMAGE تحت العنوان مباشرة (موبايل) */}
                           {awardImgSrc ? (
                             <div className="mt-3">
-                              <Image
+                              <img src={awardImgSrc} alt={awardImgAlt} />
+
+                              {/* <Image
                                 src={awardImgSrc}
                                 alt={awardImgAlt}
                                 width={activeAward?.image?.width || 340}
                                 height={activeAward?.image?.height || 220}
                                 className="h-auto w-full max-w-[320px] rounded-[16px] border border-black/10 shadow-sm object-contain"
-                              />
+                              /> */}
                             </div>
                           ) : null}
 
@@ -240,7 +242,7 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                 {/* Right stacked buttons */}
                 <div className="absolute top-4 right-4 w-[50px]">
                   {ordered.slice(1, 1 + MOBILE_TABS_COUNT).map(({ item, idx }, i) => {
-                    const y = i * 18
+                    const y = i * 13
                     return (
                       <motion.button
                         key={item?.id || idx}
@@ -250,7 +252,7 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                         onClick={() => onPick(idx)}
                         className={[
                           'absolute -right-2',
-                          'w-[50px] h-[86px]',
+                          'w-[50px] h-[130px]',
                           'rounded-[18px]',
                           'border border-black/15',
                           'shadow-md',
@@ -261,7 +263,7 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                         style={{ top: y, zIndex: 50 - i }}
                         aria-label={item?.title || 'Award'}
                       >
-                        <span className="text-[11px] text-[#252525]/65 whitespace-nowrap rotate-[-90deg] italic">
+                        <span className="text-[11px] text-[#252525]/65 whitespace-nowrap rotate-[-90deg] italic font-bold">
                           {item?.title || 'Award'}
                         </span>
                       </motion.button>

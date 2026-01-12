@@ -268,7 +268,7 @@ function HeaderMenuOverlay({
               </div>
 
               {/* Stacked Menu List */}
-              <motion.ul className="mt-16 w-full flex-1 min-h-0 overflow-y-auto overscroll-contain pb-10">
+              <motion.ul className="mt-5 py-8 w-full flex-1 min-h-0 overflow-y-auto overscroll-contain pb-10">
                 {navLinks.map((link, i) => {
                   const href = link.href || '#'
                   const active = isActiveHref(href)
@@ -296,10 +296,11 @@ function HeaderMenuOverlay({
                         className={[
                           'relative overflow-hidden rounded-[22px]',
                           'border border-black/10',
-                          'bg-[#F4E8D7]',
-                          'shadow-[0_16px_40px_rgba(0,0,0,0.18)]',
-                          'hover:shadow-[0_22px_55px_rgba(0,0,0,0.22)]',
+                          `${active ? 'bg-[#efe1cb]' : 'bg-[#F4E8D7]'} `,
+                          '',
+                          '',
                           'transition-shadow',
+                          ,
                         ].join(' ')}
                       >
                         <TransitionLink

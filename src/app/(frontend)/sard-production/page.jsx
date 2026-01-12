@@ -9,6 +9,10 @@ import MainFooter from '@/components/layout/MainFooter'
 import { getSardProductionPageData } from '@/lib/cms'
 import AboutSardProductionHero from '@/components/SardProduction/AboutSardProductionHero'
 
+export const metadata = {
+  title: 'Sard Production',
+  description: 'Sard Production.',
+}
 export default async function SardProductionPage() {
   const { header, footer, gallery, hero } = await getSardProductionPageData()
   return (

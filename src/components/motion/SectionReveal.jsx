@@ -86,7 +86,7 @@ export default function SectionReveal({
 
   return (
     <motion.div
-      className={className}
+      className={`${className} overflow-x-hidden`}
       variants={reduce ? { hidden: { opacity: 1 }, show: { opacity: 1 } } : v}
       initial="hidden"
       whileInView="show"

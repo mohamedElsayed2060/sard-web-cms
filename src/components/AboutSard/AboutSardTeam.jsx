@@ -99,9 +99,9 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
                       <button
                         type="button"
                         onClick={() => setActive(m)}
-                        className="w-full text-left"
+                        className="w-full text-left "
                       >
-                        <div className=" overflow-hidden ">
+                        <div className=" overflow-hidden duration-200 ease-in cursor-pointer rounded-b-lg hover:shadow pb-2">
                           {/* Photo */}
                           <div
                             className={[
@@ -136,7 +136,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark }) {
                               backgroundPosition: 'center',
                             }}
                           >
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center justify-between gap-3">
                               <h3 className="italic text-2xl md:text-3xl font-semibold text-[#252525] leading-none">
                                 {m?.name || 'Team member'}
                               </h3>

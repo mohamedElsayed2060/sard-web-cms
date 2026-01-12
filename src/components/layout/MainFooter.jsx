@@ -76,11 +76,11 @@ export default function MainFooter({ footer, bgImage }) {
                   alt={leftAlt}
                   width={160}
                   height={44}
-                  className="h-7 w-auto md:h-9 object-contain"
+                  className="h-9 w-auto md:h-10 w-auto  object-contain"
                 />
               </TransitionLink>
             ) : (
-              <div className="h-6 w-20 rounded-full bg-black/80" />
+              <div className="h-4 w-20 rounded-full bg-black/80" />
             )}
           </div>
 
