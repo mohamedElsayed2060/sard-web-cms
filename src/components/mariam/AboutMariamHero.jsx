@@ -114,7 +114,7 @@ export default function AboutMariamHero({ data, bgImage }) {
                 {portraitSrc ? (
                   <CMSImage
                     src={portraitSrc}
-                    alt={data.displayName || ''}
+                    alt={data.displayName || 'change for test'}
                     width={400}
                     height={400}
                     className="w-full h-auto object-cover"
