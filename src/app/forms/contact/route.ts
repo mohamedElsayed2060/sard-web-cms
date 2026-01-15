@@ -31,20 +31,20 @@ export async function POST(req: Request) {
     })
 
     // ✅ Send Email (اختياري - لو SMTP متظبط)
+    // بعد ما تعمل payload.create(...)
     if (process.env.SMTP_HOST && process.env.CONTACT_TO_EMAIL) {
-      await payload.sendEmail({
-        to: process.env.CONTACT_TO_EMAIL!,
-        from: process.env.CONTACT_FROM_EMAIL || process.env.SMTP_USER!,
-        replyTo: email, // ✅ ده المهم
-        subject: subject ? `[Sard Contact] ${subject}` : '[Sard Contact] New message',
-        html: `
-    <h2>New Contact Submission</h2>
-    <p><b>Name:</b> ${name}</p>
-    <p><b>Email:</b> ${email}</p>
-    <p><b>Subject:</b> ${subject || '-'}</p>
-    <p><b>Message:</b><br/>${message.replace(/\n/g, '<br/>')}</p>
-  `,
-      })
+      try {
+        await payload.sendEmail({
+          to: process.env.CONTACT_TO_EMAIL!,
+          from: process.env.CONTACT_FROM_EMAIL || process.env.SMTP_USER!,
+          replyTo: email,
+          subject: subject ? `[Sard Contact] ${subject}` : '[Sard Contact] New message',
+          text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\n${message}`,
+        })
+      } catch (e) {
+        console.error('Email failed (Gmail SMTP). Submission saved:', e)
+        // ✅ المهم: ما ترجعش error
+      }
     }
 
     return NextResponse.json({ ok: true })
