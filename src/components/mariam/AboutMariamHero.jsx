@@ -1,7 +1,7 @@
 // src/components/mariam/AboutMariamHero.jsx
 'use client'
 
-import Image from 'next/image'
+import CMSImage from '@/components/CMSImage'
 import PageContentReveal from '@/components/PageContentReveal'
 import { imgUrl } from '@/lib/cms'
 import SectionReveal from '../motion/SectionReveal'
@@ -112,13 +112,13 @@ export default function AboutMariamHero({ data, bgImage }) {
             <SectionReveal variant="slideRight" delay={1} duration={0.8}>
               <div className="relative overflow-hidden rounded-[24px] ">
                 {portraitSrc ? (
-                  <Image
+                  <CMSImage
                     src={portraitSrc}
-                    alt={data.displayName || 'Mariam Naoum'}
+                    alt={data.displayName || ''}
                     width={400}
                     height={400}
                     className="w-full h-auto object-cover"
-                    priority // ⬅⬅ هنا
+                    priority
                   />
                 ) : (
                   <div className="flex aspect-[3/4] items-center justify-center text-sm text-black/40">
