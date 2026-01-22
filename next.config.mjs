@@ -4,7 +4,10 @@ import { withPayload } from '@payloadcms/next/withPayload'
 const nextConfig = {
   output: 'standalone',
 
-  // Your Next.js config here
+  // experimental: {
+  //   viewTransition: true,
+  // },
+
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],

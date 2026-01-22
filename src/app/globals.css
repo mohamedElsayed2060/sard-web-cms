@@ -1,0 +1,346 @@
+@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root {
+  --background: #f3f0eb;
+  --foreground: #171717;
+
+  /* EN */
+  --font-title: 'Conso';
+  --font-body: 'Avenir';
+
+  /* AR */
+  --font-title-ar: 'LAXR';
+  --font-body-ar: 'Cairo';
+}
+@import '@splidejs/react-splide/css';
+@import 'swiper/css';
+@import 'swiper/css/navigation';
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+@font-face {
+  font-family: 'Conso';
+  src: url('/fonts/ConsoSemiBoldItalic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Avenir';
+  src: url('/fonts/Avenir-Book.ttf') format('ttf');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Avenir';
+  src: url('/fonts/Avenir-Light.ttf') format('ttf');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Avenir';
+  src: url('/fonts/Avenir-Regular.ttf') format('ttf');
+  font-weight: 500; /* أو 400 حسب الملف */
+  font-style: normal;
+  font-display: swap;
+}
+/* =========================
+   AR - Title font (LAXR)
+========================= */
+@font-face {
+  font-family: 'LAXR';
+  src: url('/fonts/ar/LAXR.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =========================
+   AR - Body font (Cairo)
+========================= */
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/ar/cairo/Cairo-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/ar/cairo/Cairo-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/ar/cairo/Cairo-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/ar/cairo/Cairo-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+/* @font-face {
+  font-family: "Cairo";
+  src: url("/fonts/ar/cairo/Cairo-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+} */
+@font-face {
+  font-family: 'Cairo';
+  src: url('/fonts/ar/cairo/Cairo-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+@layer utilities {
+  .bg-primary {
+    background-color: #881d40;
+  }
+  .text-primary {
+    color: #881d40;
+  }
+  .bg-secondary {
+    background-color: #4f001a;
+  }
+}
+
+@media (min-width: 320px) {
+  .hidden-xs {
+    display: none;
+  }
+  .show-xs {
+    display: flex;
+  }
+}
+@media (min-width: 768px) {
+  .hidden-xs {
+    display: flex;
+  }
+  .show-xs {
+    display: none;
+  }
+}
+html,
+body {
+  scroll-behavior: smooth !important;
+}
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+.h-title {
+  font-family: var(--font-title), serif;
+  font-weight: 600;
+  font-style: italic;
+}
+
+body * {
+  /* font-family: 'Nunito', sans-serif; */
+  /* font-family: 'Conso', serif; */
+  font-family:
+    var(--font-body),
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    Arial,
+    sans-serif;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+} /* WebKit */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+/* new */
+.typewriter {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 1s steps(24, end);
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+.scrollbar-none {
+  -ms-overflow-style: none; /* IE و Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* Chrome و Safari */
+}
+
+html[data-transitioning] #app-shell {
+  filter: blur(10px);
+  transform: scale(0.995);
+  transition:
+    filter 50ms ease,
+    transform 50ms ease;
+}
+
+html[data-transitioning] {
+  overflow: hidden; /* يمنع السكرول أثناء الترانزيشن */
+}
+
+/* ======= Paper / Grainy background ======= */
+.paper-noise {
+  position: relative;
+  background-color: var(--paper-bg, #f4e8d7);
+  /* background-image: url("../src/assets/marim-bg.png"); */
+  /* overflow: hidden; */
+}
+
+.paper-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  /* نقط عشوائية شبيهة بالورق */
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(0, 0, 0, 0.721) 0.5px, transparent 2px),
+    radial-gradient(circle at 80% 30%, rgba(0, 0, 0, 0.632) 0.6px, transparent 2.4px),
+    radial-gradient(circle at 20% 80%, rgba(0, 0, 0, 0.632) 0.6px, transparent 2.2px),
+    radial-gradient(circle at 70% 75%, rgba(0, 0, 0, 0.632) 0.6px, transparent 2.3px),
+    radial-gradient(circle at 50% 40%, rgba(0, 0, 0, 0.632) 0.6px, transparent 2.5px);
+
+  background-size:
+    120px 120px,
+    180px 180px,
+    200px 200px,
+    260px 260px,
+    220px 220px;
+
+  opacity: 0.35; /* لو حاسسها تقيلة قلّلها لـ 0.25 مثلاً */
+  mix-blend-mode: multiply;
+}
+
+/* عشان المحتوى مايبقاش تحت الـ ::before */
+.paper-noise > * {
+  position: relative;
+  z-index: 1;
+}
+/* =========================================================
+   GalleryCarousel (scoped) - لا يؤثر على أي Splide آخر
+========================================================= */
+
+.galleryCarousel .splide__track {
+  overflow: visible;
+}
+
+.galleryCarousel .splide__slide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.galleryCarousel .galleryCard {
+  transform-origin: center center;
+  will-change: transform, opacity;
+  transition:
+    transform 140ms cubic-bezier(0.19, 1, 0.22, 1),
+    opacity 140ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* ✅ لحظات الـ loop wrap بس */
+.galleryCarousel .galleryCard--noTrans {
+  transition: none !important;
+}
+
+/* =========================
+   TALL / PRODUCTION VARIANT
+   ✅ شيلنا/قللنا padding بتاع wrapper عشان مايكبرش الأطراف
+   وبقينا نعتمد على Splide padding في options
+========================= */
+
+.galleryCarousel--tall {
+  padding-inline: 0; /* ✅ كان 18px وده كان بيكبر الأطراف */
+  box-sizing: border-box;
+}
+
+.galleryCarousel--tall .splide__slide {
+  width: 360px;
+}
+
+@media (max-width: 1536px) {
+  .galleryCarousel--tall .splide__slide {
+    width: 340px;
+  }
+}
+@media (max-width: 1280px) {
+  .galleryCarousel--tall .splide__slide {
+    width: 320px;
+  }
+}
+@media (max-width: 1024px) {
+  .galleryCarousel--tall .splide__slide {
+    width: 290px;
+  }
+}
+
+@media (max-width: 768px) {
+  .galleryCarousel--tall .splide__slide {
+    width: 82vw; /* ✅ أقل شوية من الشاشة => يطلع جزء من اللي بعده */
+  }
+}
+
+/* افتراضيًا مخفي */
+.galleryCarousel .galleryPlayBtn {
+  opacity: 0;
+  transform: scale(0.92);
+  transition:
+    opacity 400ms cubic-bezier(0.19, 1, 0.22, 1),
+    transform 400ms cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+  color: red;
+}
+
+/* يظهر فقط على السلايد الاكتف */
+.galleryCarousel .splide__slide.is-active .galleryPlayBtn {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+html[data-transitioning][data-stack-out] #__next,
+html[data-transitioning][data-stack-out] main {
+  transform: translateY(-70px) scale(0.96);
+  transform-origin: 50% 0%;
+  transition: transform 260ms cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform;
+}
+html[lang='ar'],
+[dir='rtl'] {
+  --font-title: var(--font-title-ar);
+  --font-body: var(--font-body-ar);
+}

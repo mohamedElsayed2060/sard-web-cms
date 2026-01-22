@@ -1,19 +1,43 @@
-// src/components/AboutSard/AboutSardNewestProduction.jsx
 'use client'
 
 import { useMemo, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import PageContentReveal from '@/components/PageContentReveal'
 import SectionReveal from '@/components/motion/SectionReveal'
 import GalleryCarousel from '@/components/shared/GalleryCarousel'
 import BookModal from '@/components/shared/BookModal'
 import { imgUrl } from '@/lib/cms'
 
-// ✅ نفس صورة/تكتشر الخلفية اللي مستخدمينها عندكم
-import marimBg from '@/assets/marim-bg.png'
-
 const EASE = [0.19, 1, 0.22, 1]
+const SUPPORTED_LANGS = ['en', 'ar']
 
-function renderVideo(url) {
+const getLangFromPath = (pathname = '') => {
+  const seg = pathname.split('/')[1]
+  return SUPPORTED_LANGS.includes(seg) ? seg : 'en'
+}
+
+const UI = {
+  en: {
+    noVideoUrl: 'No video URL provided',
+    videoTitle: 'Video',
+  },
+  ar: {
+    noVideoUrl: 'لا يوجد رابط فيديو',
+    videoTitle: 'فيديو',
+  },
+}
+
+const pickText = (en, ar, lang) => {
+  if (lang === 'ar') return ar || en || ''
+  return en || ar || ''
+}
+
+const pickUploadUrl = (enFile, arFile, lang) => {
+  const chosen = lang === 'ar' ? arFile || enFile : enFile || arFile
+  return chosen ? imgUrl(chosen) : null
+}
+
+function renderVideo(url, title = 'Video') {
   if (!url) return null
 
   const u = String(url).trim()
@@ -40,7 +64,7 @@ function renderVideo(url) {
         className="h-full w-full"
         allow="autoplay; encrypted-media; picture-in-picture"
         allowFullScreen
-        title="Video"
+        title={title}
       />
     )
   }
@@ -48,9 +72,20 @@ function renderVideo(url) {
   return <video src={u} controls autoPlay playsInline className="h-full w-full object-contain" />
 }
 
-export default function AboutSardNewestProduction({ gallery, bgImage }) {
+export default function AboutSardNewestProduction({ gallery, bgImage, lang: langProp }) {
+  const pathname = usePathname()
+  const lang = langProp || getLangFromPath(pathname || '')
+  const t = UI[lang] || UI.en
+
   const [modalOpen, setModalOpen] = useState(false)
   const [activeItem, setActiveItem] = useState(null)
+
+  const sectionTitle = pickText(gallery?.sectionTitleEn, gallery?.sectionTitleAr, lang)
+  const sectionDescription = pickText(
+    gallery?.sectionDescriptionEn,
+    gallery?.sectionDescriptionAr,
+    lang,
+  )
 
   const items = useMemo(() => {
     const raw = gallery?.items || []
@@ -58,12 +93,12 @@ export default function AboutSardNewestProduction({ gallery, bgImage }) {
       .sort((a, b) => (a?.sortOrder ?? 0) - (b?.sortOrder ?? 0))
       .map((it, idx) => ({
         id: it?.id || it?._id || idx,
-        title: it?.title,
-        description: it?.description,
-        background: it?.background ? imgUrl(it.background) : null,
+        title: pickText(it?.titleEn, it?.titleAr, lang),
+        description: pickText(it?.descriptionEn, it?.descriptionAr, lang),
+        background: pickUploadUrl(it?.backgroundEn, it?.backgroundAr, lang),
         videoUrl: it?.videoUrl,
       }))
-  }, [gallery])
+  }, [gallery, lang])
 
   if (!gallery || gallery?.isActive === false) return null
   if (!items.length) return null
@@ -79,39 +114,29 @@ export default function AboutSardNewestProduction({ gallery, bgImage }) {
   }
 
   return (
-    <SectionReveal variant="fadeUp" delay={0.12} ease={EASE}>
-      <section className="max-w-[1490px] mx-auto px-3 ">
+    <SectionReveal variant="scrollFlip" delay={0.12} ease={EASE}>
+      <section className="max-w-[1490px] mx-auto px-3">
         <PageContentReveal
           paperColor="#F4E8D7"
-          // ✅ نخلي الخلفية هتتعمل بصورة جوّا السيكشن
           className={[
             'relative rounded-[32px] py-7 md:py-18 md:px-18 overflow-hidden',
-            // ✅ شيل الشادو
             'shadow-none',
           ].join(' ')}
           bgImage={bgImage}
         >
-          {/* ✅ Background image (زي باقي السكاشنز) */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            // style={{ backgroundImage: `url(${marimBg?.src || marimBg})` }}
-          />
-          {/* ✅ Overlay خفيف فوق التكستشر (لو عايز أفتح/أغمق عدّل الأوباستي) */}
-          <div className="absolute inset-0 " />
+          {/* background like other sections */}
+          <div className="absolute inset-0 bg-cover bg-center" />
+          <div className="absolute inset-0" />
 
-          {/* ✅ المحتوى فوق الخلفية */}
           <div className="relative">
-            {/* Section heading (optional from CMS) */}
-            {(gallery?.sectionTitle || gallery?.sectionDescription) && (
+            {(sectionTitle || sectionDescription) && (
               <div className="mb-6 md:mb-8">
-                {gallery?.sectionTitle && (
-                  <div className="text-[#252525] italic text-2xl md:text-4xl">
-                    {gallery.sectionTitle}
-                  </div>
+                {sectionTitle && (
+                  <div className="text-[#252525] italic text-2xl md:text-4xl">{sectionTitle}</div>
                 )}
-                {gallery?.sectionDescription && (
+                {sectionDescription && (
                   <div className="mt-2 text-[#252525]/75 text-sm md:text-base max-w-[920px]">
-                    {gallery.sectionDescription}
+                    {sectionDescription}
                   </div>
                 )}
               </div>
@@ -121,15 +146,12 @@ export default function AboutSardNewestProduction({ gallery, bgImage }) {
           </div>
         </PageContentReveal>
 
-        {/* Video modal */}
         <BookModal open={modalOpen} onClose={closeVideo} maxWidth={1100} maxHeight={720}>
           <div className="h-full w-full bg-black">
             {activeItem?.videoUrl ? (
-              renderVideo(activeItem.videoUrl)
+              renderVideo(activeItem.videoUrl, t.videoTitle)
             ) : (
-              <div className="grid h-full place-items-center text-white/80">
-                No video URL provided
-              </div>
+              <div className="grid h-full place-items-center text-white/80">{t.noVideoUrl}</div>
             )}
           </div>
         </BookModal>

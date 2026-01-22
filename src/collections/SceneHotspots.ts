@@ -4,24 +4,41 @@ import type { CollectionConfig } from 'payload'
 const SceneHotspots: CollectionConfig = {
   slug: 'scene-hotspots',
   admin: {
-    useAsTitle: 'label',
-    defaultColumns: ['label', 'targetPath', 'x', 'y', 'xMobile', 'yMobile'],
+    useAsTitle: 'labelEn',
+    defaultColumns: ['labelEn', 'labelAr', 'targetPath', 'x', 'y', 'xMobile', 'yMobile', 'order'],
   },
   access: {
     read: () => true,
   },
   fields: [
+    // ===== Label EN/AR =====
     {
-      name: 'label',
-      label: 'Label',
+      name: 'labelEn',
+      label: 'Label (EN)',
       type: 'text',
       required: true,
     },
     {
-      name: 'description',
-      label: 'Description',
-      type: 'textarea',
+      name: 'labelAr',
+      label: 'Label (AR)',
+      type: 'text',
+      required: true,
     },
+
+    // ===== Description EN/AR (optional) =====
+    {
+      name: 'descriptionEn',
+      label: 'Description (EN) (optional)',
+      type: 'textarea',
+      required: false,
+    },
+    {
+      name: 'descriptionAr',
+      label: 'Description (AR) (optional)',
+      type: 'textarea',
+      required: false,
+    },
+
     {
       name: 'x',
       label: 'X Position Desktop (%)',
@@ -54,13 +71,16 @@ const SceneHotspots: CollectionConfig = {
       min: 0,
       max: 100,
     },
+
+    // ✅ هنسيبه language-agnostic (هنضيف /en أو /ar في الفرونت تلقائيًا زي اللي عملناه)
     {
       name: 'targetPath',
-      label: 'Target Path (e.g. /about)',
+      label: 'Target Path (e.g. /about-sard)',
       type: 'text',
       required: true,
-      defaultValue: '/about',
+      defaultValue: '/about-sard',
     },
+
     {
       name: 'order',
       label: 'Order',
@@ -68,6 +88,7 @@ const SceneHotspots: CollectionConfig = {
       defaultValue: 0,
     },
   ],
+  defaultSort: 'order',
 }
 
 export default SceneHotspots

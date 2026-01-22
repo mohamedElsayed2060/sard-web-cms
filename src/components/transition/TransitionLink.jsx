@@ -1,59 +1,63 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
-import { useTransitionUI } from "./TransitionProvider";
+import Link from 'next/link'
+import { useRouter, usePathname } from 'next/navigation'
+import { useMemo } from 'react'
+import { useTransitionUI } from './TransitionProvider'
+import {
+  isExternalHref,
+  isHashOnly,
+  getLangFromPath,
+  navigateSard,
+  normalizePathname,
+} from '@/lib/sardNavigation'
 
-function normalizePath(input) {
-  if (!input) return "/";
-
-  // لو href object
-  let s =
-    typeof input === "string" ? input : input?.pathname || input?.href || "";
-
-  // لو full URL
-  try {
-    if (s.startsWith("http")) s = new URL(s).pathname;
-  } catch {}
-
-  // شيل query/hash
-  s = s.split("?")[0].split("#")[0];
-
-  // خلّيها تبدأ بـ /
-  if (!s.startsWith("/")) s = "/" + s;
-
-  // شيل trailing slash (عدا "/")
-  if (s.length > 1) s = s.replace(/\/+$/, "");
-
-  return s;
-}
-
-export default function TransitionLink({ href, children, timings, ...props }) {
-  const router = useRouter();
-  const pathname = normalizePath(usePathname());
-  const { runSequence } = useTransitionUI();
+export default function TransitionLink({ href, children, timings, onClick, ...props }) {
+  const router = useRouter()
+  const pathnameRaw = usePathname() || '/'
+  const pathname = normalizePathname(pathnameRaw)
+  const lang = useMemo(() => getLangFromPath(pathnameRaw), [pathnameRaw])
+  const { runSequence } = useTransitionUI()
 
   return (
     <Link
       href={href}
       {...props}
       onClick={(e) => {
-        if (e.metaKey || e.ctrlKey || e.button === 1) return;
+        onClick?.(e)
+        if (e.defaultPrevented) return
 
-        const targetPath = normalizePath(href);
+        // ✅ allow new tab / modified clicks / middle click
+        if (e.button !== 0) return
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+        if (props?.target === '_blank') return
 
-        // ✅ نفس الصفحة؟ ما تعملش ترانزيشن
-        if (targetPath === pathname) return;
+        const isHrefString = typeof href === 'string'
+        const raw = isHrefString ? href : href?.pathname || href?.href || ''
 
-        e.preventDefault();
+        // ✅ external/hash => سيبه طبيعي
+        if (isHrefString && (isExternalHref(raw) || isHashOnly(raw))) return
 
-        runSequence({
+        // ✅ same page guard (normalize target)
+        const targetPath = normalizePathname(
+          isHrefString ? raw : href?.pathname || href?.href || '',
+        )
+        if (targetPath === pathname) return
+
+        e.preventDefault()
+
+        // ✅ unified nav (doors/stack) + lang prefix handled inside navigateSard
+        navigateSard({
+          href,
+          lang,
+          pathname: pathnameRaw,
+          router,
+          runSequence,
           timings,
-          onNavigate: async () => router.push(href),
-        });
+        })
       }}
     >
       {children}
     </Link>
-  );
+  )
 }

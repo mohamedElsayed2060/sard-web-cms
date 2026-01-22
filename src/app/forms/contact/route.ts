@@ -5,6 +5,8 @@ import { NextResponse } from 'next/server'
 
 // عشان نتأكد إنه Node runtime (payload محتاج Node)
 export const runtime = 'nodejs'
+const wait = (ms: number) =>
+  new Promise((_, rej) => setTimeout(() => rej(new Error('Email timeout')), ms))
 
 export async function POST(req: Request) {
   try {
@@ -31,19 +33,20 @@ export async function POST(req: Request) {
     })
 
     // ✅ Send Email (اختياري - لو SMTP متظبط)
-    // بعد ما تعمل payload.create(...)
     if (process.env.SMTP_HOST && process.env.CONTACT_TO_EMAIL) {
       try {
-        await payload.sendEmail({
-          to: process.env.CONTACT_TO_EMAIL!,
-          from: process.env.CONTACT_FROM_EMAIL || process.env.SMTP_USER!,
-          replyTo: email,
-          subject: subject ? `[Sard Contact] ${subject}` : '[Sard Contact] New message',
-          text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\n${message}`,
-        })
+        await Promise.race([
+          payload.sendEmail({
+            to: process.env.CONTACT_TO_EMAIL!,
+            from: process.env.CONTACT_FROM_EMAIL || process.env.SMTP_USER!,
+            replyTo: email,
+            subject: subject ? `[Sard Contact] ${subject}` : '[Sard Contact] New message',
+            text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\n${message}`,
+          }),
+          wait(5000),
+        ])
       } catch (e) {
-        console.error('Email failed (Gmail SMTP). Submission saved:', e)
-        // ✅ المهم: ما ترجعش error
+        console.error('Email failed/timeout. Submission saved:', e)
       }
     }
 

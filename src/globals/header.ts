@@ -30,8 +30,25 @@ const SiteHeader: GlobalConfig = {
       type: 'array',
       labels: { singular: 'Link', plural: 'Links' },
       fields: [
-        { name: 'label', label: 'Label', type: 'text', required: true },
-        { name: 'href', label: 'URL / Path', type: 'text', required: true, defaultValue: '/' },
+        {
+          name: 'label',
+          label: 'Label',
+          type: 'group',
+          fields: [
+            { name: 'en', type: 'text', required: true },
+            { name: 'ar', type: 'text', required: true },
+          ],
+        },
+        {
+          name: 'href',
+          label: 'URL / Path (no /en or /ar)',
+          type: 'text',
+          required: true,
+          defaultValue: '/',
+          admin: {
+            description: 'Example: /about-sard (Do NOT include /en or /ar)',
+          },
+        },
       ],
     },
 

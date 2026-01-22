@@ -1,26 +1,63 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import PageContentReveal from '@/components/PageContentReveal'
-import { RichColumn } from './AboutSardHero'
 import { AnimatePresence, motion } from 'framer-motion'
 import SectionReveal from '../motion/SectionReveal'
-import Image from 'next/image'
 import { imgUrl } from '@/lib/cms'
+import RichColumn from '../richtext/RichColumn'
+import PinnedSection from '@/components/motion/PinnedSection'
 
-const ANIM_MS = 900 // أبطأ وأنعم
+const ANIM_MS = 900
 const EASE = [0.19, 1, 0.22, 1]
 
-export default function AboutSardAwards({ awards = [], bgImage }) {
+const SUPPORTED_LANGS = ['en', 'ar']
+const getLangFromPath = (pathname = '') => {
+  const seg = pathname.split('/')[1]
+  return SUPPORTED_LANGS.includes(seg) ? seg : 'en'
+}
+
+const UI = {
+  en: {
+    sectionTitle: 'Awards',
+    awardName: 'Award Name',
+    award: 'Award',
+  },
+  ar: {
+    sectionTitle: 'الجوائز',
+    awardName: 'اسم الجائزة',
+    award: 'جائزة',
+  },
+}
+
+const pickText = (en, ar, lang) => {
+  if (lang === 'ar') return ar || en || ''
+  return en || ar || ''
+}
+
+const pickRich = (enVal, arVal, lang) => {
+  if (lang === 'ar') return arVal || enVal || null
+  return enVal || arVal || null
+}
+
+const pickUpload = (enFile, arFile, lang) => {
+  const chosen = lang === 'ar' ? arFile || enFile : enFile || arFile
+  return chosen ? imgUrl(chosen) : null
+}
+
+export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }) {
+  const pathname = usePathname()
+  const lang = langProp || getLangFromPath(pathname || '')
+  const t = UI[lang] || UI.en
+
   const activeAwards = useMemo(() => (awards || []).filter((a) => a?.isActive !== false), [awards])
 
-  // ✅ order: أول عنصر هو الـ active، والباقي tabs
   const [order, setOrder] = useState([])
   const [showContent, setShowContent] = useState(true)
   const [closingIdx, setClosingIdx] = useState(null)
   const timerRef = useRef(null)
 
-  // Sync order when list changes
   useEffect(() => {
     setOrder(activeAwards.map((_, i) => i))
     setShowContent(true)
@@ -36,11 +73,14 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
   const activeIdx = order[0]
   const activeAward = activeAwards[activeIdx]
 
-  // ✅ image url (Payload media object)
-  const awardImgSrc = activeAward?.image ? imgUrl(activeAward.image) : null
-  const awardImgAlt = activeAward?.image?.alt || activeAward?.title || 'Award'
+  // ✅ localized fields
+  const activeTitle = pickText(activeAward?.titleEn, activeAward?.titleAr, lang) || t.awardName
+  const activeDesc = pickRich(activeAward?.descriptionEn, activeAward?.descriptionAr, lang)
 
-  // Helper: move clicked to front, and move previous active to LAST (مهم للموبايل)
+  // ✅ image: EN required? (in CMS it’s optional) + AR optional
+  const awardImgSrc = pickUpload(activeAward?.imageEn, activeAward?.imageAr, lang)
+  const awardImgAlt = activeTitle || t.award
+
   const reorderOnClick = (clickedIdx) => {
     setOrder((prev) => {
       if (!prev?.length) return prev
@@ -48,21 +88,15 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
       if (clickedIdx === currentActive) return prev
 
       const rest = prev.filter((x) => x !== clickedIdx && x !== currentActive)
-      // ✅ clicked يبقى Active، والـ active القديم ينزل آخر واحد
       return [clickedIdx, ...rest, currentActive]
     })
   }
 
   const onPick = (clickedIdx) => {
     if (clickedIdx === activeIdx) return
-
-    // ✅ خزن مين اللي كان Active (هو ده اللي هينزل آخر واحد)
     const prevActive = activeIdx
 
-    // اخفي الكونتنت فورًا
     setShowContent(false)
-
-    // ✅ اخفي label بتاع الزرار اللي بيقفل فقط
     setClosingIdx(prevActive)
 
     reorderOnClick(clickedIdx)
@@ -74,19 +108,18 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
     }, ANIM_MS)
   }
 
-  // Build ordered list of objects
   const ordered = order.map((idx) => ({ idx, item: activeAwards[idx] })).filter((x) => x.item)
-
-  // عدد التابات اللي هنظهرها في الموبايل على اليمين
   const MOBILE_TABS_COUNT = 5
 
   return (
-    <SectionReveal variant="fadeUp" delay={0.1}>
+    <SectionReveal variant="scrollFlip" delay={0.1}>
       <section className="bg-black">
         <div className="bg-black px-3 pb-5 max-w-[1490px] mx-auto">
           {/* Title line */}
           <div className="flex items-center gap-6 px-2 md:px-3 mb-4">
-            <h2 className="italic text-xl md:text-2xl font-semibold text-[#F4E8D7]">Awards</h2>
+            <h2 className="italic text-xl md:text-2xl font-semibold text-[#F4E8D7]">
+              {t.sectionTitle}
+            </h2>
             <div className="h-px flex-1 bg-[#F4E8D7]/40" />
           </div>
 
@@ -94,13 +127,15 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
             variant="slideUp"
             paperColor="#F4E8D7"
             bgImage={bgImage}
-            className="rounded-[24px] shadow-[0_20px_60px_rgba(0,0,0,0.45)] overflow-hidden"
+            className="rounded-[24px] overflow-hidden"
           >
             {/* ===================== DESKTOP ===================== */}
             <div className="hidden md:block relative">
               <div className="flex items-stretch min-h-[300px]">
                 {ordered.map(({ item, idx }, renderIndex) => {
                   const isActive = renderIndex === 0
+
+                  const tabTitle = pickText(item?.titleEn, item?.titleAr, lang) || t.award
 
                   return (
                     <motion.button
@@ -115,7 +150,7 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                         'transition-shadow duration-300',
                         isActive
                           ? 'flex-[1_1_0%] bg-transparent border-0 p-6'
-                          : 'shadow-lg border-l border-black/20 flex-[0_0_78px] hover:shadow-[0_12px_25px_rgba(0,0,0,0.18)]',
+                          : `shadow-lg ${lang === 'ar' ? 'border-r' : 'border-l'}  border-black/20 flex-[0_0_78px] hover:shadow-[0_12px_25px_rgba(0,0,0,0.18)]`,
                         renderIndex === 0 ? '' : '-ml-5',
                       ].join(' ')}
                       style={{ backgroundImage: `url('${bgImage?.src}')` }}
@@ -125,37 +160,29 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                           <AnimatePresence mode="wait">
                             {showContent && (
                               <motion.div
-                                key={activeAward?.id || activeAward?.title || 'active'}
+                                key={activeAward?.id || activeTitle || 'active'}
                                 initial={{ opacity: 0, y: 18 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 6 }}
                                 transition={{ duration: 0.55, ease: EASE }}
                               >
-                                <h3 className="italic text-lg md:text-2xl font-semibold text-[#252525]">
-                                  {activeAward?.title || 'Award Name'}
+                                <h3
+                                  className={`italic text-lg md:text-2xl font-semibold text-[#252525] text-start`}
+                                >
+                                  {activeTitle}
                                 </h3>
 
                                 {/* ✅ IMAGE تحت العنوان مباشرة */}
                                 {awardImgSrc ? (
                                   <div className="mt-3">
                                     <img src={awardImgSrc} alt={awardImgAlt} />
-                                    {/* <Image
-                                      src={awardImgSrc}
-                                      alt={awardImgAlt}
-                                      width={activeAward?.image?.width || 320}
-                                      height={activeAward?.image?.height || 200}
-                                      className="h-auto w-full max-w-[360px] rounded-[16px] border border-black/10 shadow-sm object-contain"
-                                    /> */}
                                   </div>
                                 ) : null}
 
                                 {/* description اختياري */}
-                                {activeAward?.description ? (
+                                {activeDesc ? (
                                   <div className="mt-3 text-sm text-[#252525]/80">
-                                    <RichColumn
-                                      value={activeAward.description}
-                                      textColor="text-[#252525]"
-                                    />
+                                    <RichColumn value={activeDesc} textColor="text-[#252525]" />
                                   </div>
                                 ) : null}
                               </motion.div>
@@ -175,7 +202,7 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                                   transition={{ duration: 0.18 }}
                                   className="text-[14px] font-bold text-[#252525]/60 whitespace-nowrap rotate-[-90deg] italic"
                                 >
-                                  {item?.title || 'Award'}
+                                  {tabTitle}
                                 </motion.span>
                               )}
                             </AnimatePresence>
@@ -200,37 +227,26 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                     <AnimatePresence mode="wait">
                       {showContent && (
                         <motion.div
-                          key={activeAward?.id || activeAward?.title || 'active-mobile'}
+                          key={activeAward?.id || activeTitle || 'active-mobile'}
                           initial={{ opacity: 0, y: 14 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 6 }}
                           transition={{ duration: 0.5, ease: EASE }}
                         >
                           <h3 className="italic text-lg font-semibold text-[#252525]">
-                            {activeAward?.title || 'Award Name'}
+                            {activeTitle}
                           </h3>
 
                           {/* ✅ IMAGE تحت العنوان مباشرة (موبايل) */}
                           {awardImgSrc ? (
                             <div className="mt-3">
                               <img src={awardImgSrc} alt={awardImgAlt} />
-
-                              {/* <Image
-                                src={awardImgSrc}
-                                alt={awardImgAlt}
-                                width={activeAward?.image?.width || 340}
-                                height={activeAward?.image?.height || 220}
-                                className="h-auto w-full max-w-[320px] rounded-[16px] border border-black/10 shadow-sm object-contain"
-                              /> */}
                             </div>
                           ) : null}
 
-                          {activeAward?.description ? (
+                          {activeDesc ? (
                             <div className="mt-3 text-sm text-[#252525]/80">
-                              <RichColumn
-                                value={activeAward.description}
-                                textColor="text-[#252525]"
-                              />
+                              <RichColumn value={activeDesc} textColor="text-[#252525]" />
                             </div>
                           ) : null}
                         </motion.div>
@@ -243,6 +259,8 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                 <div className="absolute top-4 right-4 w-[50px]">
                   {ordered.slice(1, 1 + MOBILE_TABS_COUNT).map(({ item, idx }, i) => {
                     const y = i * 13
+                    const tabTitle = pickText(item?.titleEn, item?.titleAr, lang) || t.award
+
                     return (
                       <motion.button
                         key={item?.id || idx}
@@ -261,10 +279,10 @@ export default function AboutSardAwards({ awards = [], bgImage }) {
                           'flex items-center justify-center',
                         ].join(' ')}
                         style={{ top: y, zIndex: 50 - i }}
-                        aria-label={item?.title || 'Award'}
+                        aria-label={tabTitle}
                       >
                         <span className="text-[11px] text-[#252525]/65 whitespace-nowrap rotate-[-90deg] italic font-bold">
-                          {item?.title || 'Award'}
+                          {tabTitle}
                         </span>
                       </motion.button>
                     )

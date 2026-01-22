@@ -8,16 +8,23 @@ const SardLearning: CollectionConfig = {
     plural: 'Sard Learning',
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'year', 'director', 'sortOrder'],
+    useAsTitle: 'titleEn',
+    defaultColumns: ['titleEn', 'sortOrder'],
   },
   access: {
     read: () => true,
   },
   fields: [
+    // ===== NEW ONLY (EN/AR) =====
     {
-      name: 'title',
-      label: 'Title',
+      name: 'titleEn',
+      label: 'Title (EN)',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'titleAr',
+      label: 'Title (AR)',
       type: 'text',
       required: true,
     },
@@ -29,18 +36,35 @@ const SardLearning: CollectionConfig = {
       unique: true,
     },
     {
-      name: 'subTitle',
-      label: 'Sub Title',
+      name: 'subTitleEn',
+      label: 'Sub Title (EN)',
       type: 'text',
-      required: true,
+      required: false,
     },
     {
-      name: 'poster',
-      label: 'Main poster',
+      name: 'subTitleAr',
+      label: 'Sub Title (AR)',
+      type: 'text',
+      required: false,
+    },
+
+    // ===== Posters (EN/AR uploads) =====
+    {
+      name: 'posterEn',
+      label: 'Main poster (EN)',
       type: 'upload',
       relationTo: 'media',
       required: true,
     },
+    {
+      name: 'posterAr',
+      label: 'Main poster (AR)',
+      type: 'upload',
+      relationTo: 'media',
+      required: false, // ✅ "ممكن يحطها" (اختياري)
+    },
+
+    // ===== Media (commented) EN/AR =====
     // {
     //   name: 'media',
     //   label: 'Stills / Media',
@@ -57,11 +81,18 @@ const SardLearning: CollectionConfig = {
     //       ],
     //     },
     //     {
-    //       name: 'thumb',
-    //       label: 'Image / Video thumbnail',
+    //       name: 'thumbEn',
+    //       label: 'Image / Video thumbnail (EN)',
     //       type: 'upload',
     //       relationTo: 'media',
     //       required: true,
+    //     },
+    //     {
+    //       name: 'thumbAr',
+    //       label: 'Image / Video thumbnail (AR)',
+    //       type: 'upload',
+    //       relationTo: 'media',
+    //       required: false, // ✅ اختياري
     //     },
     //     {
     //       name: 'videoUrl',
@@ -73,36 +104,64 @@ const SardLearning: CollectionConfig = {
     //     },
     //   ],
     // },
+
+    // ===== RichText columns EN/AR =====
     {
       type: 'row',
       fields: [
         {
-          name: 'leftColumn',
-          label: 'Left column text',
+          name: 'leftColumnEn',
+          label: 'Left column text (EN)',
           type: 'richText',
           required: true,
         },
         {
-          name: 'rightColumn',
-          label: 'Right column text',
+          name: 'rightColumnEn',
+          label: 'Right column text (EN)',
           type: 'richText',
-          required: true,
+          required: false,
         },
       ],
     },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'leftColumnAr',
+          label: 'Left column text (AR)',
+          type: 'richText',
+          required: true,
+        },
+        {
+          name: 'rightColumnAr',
+          label: 'Right column text (AR)',
+          type: 'richText',
+          required: false,
+        },
+      ],
+    },
+
+    // ===== Cast EN/AR =====
     {
       name: 'cast',
       label: 'Cast',
       type: 'array',
       fields: [
         {
-          name: 'name',
-          label: 'Name',
+          name: 'nameEn',
+          label: 'Name (EN)',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'nameAr',
+          label: 'Name (AR)',
           type: 'text',
           required: true,
         },
       ],
     },
+
     {
       name: 'sortOrder',
       label: 'Sort order',

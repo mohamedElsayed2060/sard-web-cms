@@ -1,41 +1,40 @@
 // src/components/AboutSard/AboutSardWork.jsx
-"use client";
+'use client'
 
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import PageContentReveal from "@/components/PageContentReveal";
-import Image from "next/image";
-import { Splide, SplideSlide } from "@splidejs/react-splide";
-import { imgUrl } from "@/lib/cms";
-import { RichColumn } from "./AboutSardHero";
-import SectionReveal from "../motion/SectionReveal";
+import { useEffect, useRef, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import PageContentReveal from '@/components/PageContentReveal'
+import Image from 'next/image'
+import { Splide, SplideSlide } from '@splidejs/react-splide'
+import { imgUrl } from '@/lib/cms'
+import SectionReveal from '../motion/SectionReveal'
+import RichColumn from '../richtext/RichColumn'
 
 export default function AboutSardWork({ works, bgImage }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [isMounted, setIsMounted] = useState(false); // ✅ عشان نمنع مشاكل الـ SSR
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [isMounted, setIsMounted] = useState(false) // ✅ عشان نمنع مشاكل الـ SSR
 
-  const tabsSplideRef = useRef(null);
+  const tabsSplideRef = useRef(null)
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
-  if (!works || works.length === 0) return null;
+  if (!works || works.length === 0) return null
 
-  const safeIndex =
-    activeIndex >= 0 && activeIndex < works.length ? activeIndex : 0;
-  const activeWork = works[safeIndex];
+  const safeIndex = activeIndex >= 0 && activeIndex < works.length ? activeIndex : 0
+  const activeWork = works[safeIndex]
 
   const handleTabClick = (index) => {
-    setActiveIndex(index);
+    setActiveIndex(index)
 
     // نحرك التابز لو فيه overflow
-    const inst = tabsSplideRef.current?.splide || tabsSplideRef.current || null;
-    if (inst && inst.go) inst.go(index);
-  };
+    const inst = tabsSplideRef.current?.splide || tabsSplideRef.current || null
+    if (inst && inst.go) inst.go(index)
+  }
 
-  const posterSrc = activeWork?.poster ? imgUrl(activeWork?.poster) : null;
-  const castItems = (activeWork?.cast ?? []).map((c) => c.name || c);
+  const posterSrc = activeWork?.poster ? imgUrl(activeWork?.poster) : null
+  const castItems = (activeWork?.cast ?? []).map((c) => c.name || c)
 
   return (
     <SectionReveal variant="fadeUp" delay={0.1}>
@@ -49,36 +48,36 @@ export default function AboutSardWork({ works, bgImage }) {
                   ref={tabsSplideRef}
                   aria-label="Works tabs"
                   options={{
-                    type: "slide",
+                    type: 'slide',
                     pagination: false,
-                    gap: "0.75rem",
+                    gap: '0.75rem',
                     // arrows: works.length > 3,
                     arrows: false,
-                    drag: "free",
+                    drag: 'free',
                     autoWidth: true,
                   }}
                 >
                   {works?.map((work, index) => {
-                    const isActive = index === safeIndex;
+                    const isActive = index === safeIndex
 
                     return (
                       <SplideSlide key={work.id}>
                         <button
-                          style={{ minWidth: "180px" }}
+                          style={{ minWidth: '180px' }}
                           type="button"
                           onClick={() => handleTabClick(index)}
                           className={[
-                            "px-6 py-3 text-sm whitespace-nowrap transition-all",
-                            "rounded-tl-[20px] rounded-b-none",
+                            'px-6 py-3 text-sm whitespace-nowrap transition-all',
+                            'rounded-tl-[20px] rounded-b-none',
                             isActive
-                              ? "bg-[#B7BA66] text-[#252525] shadow-[0_10px_25px_rgba(0,0,0,0.45)]"
-                              : "bg-[#B7BA66] text-[#252525] hover:bg-[#B7BA66]/90 shadow-[inset_0_-10px_5px_rgba(0,0,0,0.3)]",
-                          ].join(" ")}
+                              ? 'bg-[#B7BA66] text-[#252525] shadow-[0_10px_25px_rgba(0,0,0,0.45)]'
+                              : 'bg-[#B7BA66] text-[#252525] hover:bg-[#B7BA66]/90 shadow-[inset_0_-10px_5px_rgba(0,0,0,0.3)]',
+                          ].join(' ')}
                         >
                           {work.title}
                         </button>
                       </SplideSlide>
-                    );
+                    )
                   })}
                 </Splide>
               </div>
@@ -88,15 +87,15 @@ export default function AboutSardWork({ works, bgImage }) {
           {/* ===== Card ===== */}
           <PageContentReveal
             paperColor="#4A569F"
-            className="rounded-[24px] px-3 py-7 md:py-18 md:px-18 shadow-[0_20px_60px_rgba(0,0,0,0.45)] overflow-hidden"
+            className="rounded-[24px] px-3 py-7 md:py-18 md:px-18  overflow-hidden"
             bgImage={bgImage}
           >
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeWork?.id}
-                initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -10, filter: "blur(6px)" }}
+                initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, y: -10, filter: 'blur(6px)' }}
                 transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
                 className="mt-2 space-y-6 md:mt-0"
               >
@@ -127,23 +126,18 @@ export default function AboutSardWork({ works, bgImage }) {
                       {/* ===== Text / cast ===== */}
                       <div className="space-y-2 text-[#252525]">
                         <div className="flex flex-wrap items-baseline gap-3 text-sm md:text-2xl">
-                          <span className="italic font-semibold">
-                            {activeWork?.title}
-                          </span>
+                          <span className="italic font-semibold">{activeWork?.title}</span>
                         </div>
 
                         <div className="h-px w-full bg-[#252525]/50" />
                         <div className="italic text-[11px] flex items-center gap-3 md:text-base">
-                          {activeWork?.subTitle || ""}
+                          {activeWork?.subTitle || ''}
                         </div>
                       </div>
                       {/* عمودين باراجرافس من الـ richText */}
                       <div className={`grid gap-6 md:grid-cols-1 md:gap-8 `}>
                         <div className="md:w-[75%] space-y-4">
-                          <RichColumn
-                            value={activeWork?.leftColumn}
-                            textColor={"text-[#252525]"}
-                          />
+                          <RichColumn value={activeWork?.leftColumn} textColor={'text-[#252525]'} />
                         </div>
                         {/* <div className="space-y-4">
                       <RichColumn
@@ -174,5 +168,5 @@ export default function AboutSardWork({ works, bgImage }) {
         </div>
       </section>
     </SectionReveal>
-  );
+  )
 }

@@ -72,7 +72,6 @@ export interface Config {
     'scene-hotspots': SceneHotspot;
     'mariam-works': MariamWork;
     'sard-learning': SardLearning;
-    'about-sard-milestones': AboutSardMilestone;
     'about-sard-awards': AboutSardAward;
     'team-members': TeamMember;
     galleries: Gallery;
@@ -88,7 +87,6 @@ export interface Config {
     'scene-hotspots': SceneHotspotsSelect<false> | SceneHotspotsSelect<true>;
     'mariam-works': MariamWorksSelect<false> | MariamWorksSelect<true>;
     'sard-learning': SardLearningSelect<false> | SardLearningSelect<true>;
-    'about-sard-milestones': AboutSardMilestonesSelect<false> | AboutSardMilestonesSelect<true>;
     'about-sard-awards': AboutSardAwardsSelect<false> | AboutSardAwardsSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     galleries: GalleriesSelect<false> | GalleriesSelect<true>;
@@ -198,8 +196,10 @@ export interface Media {
  */
 export interface SceneHotspot {
   id: string;
-  label: string;
-  description?: string | null;
+  labelEn: string;
+  labelAr: string;
+  descriptionEn?: string | null;
+  descriptionAr?: string | null;
   x: number;
   y: number;
   xMobile?: number | null;
@@ -215,22 +215,27 @@ export interface SceneHotspot {
  */
 export interface MariamWork {
   id: string;
-  title: string;
+  titleEn: string;
+  titleAr: string;
   slug: string;
   year: number;
-  director: string;
-  poster: string | Media;
+  directorEn: string;
+  directorAr: string;
+  posterEn: string | Media;
+  posterAr: string | Media;
   media?:
     | {
         type?: ('image' | 'video') | null;
-        thumb: string | Media;
+        thumbEn: string | Media;
+        thumbAr: string | Media;
         videoUrl?: string | null;
         id?: string | null;
       }[]
     | null;
   cast?:
     | {
-        name: string;
+        nameEn: string;
+        nameAr: string;
         id?: string | null;
       }[]
     | null;
@@ -244,11 +249,14 @@ export interface MariamWork {
  */
 export interface SardLearning {
   id: string;
-  title: string;
+  titleEn: string;
+  titleAr: string;
   slug: string;
-  subTitle: string;
-  poster: string | Media;
-  leftColumn: {
+  subTitleEn?: string | null;
+  subTitleAr?: string | null;
+  posterEn: string | Media;
+  posterAr?: (string | null) | Media;
+  leftColumnEn: {
     root: {
       type: string;
       children: {
@@ -263,74 +271,7 @@ export interface SardLearning {
     };
     [k: string]: unknown;
   };
-  rightColumn: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  cast?:
-    | {
-        name: string;
-        id?: string | null;
-      }[]
-    | null;
-  sortOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "about-sard-milestones".
- */
-export interface AboutSardMilestone {
-  id: string;
-  title: string;
-  slug: string;
-  subTitle?: string | null;
-  poster: string | Media;
-  leftColumn: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  cast?:
-    | {
-        name: string;
-        id?: string | null;
-      }[]
-    | null;
-  sortOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "about-sard-awards".
- */
-export interface AboutSardAward {
-  id: string;
-  title: string;
-  description?: {
+  rightColumnEn?: {
     root: {
       type: string;
       children: {
@@ -345,7 +286,87 @@ export interface AboutSardAward {
     };
     [k: string]: unknown;
   } | null;
-  image?: (string | null) | Media;
+  leftColumnAr: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  rightColumnAr?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  cast?:
+    | {
+        nameEn: string;
+        nameAr: string;
+        id?: string | null;
+      }[]
+    | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-sard-awards".
+ */
+export interface AboutSardAward {
+  id: string;
+  titleEn: string;
+  titleAr: string;
+  descriptionEn?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  descriptionAr?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  imageEn?: (string | null) | Media;
+  imageAr?: (string | null) | Media;
   isActive?: boolean | null;
   sortOrder?: number | null;
   updatedAt: string;
@@ -357,10 +378,28 @@ export interface AboutSardAward {
  */
 export interface TeamMember {
   id: string;
-  name: string;
-  photo: string | Media;
-  badgeIcon?: (string | null) | Media;
-  details: {
+  nameEn: string;
+  nameAr: string;
+  photoEn: string | Media;
+  photoAr?: (string | null) | Media;
+  badgeIconEn?: (string | null) | Media;
+  badgeIconAr?: (string | null) | Media;
+  detailsEn: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  detailsAr: {
     root: {
       type: string;
       children: {
@@ -387,19 +426,27 @@ export interface TeamMember {
  */
 export interface Gallery {
   id: string;
-  title: string;
+  titleEn: string;
+  titleAr: string;
   /**
    * Use this slug in the frontend (e.g. about-sard-newest-production).
    */
   slug: string;
   isActive?: boolean | null;
-  sectionTitle?: string | null;
-  sectionDescription?: string | null;
+  sectionTitleEn?: string | null;
+  sectionTitleAr?: string | null;
+  sectionDescriptionEn?: string | null;
+  sectionDescriptionAr?: string | null;
   items?:
     | {
-        title: string;
-        description?: string | null;
-        background: string | Media;
+        titleEn: string;
+        titleAr: string;
+        descriptionEn?: string | null;
+        descriptionAr?: string | null;
+        backgroundEn: string | Media;
+        backgroundAr?: (string | null) | Media;
+        directorEn?: string | null;
+        directorAr?: string | null;
         /**
          * YouTube link or direct mp4/webm link. If empty, play button can be hidden.
          */
@@ -451,10 +498,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'sard-learning';
         value: string | SardLearning;
-      } | null)
-    | ({
-        relationTo: 'about-sard-milestones';
-        value: string | AboutSardMilestone;
       } | null)
     | ({
         relationTo: 'about-sard-awards';
@@ -559,8 +602,10 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "scene-hotspots_select".
  */
 export interface SceneHotspotsSelect<T extends boolean = true> {
-  label?: T;
-  description?: T;
+  labelEn?: T;
+  labelAr?: T;
+  descriptionEn?: T;
+  descriptionAr?: T;
   x?: T;
   y?: T;
   xMobile?: T;
@@ -575,23 +620,28 @@ export interface SceneHotspotsSelect<T extends boolean = true> {
  * via the `definition` "mariam-works_select".
  */
 export interface MariamWorksSelect<T extends boolean = true> {
-  title?: T;
+  titleEn?: T;
+  titleAr?: T;
   slug?: T;
   year?: T;
-  director?: T;
-  poster?: T;
+  directorEn?: T;
+  directorAr?: T;
+  posterEn?: T;
+  posterAr?: T;
   media?:
     | T
     | {
         type?: T;
-        thumb?: T;
+        thumbEn?: T;
+        thumbAr?: T;
         videoUrl?: T;
         id?: T;
       };
   cast?:
     | T
     | {
-        name?: T;
+        nameEn?: T;
+        nameAr?: T;
         id?: T;
       };
   sortOrder?: T;
@@ -603,36 +653,22 @@ export interface MariamWorksSelect<T extends boolean = true> {
  * via the `definition` "sard-learning_select".
  */
 export interface SardLearningSelect<T extends boolean = true> {
-  title?: T;
+  titleEn?: T;
+  titleAr?: T;
   slug?: T;
-  subTitle?: T;
-  poster?: T;
-  leftColumn?: T;
-  rightColumn?: T;
+  subTitleEn?: T;
+  subTitleAr?: T;
+  posterEn?: T;
+  posterAr?: T;
+  leftColumnEn?: T;
+  rightColumnEn?: T;
+  leftColumnAr?: T;
+  rightColumnAr?: T;
   cast?:
     | T
     | {
-        name?: T;
-        id?: T;
-      };
-  sortOrder?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "about-sard-milestones_select".
- */
-export interface AboutSardMilestonesSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  subTitle?: T;
-  poster?: T;
-  leftColumn?: T;
-  cast?:
-    | T
-    | {
-        name?: T;
+        nameEn?: T;
+        nameAr?: T;
         id?: T;
       };
   sortOrder?: T;
@@ -644,9 +680,12 @@ export interface AboutSardMilestonesSelect<T extends boolean = true> {
  * via the `definition` "about-sard-awards_select".
  */
 export interface AboutSardAwardsSelect<T extends boolean = true> {
-  title?: T;
-  description?: T;
-  image?: T;
+  titleEn?: T;
+  titleAr?: T;
+  descriptionEn?: T;
+  descriptionAr?: T;
+  imageEn?: T;
+  imageAr?: T;
   isActive?: T;
   sortOrder?: T;
   updatedAt?: T;
@@ -657,10 +696,14 @@ export interface AboutSardAwardsSelect<T extends boolean = true> {
  * via the `definition` "team-members_select".
  */
 export interface TeamMembersSelect<T extends boolean = true> {
-  name?: T;
-  photo?: T;
-  badgeIcon?: T;
-  details?: T;
+  nameEn?: T;
+  nameAr?: T;
+  photoEn?: T;
+  photoAr?: T;
+  badgeIconEn?: T;
+  badgeIconAr?: T;
+  detailsEn?: T;
+  detailsAr?: T;
   displayOn?: T;
   isActive?: T;
   sortOrder?: T;
@@ -672,17 +715,25 @@ export interface TeamMembersSelect<T extends boolean = true> {
  * via the `definition` "galleries_select".
  */
 export interface GalleriesSelect<T extends boolean = true> {
-  title?: T;
+  titleEn?: T;
+  titleAr?: T;
   slug?: T;
   isActive?: T;
-  sectionTitle?: T;
-  sectionDescription?: T;
+  sectionTitleEn?: T;
+  sectionTitleAr?: T;
+  sectionDescriptionEn?: T;
+  sectionDescriptionAr?: T;
   items?:
     | T
     | {
-        title?: T;
-        description?: T;
-        background?: T;
+        titleEn?: T;
+        titleAr?: T;
+        descriptionEn?: T;
+        descriptionAr?: T;
+        backgroundEn?: T;
+        backgroundAr?: T;
+        directorEn?: T;
+        directorAr?: T;
         videoUrl?: T;
         sortOrder?: T;
         id?: T;
@@ -747,7 +798,13 @@ export interface SiteHeader {
   logoSmallAlt?: string | null;
   links?:
     | {
-        label: string;
+        label: {
+          en: string;
+          ar: string;
+        };
+        /**
+         * Example: /about-sard (Do NOT include /en or /ar)
+         */
         href: string;
         id?: string | null;
       }[]
@@ -772,18 +829,24 @@ export interface SiteHeader {
  */
 export interface SiteFooter {
   id: string;
-  logoLeft?: (string | null) | Media;
-  logoLeftAlt?: string | null;
-  logoRight?: (string | null) | Media;
-  logoRightAlt?: string | null;
+  logoLeftEn?: (string | null) | Media;
+  logoLeftAr?: (string | null) | Media;
+  logoLeftAltEn?: string | null;
+  logoLeftAltAr?: string | null;
+  logoRightEn?: (string | null) | Media;
+  logoRightAr?: (string | null) | Media;
+  logoRightAltEn?: string | null;
+  logoRightAltAr?: string | null;
   links?:
     | {
-        label: string;
+        labelEn: string;
+        labelAr: string;
         href: string;
         id?: string | null;
       }[]
     | null;
-  copyright: string;
+  copyrightEn: string;
+  copyrightAr: string;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -794,8 +857,10 @@ export interface SiteFooter {
 export interface Scene {
   id: string;
   title?: string | null;
-  backgroundImage: string | Media;
-  hint?: string | null;
+  backgroundImageEn: string | Media;
+  backgroundImageAr?: (string | null) | Media;
+  hintEn: string;
+  hintAr: string;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -806,37 +871,78 @@ export interface Scene {
 export interface MariamAbout {
   id: string;
   portrait: string | Media;
-  allAboutLabel?: string | null;
-  displayName: string;
-  leftColumn: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
+  portraitAr?: (string | null) | Media;
+  allAboutLabel?: {
+    en?: string | null;
+    ar?: string | null;
   };
-  rightColumn: {
-    root: {
-      type: string;
-      children: {
+  displayName: {
+    en: string;
+    ar: string;
+  };
+  leftColumn: {
+    en: {
+      root: {
         type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
         version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
+      };
+      [k: string]: unknown;
     };
-    [k: string]: unknown;
+    ar: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+  };
+  rightColumn?: {
+    en?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    ar?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -848,37 +954,78 @@ export interface MariamAbout {
 export interface LearningAbout {
   id: string;
   portrait: string | Media;
-  allAboutLabel?: string | null;
-  displayName: string;
-  leftColumn: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
+  portraitAr?: (string | null) | Media;
+  allAboutLabel?: {
+    en?: string | null;
+    ar?: string | null;
   };
-  rightColumn: {
-    root: {
-      type: string;
-      children: {
+  displayName: {
+    en: string;
+    ar: string;
+  };
+  leftColumn: {
+    en: {
+      root: {
         type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
         version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
+      };
+      [k: string]: unknown;
     };
-    [k: string]: unknown;
+    ar: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+  };
+  rightColumn?: {
+    en?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    ar?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -890,37 +1037,78 @@ export interface LearningAbout {
 export interface SardMilestonesAbout {
   id: string;
   portrait: string | Media;
-  allAboutLabel?: string | null;
-  displayName: string;
+  portraitAr?: (string | null) | Media;
+  allAboutLabel?: {
+    en?: string | null;
+    ar?: string | null;
+  };
+  displayName: {
+    en: string;
+    ar: string;
+  };
   leftColumn: {
-    root: {
-      type: string;
-      children: {
+    en: {
+      root: {
         type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
         version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
+      };
+      [k: string]: unknown;
     };
-    [k: string]: unknown;
+    ar: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
   };
   rightColumn: {
-    root: {
-      type: string;
-      children: {
+    en: {
+      root: {
         type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
         version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
+      };
+      [k: string]: unknown;
     };
-    [k: string]: unknown;
+    ar: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -931,10 +1119,27 @@ export interface SardMilestonesAbout {
  */
 export interface SardVisionMission {
   id: string;
-  sectionTitle: string;
+  sectionTitleEn: string;
+  sectionTitleAr: string;
   vision: {
-    title: string;
-    body: {
+    titleEn: string;
+    titleAr: string;
+    bodyEn: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    bodyAr: {
       root: {
         type: string;
         children: {
@@ -951,8 +1156,24 @@ export interface SardVisionMission {
     };
   };
   mission: {
-    title: string;
-    body: {
+    titleEn: string;
+    titleAr: string;
+    bodyEn: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    bodyAr: {
       root: {
         type: string;
         children: {
@@ -969,8 +1190,24 @@ export interface SardVisionMission {
     };
   };
   values: {
-    title: string;
-    body: {
+    titleEn: string;
+    titleAr: string;
+    bodyEn: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
+    bodyAr: {
       root: {
         type: string;
         children: {
@@ -996,38 +1233,79 @@ export interface SardVisionMission {
 export interface SardProductionAboutHero {
   id: string;
   portrait: string | Media;
-  allAboutLabel?: string | null;
-  displayName: string;
+  portraitAr?: (string | null) | Media;
+  allAboutLabel?: {
+    en?: string | null;
+    ar?: string | null;
+  };
+  displayName: {
+    en: string;
+    ar: string;
+  };
   leftColumn: {
-    root: {
-      type: string;
-      children: {
+    en: {
+      root: {
         type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
         version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
+      };
+      [k: string]: unknown;
     };
-    [k: string]: unknown;
+    ar: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
   };
   rightColumn?: {
-    root: {
-      type: string;
-      children: {
+    en?: {
+      root: {
         type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
         version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+      };
+      [k: string]: unknown;
+    } | null;
+    ar?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1038,38 +1316,79 @@ export interface SardProductionAboutHero {
 export interface SardWriterAboutHero {
   id: string;
   portrait: string | Media;
-  allAboutLabel?: string | null;
-  displayName: string;
+  portraitAr?: (string | null) | Media;
+  allAboutLabel?: {
+    en?: string | null;
+    ar?: string | null;
+  };
+  displayName: {
+    en: string;
+    ar: string;
+  };
   leftColumn: {
-    root: {
-      type: string;
-      children: {
+    en: {
+      root: {
         type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
         version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
+      };
+      [k: string]: unknown;
     };
-    [k: string]: unknown;
+    ar: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    };
   };
   rightColumn?: {
-    root: {
-      type: string;
-      children: {
+    en?: {
+      root: {
         type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
         version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+      };
+      [k: string]: unknown;
+    } | null;
+    ar?: {
+      root: {
+        type: string;
+        children: {
+          type: string;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1085,7 +1404,12 @@ export interface SiteHeaderSelect<T extends boolean = true> {
   links?:
     | T
     | {
-        label?: T;
+        label?:
+          | T
+          | {
+              en?: T;
+              ar?: T;
+            };
         href?: T;
         id?: T;
       };
@@ -1106,18 +1430,24 @@ export interface SiteHeaderSelect<T extends boolean = true> {
  * via the `definition` "site-footer_select".
  */
 export interface SiteFooterSelect<T extends boolean = true> {
-  logoLeft?: T;
-  logoLeftAlt?: T;
-  logoRight?: T;
-  logoRightAlt?: T;
+  logoLeftEn?: T;
+  logoLeftAr?: T;
+  logoLeftAltEn?: T;
+  logoLeftAltAr?: T;
+  logoRightEn?: T;
+  logoRightAr?: T;
+  logoRightAltEn?: T;
+  logoRightAltAr?: T;
   links?:
     | T
     | {
-        label?: T;
+        labelEn?: T;
+        labelAr?: T;
         href?: T;
         id?: T;
       };
-  copyright?: T;
+  copyrightEn?: T;
+  copyrightAr?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1128,8 +1458,10 @@ export interface SiteFooterSelect<T extends boolean = true> {
  */
 export interface SceneSelect<T extends boolean = true> {
   title?: T;
-  backgroundImage?: T;
-  hint?: T;
+  backgroundImageEn?: T;
+  backgroundImageAr?: T;
+  hintEn?: T;
+  hintAr?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1140,10 +1472,31 @@ export interface SceneSelect<T extends boolean = true> {
  */
 export interface MariamAboutSelect<T extends boolean = true> {
   portrait?: T;
-  allAboutLabel?: T;
-  displayName?: T;
-  leftColumn?: T;
-  rightColumn?: T;
+  portraitAr?: T;
+  allAboutLabel?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  displayName?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  leftColumn?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  rightColumn?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1154,10 +1507,31 @@ export interface MariamAboutSelect<T extends boolean = true> {
  */
 export interface LearningAboutSelect<T extends boolean = true> {
   portrait?: T;
-  allAboutLabel?: T;
-  displayName?: T;
-  leftColumn?: T;
-  rightColumn?: T;
+  portraitAr?: T;
+  allAboutLabel?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  displayName?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  leftColumn?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  rightColumn?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1168,10 +1542,31 @@ export interface LearningAboutSelect<T extends boolean = true> {
  */
 export interface SardMilestonesAboutSelect<T extends boolean = true> {
   portrait?: T;
-  allAboutLabel?: T;
-  displayName?: T;
-  leftColumn?: T;
-  rightColumn?: T;
+  portraitAr?: T;
+  allAboutLabel?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  displayName?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  leftColumn?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  rightColumn?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1181,24 +1576,31 @@ export interface SardMilestonesAboutSelect<T extends boolean = true> {
  * via the `definition` "sard-vision-mission_select".
  */
 export interface SardVisionMissionSelect<T extends boolean = true> {
-  sectionTitle?: T;
+  sectionTitleEn?: T;
+  sectionTitleAr?: T;
   vision?:
     | T
     | {
-        title?: T;
-        body?: T;
+        titleEn?: T;
+        titleAr?: T;
+        bodyEn?: T;
+        bodyAr?: T;
       };
   mission?:
     | T
     | {
-        title?: T;
-        body?: T;
+        titleEn?: T;
+        titleAr?: T;
+        bodyEn?: T;
+        bodyAr?: T;
       };
   values?:
     | T
     | {
-        title?: T;
-        body?: T;
+        titleEn?: T;
+        titleAr?: T;
+        bodyEn?: T;
+        bodyAr?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1210,10 +1612,31 @@ export interface SardVisionMissionSelect<T extends boolean = true> {
  */
 export interface SardProductionAboutHeroSelect<T extends boolean = true> {
   portrait?: T;
-  allAboutLabel?: T;
-  displayName?: T;
-  leftColumn?: T;
-  rightColumn?: T;
+  portraitAr?: T;
+  allAboutLabel?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  displayName?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  leftColumn?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  rightColumn?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1224,10 +1647,31 @@ export interface SardProductionAboutHeroSelect<T extends boolean = true> {
  */
 export interface SardWriterAboutHeroSelect<T extends boolean = true> {
   portrait?: T;
-  allAboutLabel?: T;
-  displayName?: T;
-  leftColumn?: T;
-  rightColumn?: T;
+  portraitAr?: T;
+  allAboutLabel?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  displayName?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  leftColumn?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  rightColumn?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -2,11 +2,11 @@
 import type { GlobalConfig } from 'payload'
 
 const Scene: GlobalConfig = {
-  slug: 'scene', // مهم يفضل كده عشان /api/globals/scene
+  slug: 'scene',
   label: 'Sard Scene (Home)',
   access: {
-    read: () => true, // أي حد يقدر يقرى
-    update: ({ req }) => !!req.user, // التعديل للمستخدمين اللي لوجين
+    read: () => true,
+    update: ({ req }) => !!req.user,
   },
   fields: [
     {
@@ -14,18 +14,37 @@ const Scene: GlobalConfig = {
       label: 'Internal Title',
       type: 'text',
     },
+
+    // ✅ Background images (EN required, AR optional)
     {
-      name: 'backgroundImage',
-      label: 'Background Image',
+      name: 'backgroundImageEn',
+      label: 'Background Image (EN)',
       type: 'upload',
       relationTo: 'media',
       required: true,
     },
     {
-      name: 'hint',
-      label: 'Hint Text',
+      name: 'backgroundImageAr',
+      label: 'Background Image (AR) (optional)',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+
+    // ✅ Hint text (EN/AR)
+    {
+      name: 'hintEn',
+      label: 'Hint Text (EN)',
       type: 'text',
+      required: true,
       defaultValue: 'Explore Sard by tapping the glowing points.',
+    },
+    {
+      name: 'hintAr',
+      label: 'Hint Text (AR)',
+      type: 'text',
+      required: true,
+      defaultValue: 'استكشف سارد بالضغط على النقاط المضيئة.',
     },
   ],
 }

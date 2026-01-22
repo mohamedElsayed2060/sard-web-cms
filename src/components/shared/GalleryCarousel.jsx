@@ -3,6 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Splide, SplideSlide } from '@splidejs/react-splide'
 import clsx from 'clsx'
+import useDocumentDir from '@/components/shared/useDocumentDir'
+
+const swapPadding = (pad, dir) => {
+  if (!pad || typeof pad !== 'object') return pad
+  if (dir !== 'rtl') return pad
+  const { left, right, ...rest } = pad
+  return { ...rest, left: right, right: left }
+}
 
 export default function GalleryCarousel({
   items = [],
@@ -10,11 +18,14 @@ export default function GalleryCarousel({
   className,
   initialIndex = 0,
   variant = 'default', // 'default' | 'tall' | 'production'
+  lang,
 }) {
   const [mounted, setMounted] = useState(false)
   const splideRef = useRef(null)
   const rafRef = useRef(0)
   const wrapTimerRef = useRef(null)
+
+  const dir = useDocumentDir('ltr')
 
   useEffect(() => setMounted(true), [])
 
@@ -38,9 +49,7 @@ export default function GalleryCarousel({
       cards.forEach((c) => c.classList.toggle('galleryCard--noTrans', on))
     }
 
-    // ✅ حل الومضة عند loop wrap: نطفي transition لحظيًا فقط وقت القفزة
     const onMove = (newIndex, prevIndex) => {
-      // في loop لما يعمل wrap بيبقى الفرق كبير (مش خطوة واحدة)
       if (Math.abs(newIndex - prevIndex) > 1) {
         setNoTrans(true)
         if (wrapTimerRef.current) clearTimeout(wrapTimerRef.current)
@@ -50,14 +59,11 @@ export default function GalleryCarousel({
 
     try {
       inst.on('move', onMove)
-    } catch {
-      // لو النسخة مش داعمة move listener بشكل متوقع، تجاهل بأمان
-    }
+    } catch {}
 
     const update = () => {
       const trackRect = track.getBoundingClientRect()
       const centerX = trackRect.left + trackRect.width / 2
-
       const slides = inst.root.querySelectorAll('.splide__slide')
 
       slides.forEach((slide) => {
@@ -97,64 +103,76 @@ export default function GalleryCarousel({
   const isTall = variant === 'tall' || variant === 'production'
   if (!items?.length) return null
 
-  const options = useMemo(
-    () => ({
+  const options = useMemo(() => {
+    const baseTall = {
+      perPage: 1,
+      autoWidth: true,
+      gap: '0.7rem',
+      padding: { left: '14px', right: '14px' },
+      trimSpace: false,
+    }
+
+    const baseDefault = {
+      perPage: 1.5,
+      gap: '0rem',
+      padding: { left: '12%', right: '12%' },
+    }
+
+    const tallBreakpoints = {
+      1536: { gap: '0.65rem', padding: { left: '12px', right: '12px' } },
+      1280: { gap: '0.6rem', padding: { left: '10px', right: '10px' } },
+      1024: { gap: '0.55rem', padding: { left: '10px', right: '10px' } },
+      768: {
+        autoWidth: false,
+        perPage: 1,
+        padding: { left: '25px', right: '25px' },
+        gap: '0.75rem',
+        trimSpace: false,
+        focus: 'center',
+      },
+    }
+
+    const defaultBreakpoints = {
+      1536: { padding: { left: '11%', right: '11%' } },
+      1280: { padding: { left: '10%', right: '10%' } },
+      1024: { padding: { left: '8%', right: '8%' } },
+      768: {
+        autoWidth: false,
+        perPage: 1,
+        padding: 36,
+        gap: '1rem',
+      },
+    }
+
+    // swap paddings in RTL (only when it's object {left,right})
+    const picked = isTall ? baseTall : baseDefault
+    const breakpoints = isTall ? tallBreakpoints : defaultBreakpoints
+
+    const fixedBreakpoints = Object.fromEntries(
+      Object.entries(breakpoints).map(([k, v]) => {
+        const next = { ...v }
+        if ('padding' in next) next.padding = swapPadding(next.padding, dir)
+        return [k, next]
+      }),
+    )
+
+    return {
+      direction: dir, // ✅ RTL/LTR
       type: 'loop',
       focus: 'center',
       pagination: false,
       arrows: false,
       drag: items.length > 1,
       start: initialIndex,
-
       speed: isTall ? 920 : 950,
       easing: 'cubic-bezier(0.19, 1, 0.22, 1)',
 
-      ...(isTall
-        ? {
-            perPage: 1,
-            autoWidth: true,
-            gap: '0.7rem', // ✅ قللنا الجاب
-            padding: { left: '14px', right: '14px' }, // ✅ ده اللي بيظبط الأطراف
-            trimSpace: false,
-          }
-        : {
-            perPage: 1.5,
-            gap: '0rem', // ✅ قللنا المسافة
-            padding: { left: '12%', right: '12%' }, // ✅ كانت كبيرة (18%)
-          }),
+      ...picked,
+      padding: swapPadding(picked.padding, dir),
 
-      breakpoints: {
-        1536: isTall
-          ? { gap: '0.65rem', padding: { left: '12px', right: '12px' } }
-          : { padding: { left: '11%', right: '11%' } },
-
-        1280: isTall
-          ? { gap: '0.6rem', padding: { left: '10px', right: '10px' } }
-          : { padding: { left: '10%', right: '10%' } },
-
-        1024: isTall
-          ? { gap: '0.55rem', padding: { left: '10px', right: '10px' } }
-          : { padding: { left: '8%', right: '8%' } },
-
-        768: isTall
-          ? {
-              autoWidth: false, // ✅ اقفله على الموبايل
-              perPage: 1, // ✅ واحد + حتة من اللي بعده
-              padding: { left: '25px', right: '25px' },
-              gap: '0.75rem',
-              trimSpace: false,
-              focus: 'center',
-            }
-          : {
-              autoWidth: false,
-              perPage: 1,
-              padding: 36,
-              gap: '1rem',
-            },
-      },
-    }),
-    [items.length, isTall, initialIndex],
-  )
+      breakpoints: fixedBreakpoints,
+    }
+  }, [items.length, isTall, initialIndex, dir])
 
   return (
     <div
@@ -163,6 +181,7 @@ export default function GalleryCarousel({
         isTall ? 'galleryCarousel--tall' : 'galleryCarousel--default',
         className,
       )}
+      dir={dir}
     >
       {mounted && (
         <Splide ref={splideRef} aria-label="Gallery" options={options}>
@@ -175,7 +194,6 @@ export default function GalleryCarousel({
                 <div
                   role="button"
                   tabIndex={0}
-                  type="button"
                   onClick={() => {
                     const inst = splideRef.current?.splide || splideRef.current
                     if (inst?.go) inst.go(i)
@@ -227,17 +245,31 @@ export default function GalleryCarousel({
                     >
                       <div className="max-w-[560px]">
                         <div
-                          className={`text-[#F0EADB] italic text-2xl ${isTall ? 'md:text-xl' : 'md:text-3xl'}`}
+                          className={`text-[#F0EADB] italic text-2xl ${
+                            isTall ? 'md:text-xl' : 'md:text-3xl'
+                          } ${lang === 'ar' ? 'text-end' : ''}`}
                         >
                           {it?.title}
                         </div>
+
                         {it?.description && (
                           <div
-                            className={`mt-4 text-[#F0EADB]/85 text-sm ${isTall ? 'md:text-sm' : 'md:text-base'} leading-relaxed`}
+                            className={`mt-4 text-[#F0EADB]/85 text-sm ${
+                              isTall ? 'md:text-sm' : 'md:text-base'
+                            } leading-relaxed ${lang === 'ar' ? 'text-end' : ''}`}
                           >
                             {it.description}
                           </div>
                         )}
+                        {it?.director ? (
+                          <div
+                            className={`mt-1 text-[12px] uppercase tracking-[0.22em] text-[#F0EADB]/85 ${lang === 'ar' ? 'text-end' : ''}`}
+                          >
+                            {lang === 'ar'
+                              ? `إخراج: ${it?.director}`
+                              : `Directed by: ${it?.director}`}
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   </div>

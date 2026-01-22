@@ -1,4 +1,4 @@
-// src/collections/Galleries.ts
+// cms/src/collections/Galleries.ts
 import type { CollectionConfig } from 'payload'
 
 const Galleries: CollectionConfig = {
@@ -8,19 +8,26 @@ const Galleries: CollectionConfig = {
     plural: 'Galleries',
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'slug', 'isActive', 'updatedAt'],
+    useAsTitle: 'titleEn',
+    defaultColumns: ['titleEn', 'slug', 'isActive', 'updatedAt'],
   },
   access: {
     read: () => true,
   },
   fields: [
     {
-      name: 'title',
-      label: 'Title',
+      name: 'titleEn',
+      label: 'Title (EN)',
       type: 'text',
       required: true,
     },
+    {
+      name: 'titleAr',
+      label: 'Title (AR)',
+      type: 'text',
+      required: true,
+    },
+
     {
       name: 'slug',
       label: 'Slug (unique)',
@@ -31,22 +38,36 @@ const Galleries: CollectionConfig = {
         description: 'Use this slug in the frontend (e.g. about-sard-newest-production).',
       },
     },
+
     {
       name: 'isActive',
       label: 'Active',
       type: 'checkbox',
       defaultValue: true,
     },
+
+    // Section heading (optional)
     {
-      name: 'sectionTitle',
-      label: 'Section title (optional)',
+      name: 'sectionTitleEn',
+      label: 'Section title (EN) (optional)',
       type: 'text',
     },
     {
-      name: 'sectionDescription',
-      label: 'Section description (optional)',
+      name: 'sectionTitleAr',
+      label: 'Section title (AR) (optional)',
+      type: 'text',
+    },
+    {
+      name: 'sectionDescriptionEn',
+      label: 'Section description (EN) (optional)',
       type: 'textarea',
     },
+    {
+      name: 'sectionDescriptionAr',
+      label: 'Section description (AR) (optional)',
+      type: 'textarea',
+    },
+
     {
       name: 'items',
       label: 'Gallery items',
@@ -54,22 +75,53 @@ const Galleries: CollectionConfig = {
       minRows: 1,
       fields: [
         {
-          name: 'title',
-          label: 'Title',
+          name: 'titleEn',
+          label: 'Title (EN)',
           type: 'text',
           required: true,
         },
         {
-          name: 'description',
-          label: 'Description',
+          name: 'titleAr',
+          label: 'Title (AR)',
+          type: 'text',
+          required: true,
+        },
+
+        {
+          name: 'descriptionEn',
+          label: 'Description (EN) (optional)',
           type: 'textarea',
         },
         {
-          name: 'background',
-          label: 'Background image',
+          name: 'descriptionAr',
+          label: 'Description (AR) (optional)',
+          type: 'textarea',
+        },
+
+        // Background image EN/AR
+        {
+          name: 'backgroundEn',
+          label: 'Background image (EN)',
           type: 'upload',
           relationTo: 'media',
           required: true,
+        },
+        {
+          name: 'backgroundAr',
+          label: 'Background image (AR) (optional)',
+          type: 'upload',
+          relationTo: 'media',
+          required: false, // ✅ اختياري
+        },
+        {
+          name: 'directorEn',
+          label: 'Director (EN)',
+          type: 'text',
+        },
+        {
+          name: 'directorAr',
+          label: 'Director (AR)',
+          type: 'text',
         },
         {
           name: 'videoUrl',
@@ -80,6 +132,7 @@ const Galleries: CollectionConfig = {
               'YouTube link or direct mp4/webm link. If empty, play button can be hidden.',
           },
         },
+
         {
           name: 'sortOrder',
           label: 'Sort order',

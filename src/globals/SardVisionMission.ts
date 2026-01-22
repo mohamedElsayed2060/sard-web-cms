@@ -7,12 +7,20 @@ const SardVisionMission: GlobalConfig = {
   access: { read: () => true },
   fields: [
     {
-      name: 'sectionTitle',
-      label: 'Section title',
+      name: 'sectionTitleEn',
+      label: 'Section title (EN)',
       type: 'text',
       required: true,
       defaultValue: 'VISION & MISSION',
     },
+    {
+      name: 'sectionTitleAr',
+      label: 'Section title (AR)',
+      type: 'text',
+      required: true,
+      defaultValue: 'الرؤية والرسالة',
+    },
+
     {
       type: 'row',
       fields: [
@@ -22,52 +30,69 @@ const SardVisionMission: GlobalConfig = {
           label: 'Vision',
           fields: [
             {
-              name: 'title',
+              name: 'titleEn',
+              label: 'Title (EN)',
               type: 'text',
               required: true,
               defaultValue: 'Vision Statement',
             },
             {
-              name: 'body',
-              type: 'richText',
+              name: 'titleAr',
+              label: 'Title (AR)',
+              type: 'text',
               required: true,
+              defaultValue: 'الرؤية',
             },
+            { name: 'bodyEn', label: 'Body (EN)', type: 'richText', required: true },
+            { name: 'bodyAr', label: 'Body (AR)', type: 'richText', required: true },
           ],
         },
+
         {
           name: 'mission',
           type: 'group',
           label: 'Mission',
           fields: [
             {
-              name: 'title',
+              name: 'titleEn',
+              label: 'Title (EN)',
               type: 'text',
               required: true,
               defaultValue: 'Mission Statement',
             },
             {
-              name: 'body',
-              type: 'richText',
+              name: 'titleAr',
+              label: 'Title (AR)',
+              type: 'text',
               required: true,
+              defaultValue: 'الرسالة',
             },
+            { name: 'bodyEn', label: 'Body (EN)', type: 'richText', required: true },
+            { name: 'bodyAr', label: 'Body (AR)', type: 'richText', required: true },
           ],
         },
+
         {
           name: 'values',
           type: 'group',
           label: 'Values',
           fields: [
             {
-              name: 'title',
+              name: 'titleEn',
+              label: 'Title (EN)',
               type: 'text',
               required: true,
               defaultValue: 'Our Values',
             },
             {
-              name: 'body',
-              type: 'richText',
+              name: 'titleAr',
+              label: 'Title (AR)',
+              type: 'text',
               required: true,
+              defaultValue: 'قيمنا',
             },
+            { name: 'bodyEn', label: 'Body (EN)', type: 'richText', required: true },
+            { name: 'bodyAr', label: 'Body (AR)', type: 'richText', required: true },
           ],
         },
       ],

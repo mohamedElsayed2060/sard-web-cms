@@ -1,16 +1,22 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
-import { useTransitionUI } from "./TransitionProvider";
+import { useEffect, useMemo } from 'react'
+import { usePathname } from 'next/navigation'
+import { useTransitionUI } from './TransitionProvider'
 
 export default function TransitionBridge() {
-  const pathname = usePathname();
-  const api = useTransitionUI();
+  const pathname = usePathname()
+  const { setCurrentPath } = useTransitionUI()
+
+  // ✅ normalize بسيطة (اختياري) عشان نخلي المقارنة ثابتة
+  const clean = useMemo(() => {
+    if (!pathname) return '/'
+    return pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
+  }, [pathname])
 
   useEffect(() => {
-    api.setCurrentPath?.(pathname);
-  }, [pathname, api]);
+    setCurrentPath?.(clean)
+  }, [clean, setCurrentPath])
 
-  return null;
+  return null
 }

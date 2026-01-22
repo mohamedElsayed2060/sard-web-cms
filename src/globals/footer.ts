@@ -4,48 +4,79 @@ import type { GlobalConfig } from 'payload'
 const SiteFooter: GlobalConfig = {
   slug: 'site-footer',
   label: 'Site Footer',
-  access: {
-    read: () => true,
-  },
+  access: { read: () => true },
   fields: [
+    // ===== Logos (EN required, AR optional) =====
     {
-      name: 'logoLeft',
-      label: 'Left Logo',
+      name: 'logoLeftEn',
+      label: 'Left Logo (EN)',
       type: 'upload',
       relationTo: 'media',
       required: false,
     },
     {
-      name: 'logoLeftAlt',
-      label: 'Left Logo Alt Text',
+      name: 'logoLeftAr',
+      label: 'Left Logo (AR) (optional)',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+    {
+      name: 'logoLeftAltEn',
+      label: 'Left Logo Alt Text (EN)',
       type: 'text',
       defaultValue: 'Sard',
     },
     {
-      name: 'logoRight',
-      label: 'Right Logo',
+      name: 'logoLeftAltAr',
+      label: 'Left Logo Alt Text (AR)',
+      type: 'text',
+      defaultValue: 'سارد',
+    },
+
+    {
+      name: 'logoRightEn',
+      label: 'Right Logo (EN)',
       type: 'upload',
       relationTo: 'media',
       required: false,
     },
     {
-      name: 'logoRightAlt',
-      label: 'Right Logo Alt Text',
+      name: 'logoRightAr',
+      label: 'Right Logo (AR) (optional)',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+    {
+      name: 'logoRightAltEn',
+      label: 'Right Logo Alt Text (EN)',
       type: 'text',
       defaultValue: 'Sard icon',
     },
     {
+      name: 'logoRightAltAr',
+      label: 'Right Logo Alt Text (AR)',
+      type: 'text',
+      defaultValue: 'أيقونة سارد',
+    },
+
+    // ===== Links (EN/AR labels) =====
+    {
       name: 'links',
       label: 'Footer Links',
       type: 'array',
-      labels: {
-        singular: 'Link',
-        plural: 'Links',
-      },
+      labels: { singular: 'Link', plural: 'Links' },
       fields: [
         {
-          name: 'label',
-          label: 'Label',
+          name: 'labelEn',
+          label: 'Label (EN)',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'labelAr',
+          label: 'Label (AR)',
           type: 'text',
           required: true,
         },
@@ -57,13 +88,23 @@ const SiteFooter: GlobalConfig = {
         },
       ],
     },
+
+    // ===== Copyright (EN/AR) =====
     {
-      name: 'copyright',
-      label: 'Copyright Text',
+      name: 'copyrightEn',
+      label: 'Copyright Text (EN)',
       type: 'text',
       required: true,
       defaultValue: 'Copyright © 2025',
     },
+    {
+      name: 'copyrightAr',
+      label: 'Copyright Text (AR)',
+      type: 'text',
+      required: true,
+      defaultValue: 'حقوق النشر © 2025',
+    },
   ],
 }
+
 export default SiteFooter

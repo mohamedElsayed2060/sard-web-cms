@@ -8,19 +8,28 @@ const MariamWorks: CollectionConfig = {
     plural: 'Mariam Works',
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'year', 'director', 'sortOrder'],
+    // أسهل للـ Admin: العنوان الظاهر يبقى Title EN
+    useAsTitle: 'titleEn',
+    defaultColumns: ['titleEn', 'year', 'directorEn', 'sortOrder'],
   },
   access: {
     read: () => true,
   },
   fields: [
+    // ===== Titles (NEW ONLY) =====
     {
-      name: 'title',
-      label: 'Title',
+      name: 'titleEn',
+      label: 'Title (EN)',
       type: 'text',
       required: true,
     },
+    {
+      name: 'titleAr',
+      label: 'Title (AR)',
+      type: 'text',
+      required: true,
+    },
+
     {
       name: 'slug',
       label: 'Slug (for tabs)',
@@ -28,25 +37,45 @@ const MariamWorks: CollectionConfig = {
       required: true,
       unique: true,
     },
+
     {
       name: 'year',
       label: 'Year',
       type: 'number',
       required: true,
     },
+
+    // ===== Director (NEW ONLY) =====
     {
-      name: 'director',
-      label: 'Director',
+      name: 'directorEn',
+      label: 'Director (EN)',
       type: 'text',
       required: true,
     },
     {
-      name: 'poster',
-      label: 'Main poster',
+      name: 'directorAr',
+      label: 'Director (AR)',
+      type: 'text',
+      required: true,
+    },
+
+    // ===== Posters (EN/AR uploads) =====
+    {
+      name: 'posterEn',
+      label: 'Main Poster (EN)',
       type: 'upload',
       relationTo: 'media',
       required: true,
     },
+    {
+      name: 'posterAr',
+      label: 'Main Poster (AR)',
+      type: 'upload',
+      relationTo: 'media',
+      required: true,
+    },
+
+    // ===== Media (thumb EN/AR uploads) =====
     {
       name: 'media',
       label: 'Stills / Media',
@@ -62,13 +91,25 @@ const MariamWorks: CollectionConfig = {
             { label: 'Video', value: 'video' },
           ],
         },
+
+        // ✅ Upload للثَمب إنجليزي
         {
-          name: 'thumb',
-          label: 'Image / Video thumbnail',
+          name: 'thumbEn',
+          label: 'Thumbnail (EN)',
           type: 'upload',
           relationTo: 'media',
           required: true,
         },
+
+        // ✅ Upload للثَمب عربي
+        {
+          name: 'thumbAr',
+          label: 'Thumbnail (AR)',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+
         {
           name: 'videoUrl',
           label: 'Video URL (optional)',
@@ -79,19 +120,28 @@ const MariamWorks: CollectionConfig = {
         },
       ],
     },
+
+    // ===== Cast (NEW ONLY) =====
     {
       name: 'cast',
       label: 'Cast',
       type: 'array',
       fields: [
         {
-          name: 'name',
-          label: 'Name',
+          name: 'nameEn',
+          label: 'Name (EN)',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'nameAr',
+          label: 'Name (AR)',
           type: 'text',
           required: true,
         },
       ],
     },
+
     {
       name: 'sortOrder',
       label: 'Sort order',

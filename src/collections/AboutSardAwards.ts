@@ -8,33 +8,53 @@ const AboutSardAwards: CollectionConfig = {
     plural: 'About Sard Awards',
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'sortOrder', 'isActive'],
+    useAsTitle: 'titleEn',
+    defaultColumns: ['titleEn', 'titleAr', 'sortOrder', 'isActive'],
   },
   access: { read: () => true },
   fields: [
+    // ===== NEW ONLY (EN/AR) =====
     {
-      name: 'title',
-      label: 'Award name',
+      name: 'titleEn',
+      label: 'Award name (EN)',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'titleAr',
+      label: 'Award name (AR)',
       type: 'text',
       required: true,
     },
 
-    // ✅ احتياطي (مش هنستخدمه دلوقتي)
+    // ===== Description (EN/AR) (optional) =====
     {
-      name: 'description',
-      label: 'Description (optional)',
+      name: 'descriptionEn',
+      label: 'Description (EN) (optional)',
+      type: 'richText',
+      required: false,
+    },
+    {
+      name: 'descriptionAr',
+      label: 'Description (AR) (optional)',
       type: 'richText',
       required: false,
     },
 
-    // ✅ احتياطي (مش هنستخدمه دلوقتي)
+    // ===== Images (EN/AR) (optional) =====
     {
-      name: 'image',
-      label: 'Image (optional)',
+      name: 'imageEn',
+      label: 'Image (EN) (optional)',
       type: 'upload',
       relationTo: 'media',
       required: false,
+    },
+    {
+      name: 'imageAr',
+      label: 'Image (AR) (optional)',
+      type: 'upload',
+      relationTo: 'media',
+      required: false, // ✅ صورة عربي اختياري
     },
 
     {

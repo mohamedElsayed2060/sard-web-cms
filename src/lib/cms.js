@@ -7,7 +7,8 @@
 // - On Railway/Prod: set NEXT_PUBLIC_CMS_URL to your deployed domain (same service).
 // - On local dev: NEXT_PUBLIC_CMS_URL can be http://localhost:3000
 const FALLBACK_ORIGIN = 'http://localhost:3000'
-
+const DEFAULT_REVALIDATE = Number(process.env.CMS_REVALIDATE_SECONDS ?? 60)
+const RV = Number.isFinite(DEFAULT_REVALIDATE) ? DEFAULT_REVALIDATE : 60
 export const CMS = (
   process.env.NEXT_PUBLIC_CMS_URL ||
   process.env.NEXT_PUBLIC_SITE_URL ||
@@ -25,8 +26,14 @@ export async function fetchJSON(path) {
 
 export async function getLayoutProps() {
   const [header, footer] = await Promise.all([
-    fetchJSON(`/api/globals/site-header?depth=2`).catch(() => null),
-    fetchJSON(`/api/globals/site-footer?depth=2`).catch(() => null),
+    fetchJSON(`/api/globals/site-header?depth=2`, {
+      revalidate: RV,
+      tags: ['global:site-header'],
+    }).catch(() => null),
+    fetchJSON(`/api/globals/site-footer?depth=2`, {
+      revalidate: RV,
+      tags: ['global:site-footer'],
+    }).catch(() => null),
   ])
   return { header, footer }
 }
@@ -44,10 +51,14 @@ export function withLayout(gssp) {
 }
 export async function getMariamPageData() {
   const [hero, worksRes] = await Promise.all([
-    // Global الجديد
-    fetchJSON('/api/globals/mariam-about?depth=2'),
-    // Collection للأعمال
-    fetchJSON('/api/mariam-works?depth=2&limit=50&sort=sortOrder'),
+    fetchJSON('/api/globals/mariam-about?depth=2', {
+      revalidate: RV,
+      tags: ['global:mariam-about'],
+    }),
+    fetchJSON('/api/mariam-works?depth=2&limit=50&sort=sortOrder', {
+      revalidate: RV,
+      tags: ['collection:mariam-works'],
+    }),
   ])
 
   const works = worksRes?.docs ?? []
@@ -56,20 +67,30 @@ export async function getMariamPageData() {
 }
 export async function getSiteHeader() {
   // slug بتاع الـ Global في Payload
-  const data = await fetchJSON('/api/globals/site-header')
+  const data = await fetchJSON('/api/globals/site-header', {
+    revalidate: RV,
+    tags: ['global:site-header'],
+  })
   return data
 }
 
 export async function getSiteFooter() {
-  const data = await fetchJSON('/api/globals/site-footer')
+  const data = await fetchJSON('/api/globals/site-footer', {
+    revalidate: RV,
+    tags: ['global:site-footer'],
+  })
   return data
 }
 export async function getLearningPageData() {
   const [hero, sardLearning] = await Promise.all([
-    // Global الجديد
-    fetchJSON('/api/globals/learning-about?depth=2'),
-    // Collection للأعمال
-    fetchJSON('/api/sard-learning?depth=2&limit=50&sort=sortOrder'),
+    fetchJSON('/api/globals/learning-about?depth=2', {
+      revalidate: RV,
+      tags: ['global:learning-about'],
+    }),
+    fetchJSON('/api/sard-learning?depth=2&limit=50&sort=sortOrder', {
+      revalidate: RV,
+      tags: ['collection:sard-learning'],
+    }),
   ])
 
   // const works = worksRes?.docs ?? [];
@@ -84,6 +105,7 @@ export async function getTeamMembers(section = 'aboutSard') {
   // where[displayOn][contains]=aboutSard
   const res = await fetchJSON(
     `/api/team-members?depth=2&limit=50&sort=sortOrder&where[isActive][equals]=true&where[displayOn][contains]=${section}`,
+    { revalidate: RV, tags: [`collection:team-members:${section}`] },
   )
 
   return res?.docs ?? []
@@ -93,26 +115,43 @@ export async function getTeamMembers(section = 'aboutSard') {
 export async function getGalleryBySlug(slug) {
   if (!slug) return null
   const safe = encodeURIComponent(slug)
-  const res = await fetchJSON(`/api/galleries?depth=2&limit=1&where[slug][equals]=${safe}`)
+  const res = await fetchJSON(`/api/galleries?depth=2&limit=1&where[slug][equals]=${safe}`, {
+    revalidate: RV,
+    tags: [`collection:galleries:${slug}`],
+  })
   return res?.docs?.[0] ?? null
 }
 
 export async function getAboutSardPageData() {
-  const [hero, sardAboutSard, visionMission, awardsRes, team, newestProduction] = await Promise.all(
-    [
-      fetchJSON('/api/globals/sard-milestones-about?depth=2'),
-      fetchJSON('/api/about-sard-milestones?depth=2&limit=50&sort=sortOrder'),
-      fetchJSON('/api/globals/sard-vision-mission?depth=2'),
-      fetchJSON('/api/about-sard-awards?depth=2&limit=50&sort=sortOrder'),
-      getTeamMembers('aboutSard'),
-      // ✅ Reusable gallery doc slug (create it from Payload admin)
-      getGalleryBySlug('about-sard-newest-production'),
-    ],
-  )
+  const [
+    hero,
+    // sardAboutSard, // this sard work removed
+    visionMission,
+    awardsRes,
+    team,
+    newestProduction,
+  ] = await Promise.all([
+    fetchJSON('/api/globals/sard-milestones-about?depth=2', {
+      revalidate: RV,
+      tags: ['global:sard-milestones-about'],
+    }),
+    fetchJSON('/api/globals/sard-vision-mission?depth=2', {
+      revalidate: RV,
+      tags: ['global:sard-vision-mission'],
+    }),
+    fetchJSON('/api/about-sard-awards?depth=2&limit=50&sort=sortOrder', {
+      revalidate: RV,
+      tags: ['collection:about-sard-awards'],
+    }),
+
+    getTeamMembers('aboutSard'),
+    // ✅ Reusable gallery doc slug (create it from Payload admin)
+    getGalleryBySlug('about-sard-newest-production'),
+  ])
 
   return {
     hero,
-    sardAboutSard,
+    // sardAboutSard,
     visionMission,
     awards: awardsRes?.docs ?? [],
     team,
@@ -121,10 +160,13 @@ export async function getAboutSardPageData() {
 }
 export async function getSardProductionPageData() {
   const [header, footer, gallery, hero] = await Promise.all([
-    fetchJSON('/api/globals/site-header?depth=2'),
-    fetchJSON('/api/globals/site-footer?depth=2'),
+    fetchJSON('/api/globals/site-header?depth=2', { revalidate: RV, tags: ['global:site-header'] }),
+    fetchJSON('/api/globals/site-footer?depth=2', { revalidate: RV, tags: ['global:site-footer'] }),
     getGalleryBySlug('sard-production-gallery'),
-    fetchJSON('/api/globals/sard-production-about-hero?depth=2'),
+    fetchJSON('/api/globals/sard-production-about-hero?depth=2', {
+      revalidate: RV,
+      tags: ['global:sard-production-about-hero'],
+    }),
   ])
 
   return {
@@ -136,10 +178,13 @@ export async function getSardProductionPageData() {
 }
 export async function getSardWriterRoomPageData() {
   const [header, footer, gallery, hero] = await Promise.all([
-    fetchJSON('/api/globals/site-header?depth=2'),
-    fetchJSON('/api/globals/site-footer?depth=2'),
+    fetchJSON('/api/globals/site-header?depth=2', { revalidate: RV, tags: ['global:site-header'] }),
+    fetchJSON('/api/globals/site-footer?depth=2', { revalidate: RV, tags: ['global:site-footer'] }),
     getGalleryBySlug('sard-writer-room-gallery'),
-    fetchJSON('/api/globals/sard-writer-about-hero?depth=2'),
+    fetchJSON('/api/globals/sard-writer-about-hero?depth=2', {
+      revalidate: RV,
+      tags: ['global:sard-writer-about-hero'],
+    }),
   ])
 
   return {

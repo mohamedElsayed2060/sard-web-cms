@@ -24,7 +24,7 @@ import MariamAbout from './globals/mariamAbout'
 import MariamWorks from './collections/MariamWorks'
 import learningAbout from './globals/learningAbout'
 import SardLearning from './collections/SardLearning'
-import AboutSardMilestones from './collections/AboutSardMilestones'
+// import AboutSardMilestones from './collections/AboutSardMilestones'
 import SardMilestonesAbout from './globals/SardMilestonesAbout'
 import SardVisionMission from './globals/SardVisionMission'
 import AboutSardAwards from './collections/AboutSardAwards'
@@ -70,7 +70,7 @@ export default buildConfig({
     SceneHotspots,
     MariamWorks,
     SardLearning,
-    AboutSardMilestones,
+    // AboutSardMilestones,
     AboutSardAwards,
     TeamMembers,
     Galleries,
@@ -85,9 +85,15 @@ export default buildConfig({
       port: Number(process.env.SMTP_PORT || 587),
       auth: {
         user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        // ✅ مهم: شيل أي مسافات من app password
+        pass: (process.env.SMTP_PASS || '').replace(/\s/g, ''),
       },
       secure: Number(process.env.SMTP_PORT || 587) === 465,
+
+      // ✅ Timeouts تمنع التعليق
+      connectionTimeout: 5000,
+      greetingTimeout: 5000,
+      socketTimeout: 7000,
     },
   }),
 

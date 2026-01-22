@@ -15,18 +15,32 @@ const SardWriterAbout: GlobalConfig = {
       relationTo: 'media',
       required: true,
     },
+    // ✅ NEW (optional)
+    {
+      name: 'portraitAr',
+      label: 'Portrait image (AR - optional)',
+      type: 'upload',
+      relationTo: 'media',
+      required: false,
+    },
+
     {
       name: 'allAboutLabel',
       label: '"All About" label',
-      type: 'text',
-      defaultValue: 'All ',
+      type: 'group',
+      fields: [
+        { name: 'en', type: 'text', defaultValue: 'All About' },
+        { name: 'ar', type: 'text', defaultValue: 'كل ما يتعلق بـ' },
+      ],
     },
     {
       name: 'displayName',
       label: 'Display name',
-      type: 'text',
-      required: true,
-      defaultValue: "Sard Writer's Room",
+      type: 'group',
+      fields: [
+        { name: 'en', type: 'text', required: true, defaultValue: '' },
+        { name: 'ar', type: 'text', required: true, defaultValue: '' },
+      ],
     },
     {
       type: 'row',
@@ -34,14 +48,20 @@ const SardWriterAbout: GlobalConfig = {
         {
           name: 'leftColumn',
           label: 'Left column text',
-          type: 'richText',
-          required: true,
+          type: 'group',
+          fields: [
+            { name: 'en', type: 'richText', required: true },
+            { name: 'ar', type: 'richText', required: true },
+          ],
         },
         {
           name: 'rightColumn',
           label: 'Right column text',
-          type: 'richText',
-          required: false,
+          type: 'group',
+          fields: [
+            { name: 'en', type: 'richText' },
+            { name: 'ar', type: 'richText' },
+          ],
         },
       ],
     },
