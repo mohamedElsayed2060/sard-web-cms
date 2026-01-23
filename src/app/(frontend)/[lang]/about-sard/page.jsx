@@ -15,6 +15,8 @@ import AboutSardVisionMission from '@/components/AboutSard/AboutSardVisionMissio
 import AboutSardAwards from '@/components/AboutSard/AboutSardAwards'
 import AboutSardTeam from '@/components/AboutSard/AboutSardTeam'
 import AboutSardNewestProduction from '@/components/AboutSard/AboutSardNewestProduction'
+import AboutSardGrants from '@/components/AboutSard/AboutSardGrants'
+import AboutSardPartners from '@/components/AboutSard/AboutSardPartners'
 
 export async function generateMetadata({ params }) {
   const { lang } = await params
@@ -50,6 +52,14 @@ export default async function AboutSardPage({ params }) {
       <AboutSardVisionMission data={pageData?.visionMission} bgImage={marim_bg} />
       <AboutSardAwards awards={pageData?.awards} bgImage={marim_bg} />
       <AboutSardTeam members={pageData?.team} bgImage={marim_bg} brandMark={brand_mark} />
+
+      <AboutSardGrants
+        doc={pageData?.grantsDoc}
+        bgImage={marim_bg}
+        brandMark={brand_mark}
+        lang={lang}
+      />
+      <AboutSardPartners doc={pageData?.partnersDoc} bgImage={marim_bg} lang={lang} />
       {/* ✅ New reusable gallery section (data from Payload: Galleries collection) */}
       <AboutSardNewestProduction gallery={pageData?.newestProduction} bgImage={marim_bg} />
       <MainFooter footer={footer} bgImage={marim_bg} />

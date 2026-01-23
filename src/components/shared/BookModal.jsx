@@ -32,6 +32,10 @@ export default function BookModal({
   const [phase, setPhase] = useState('idle') // idle | boot | opening | fading | shown | restore | closing
   const [canClose, setCanClose] = useState(false)
 
+  // ✅ NEW: smooth exit after doors fully close
+  const [isExiting, setIsExiting] = useState(false)
+  const EXIT_FADE_MS = 1000 // tweak: 250-450ms
+
   const bgUrl = useMemo(() => `url(${marimBg?.src || marimBg})`, [])
   const dalUrl = useMemo(() => dalImg?.src || dalImg, [])
 
@@ -49,6 +53,7 @@ export default function BookModal({
 
     async function runOpen() {
       setMounted(true)
+      setIsExiting(false) // ✅ reset exit state on open
       setCanClose(false)
 
       setPhase('boot')
@@ -78,8 +83,14 @@ export default function BookModal({
       await sleep(closeMs)
       if (cancelled) return
 
+      // ✅ doors are now fully closed — fade the whole modal smoothly
+      setIsExiting(true)
+      await sleep(EXIT_FADE_MS)
+      if (cancelled) return
+
       setPhase('idle')
       setMounted(false)
+      setIsExiting(false)
     }
 
     if (open) runOpen()
@@ -157,19 +168,21 @@ export default function BookModal({
       <motion.div
         className="fixed inset-0 z-[99999] flex items-center justify-center"
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        animate={{ opacity: isExiting ? 0 : 1 }}
         exit={{ opacity: 0 }}
+        transition={{ duration: isExiting ? EXIT_FADE_MS / 1000 : 0.25, ease: EASE }}
       >
         {/* خلفية المودال (dim) */}
         <motion.button
           type="button"
           aria-label="Close"
           className="absolute inset-0 bg-black/70"
-          onClick={() => onClose?.()}
+          // ✅ امنع القفل أثناء الانيميشن + أثناء الخروج
+          onClick={() => (canClose && !isExiting ? onClose?.() : null)}
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          animate={{ opacity: isExiting ? 0 : 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.25, ease: EASE }}
+          transition={{ duration: isExiting ? EXIT_FADE_MS / 1000 : 0.25, ease: EASE }}
         />
 
         {/* جسم المودال */}
@@ -177,17 +190,19 @@ export default function BookModal({
           className="relative overflow-hidden rounded-2xl"
           style={modalSizeStyle}
           initial={{ opacity: 0, y: 18, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
+          animate={{
+            opacity: isExiting ? 0 : 1,
+            y: 0,
+            scale: 1,
+          }}
           exit={{ opacity: 0, y: 18, scale: 0.98 }}
-          transition={{ duration: 0.5, ease: EASE }}
+          transition={{ duration: isExiting ? EXIT_FADE_MS / 1000 : 0.5, ease: EASE }}
         >
           {/* ✅ الكونتنت: سكرول داخلي Y يظهر فقط لو محتاج */}
           <div className="absolute inset-0" style={{ background: paperBg }}>
             <div
               className={[
                 'h-full w-full overflow-y-auto overscroll-contain',
-                // optional padding if you want
-                // 'p-4 md:p-6',
                 contentClassName,
               ].join(' ')}
             >
@@ -300,7 +315,7 @@ export default function BookModal({
           <button
             type="button"
             className="absolute right-3 top-3 z-[100] rounded-full bg-black/40 px-3 py-2 text-xs text-white hover:bg-black/60"
-            onClick={() => onClose?.()}
+            onClick={() => (canClose && !isExiting ? onClose?.() : null)}
           >
             Close
           </button>

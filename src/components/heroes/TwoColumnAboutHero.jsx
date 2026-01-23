@@ -60,7 +60,7 @@ export default function TwoColumnAboutHero({
           bgImage={bgImage}
         >
           <div className="grid gap-8 md:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)] md:gap-10">
-            <SectionReveal variant="slideRight" delay={1} duration={0.8}>
+            <SectionReveal variant="slideRight" delay={0.5}>
               <div className="relative overflow-hidden rounded-[24px]">
                 {portraitSrc ? (
                   <CMSImage
@@ -79,7 +79,7 @@ export default function TwoColumnAboutHero({
               </div>
             </SectionReveal>
 
-            <SectionReveal variant="slideLeft" delay={1} duration={0.8}>
+            <SectionReveal variant="slideLeft" delay={0.5}>
               <div className="space-y-8 text-[#252525]">
                 <div className="space-y-4">
                   <div className="flex items-center gap-6">

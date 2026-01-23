@@ -73,9 +73,11 @@ export interface Config {
     'mariam-works': MariamWork;
     'sard-learning': SardLearning;
     'about-sard-awards': AboutSardAward;
+    'about-sard-grants': AboutSardGrant;
     'team-members': TeamMember;
     galleries: Gallery;
     'contact-submissions': ContactSubmission;
+    'about-sard-partners': AboutSardPartner;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -88,9 +90,11 @@ export interface Config {
     'mariam-works': MariamWorksSelect<false> | MariamWorksSelect<true>;
     'sard-learning': SardLearningSelect<false> | SardLearningSelect<true>;
     'about-sard-awards': AboutSardAwardsSelect<false> | AboutSardAwardsSelect<true>;
+    'about-sard-grants': AboutSardGrantsSelect<false> | AboutSardGrantsSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     galleries: GalleriesSelect<false> | GalleriesSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
+    'about-sard-partners': AboutSardPartnersSelect<false> | AboutSardPartnersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -374,6 +378,88 @@ export interface AboutSardAward {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-sard-grants".
+ */
+export interface AboutSardGrant {
+  id: string;
+  sectionTitleEn: string;
+  sectionTitleAr: string;
+  descriptionEn?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  descriptionAr?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  items?:
+    | {
+        year: string;
+        captionEn: string;
+        captionAr?: string | null;
+        detailsEn?: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        detailsAr?: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        image?: (string | null) | Media;
+        isActive?: boolean | null;
+        sortOrder?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "team-members".
  */
 export interface TeamMember {
@@ -474,6 +560,26 @@ export interface ContactSubmission {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-sard-partners".
+ */
+export interface AboutSardPartner {
+  id: string;
+  sectionTitleEn: string;
+  sectionTitleAr: string;
+  items?:
+    | {
+        logo: string | Media;
+        name?: string | null;
+        isActive?: boolean | null;
+        sortOrder?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -504,6 +610,10 @@ export interface PayloadLockedDocument {
         value: string | AboutSardAward;
       } | null)
     | ({
+        relationTo: 'about-sard-grants';
+        value: string | AboutSardGrant;
+      } | null)
+    | ({
         relationTo: 'team-members';
         value: string | TeamMember;
       } | null)
@@ -514,6 +624,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'contact-submissions';
         value: string | ContactSubmission;
+      } | null)
+    | ({
+        relationTo: 'about-sard-partners';
+        value: string | AboutSardPartner;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -693,6 +807,31 @@ export interface AboutSardAwardsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-sard-grants_select".
+ */
+export interface AboutSardGrantsSelect<T extends boolean = true> {
+  sectionTitleEn?: T;
+  sectionTitleAr?: T;
+  descriptionEn?: T;
+  descriptionAr?: T;
+  items?:
+    | T
+    | {
+        year?: T;
+        captionEn?: T;
+        captionAr?: T;
+        detailsEn?: T;
+        detailsAr?: T;
+        image?: T;
+        isActive?: T;
+        sortOrder?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "team-members_select".
  */
 export interface TeamMembersSelect<T extends boolean = true> {
@@ -751,6 +890,25 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   subject?: T;
   message?: T;
   company?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-sard-partners_select".
+ */
+export interface AboutSardPartnersSelect<T extends boolean = true> {
+  sectionTitleEn?: T;
+  sectionTitleAr?: T;
+  items?:
+    | T
+    | {
+        logo?: T;
+        name?: T;
+        isActive?: T;
+        sortOrder?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -861,6 +1019,9 @@ export interface Scene {
   backgroundImageAr?: (string | null) | Media;
   hintEn: string;
   hintAr: string;
+  canvasWidthLg?: number | null;
+  canvasWidthMd?: number | null;
+  canvasWidthSm?: number | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1462,6 +1623,9 @@ export interface SceneSelect<T extends boolean = true> {
   backgroundImageAr?: T;
   hintEn?: T;
   hintAr?: T;
+  canvasWidthLg?: T;
+  canvasWidthMd?: T;
+  canvasWidthSm?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

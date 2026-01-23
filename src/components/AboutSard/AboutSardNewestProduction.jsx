@@ -112,9 +112,9 @@ export default function AboutSardNewestProduction({ gallery, bgImage, lang: lang
     setModalOpen(false)
     setActiveItem(null)
   }
-
+  // variant="scrollFlip"
   return (
-    <SectionReveal variant="scrollFlip" delay={0.12} ease={EASE}>
+    <SectionReveal delay={0.12} ease={EASE}>
       <section className="max-w-[1490px] mx-auto px-3">
         <PageContentReveal
           paperColor="#F4E8D7"

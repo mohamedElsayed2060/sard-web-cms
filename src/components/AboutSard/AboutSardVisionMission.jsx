@@ -59,7 +59,7 @@ export default function AboutSardVisionMission({ data, bgImage, lang: langProp }
   const valuesBody = pickRich(data?.values?.bodyEn, data?.values?.bodyAr, lang)
 
   return (
-    <SectionReveal variant="scrollFlip" once={false} delay={0.1} duration={1.8}>
+    <SectionReveal once={true} delay={0.1}>
       <section className="bg-black px-3 pb-5 max-w-[1490px] mx-auto">
         <PageContentReveal
           variant="slideUp"

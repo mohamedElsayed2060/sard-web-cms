@@ -1,4 +1,4 @@
-// src/globals/scene.ts
+// cms/src/globals/scene.ts
 import type { GlobalConfig } from 'payload'
 
 const Scene: GlobalConfig = {
@@ -45,6 +45,39 @@ const Scene: GlobalConfig = {
       type: 'text',
       required: true,
       defaultValue: 'استكشف سارد بالضغط على النقاط المضيئة.',
+    },
+
+    // ✅ Canvas widths (world size) per breakpoint
+    {
+      type: 'collapsible',
+      label: 'Canvas / Drag Map Settings',
+      admin: { initCollapsed: true },
+      fields: [
+        {
+          name: 'canvasWidthLg',
+          label: 'Canvas width on Large screens (px)',
+          type: 'number',
+          defaultValue: 1600,
+          min: 900,
+          max: 5000,
+        },
+        {
+          name: 'canvasWidthMd',
+          label: 'Canvas width on Medium screens (px)',
+          type: 'number',
+          defaultValue: 1400,
+          min: 700,
+          max: 4000,
+        },
+        {
+          name: 'canvasWidthSm',
+          label: 'Canvas width on Small screens (px)',
+          type: 'number',
+          defaultValue: 1100,
+          min: 500,
+          max: 3000,
+        },
+      ],
     },
   ],
 }

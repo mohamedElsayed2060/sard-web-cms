@@ -73,9 +73,9 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
   const [active, setActive] = useState(null)
 
   if (!list.length) return null
-
+  // variant="scrollFlip"
   return (
-    <SectionReveal variant="scrollFlip" delay={0.1}>
+    <SectionReveal delay={0.1}>
       <section className="bg-black px-3 pb-5 max-w-[1490px] mx-auto">
         <PageContentReveal
           variant="slideUp"

@@ -28,7 +28,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 export function TransitionProvider({ children }) {
   const initialVariant = getTransitionVariantFromEnv()
-  const [ui, setUI] = useState({ visible: false, phase: 'idle', variant: initialVariant })
+  const initialUI =
+    initialVariant === 'stack'
+      ? { visible: true, phase: 'stack_close', variant: 'stack' } // (اختياري) للستاك
+      : { visible: true, phase: 'boot', variant: 'doors' } // ✅ الأبواب مقفولة من أول رندر
+
+  const [ui, setUI] = useState(initialUI)
 
   const lockRef = useRef(false)
   const currentPathRef = useRef(null)
@@ -200,6 +205,18 @@ export function TransitionProvider({ children }) {
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
+  }, [apiBase])
+  useEffect(() => {
+    const onPageShow = (e) => {
+      // ✅ لو المتصفح رجّع الصفحة من الـ bfcache
+      if (e.persisted) {
+        const v = getTransitionVariantFromEnv()
+        apiBase.runEnterSequence({ logoMs: 520, openMs: 1050, fadeMs: 550 }, v)
+      }
+    }
+
+    window.addEventListener('pageshow', onPageShow)
+    return () => window.removeEventListener('pageshow', onPageShow)
   }, [apiBase])
 
   // ✅ أول تحميل / ريفريش

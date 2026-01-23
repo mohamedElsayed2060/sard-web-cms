@@ -17,9 +17,33 @@ export const CMS = (
 
 export const imgUrl = (file) => (file?.url ? file.url : null)
 
-export async function fetchJSON(path) {
+export async function fetchJSON(path, options = {}) {
+  const { revalidate, tags, cache: cacheOverride, ...init } = options || {}
+
   const url = new URL(path, CMS).toString()
-  const res = await fetch(url, { cache: 'no-store' })
+
+  // لو فيه revalidate/tags هنخليها قابلة للكاش
+  const cache =
+    cacheOverride ??
+    (typeof revalidate === 'number' || (Array.isArray(tags) && tags.length)
+      ? 'force-cache'
+      : 'no-store')
+
+  const next =
+    typeof revalidate === 'number' || (Array.isArray(tags) && tags.length)
+      ? {
+          ...(typeof revalidate === 'number' ? { revalidate } : null),
+          ...(Array.isArray(tags) && tags.length ? { tags } : null),
+          ...(init.next || {}),
+        }
+      : init.next
+
+  const res = await fetch(url, {
+    ...init,
+    cache,
+    ...(next ? { next } : null),
+  })
+
   if (!res.ok) throw new Error(`Failed to fetch ${path} (${res.status})`)
   return res.json()
 }
@@ -128,6 +152,8 @@ export async function getAboutSardPageData() {
     // sardAboutSard, // this sard work removed
     visionMission,
     awardsRes,
+    grantsRes, // ✅ NEW
+    partnersRes,
     team,
     newestProduction,
   ] = await Promise.all([
@@ -144,20 +170,34 @@ export async function getAboutSardPageData() {
       tags: ['collection:about-sard-awards'],
     }),
 
+    // ✅ About Sard Grants (single doc in collection)
+    fetchJSON('/api/about-sard-grants?depth=2&limit=1', {
+      revalidate: RV,
+      tags: ['collection:about-sard-grants'],
+    }),
+    // ✅ partners doc
+    fetchJSON('/api/about-sard-partners?depth=2&limit=1', {
+      revalidate: RV,
+      tags: ['collection:about-sard-partners'],
+    }),
     getTeamMembers('aboutSard'),
     // ✅ Reusable gallery doc slug (create it from Payload admin)
     getGalleryBySlug('about-sard-newest-production'),
   ])
+  console.log(grantsRes?.docs[0])
 
   return {
     hero,
     // sardAboutSard,
     visionMission,
     awards: awardsRes?.docs ?? [],
+    grantsDoc: grantsRes?.docs?.[0] ?? null, // ✅ NEW
+    partnersDoc: partnersRes?.docs?.[0] ?? null,
     team,
     newestProduction,
   }
 }
+
 export async function getSardProductionPageData() {
   const [header, footer, gallery, hero] = await Promise.all([
     fetchJSON('/api/globals/site-header?depth=2', { revalidate: RV, tags: ['global:site-header'] }),

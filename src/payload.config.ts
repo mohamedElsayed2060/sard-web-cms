@@ -32,6 +32,9 @@ import TeamMembers from './collections/TeamMembers'
 import Galleries from './collections/Galleries'
 import SardProductionAbout from './globals/sardProductionHero'
 import SardWriterAbout from './globals/sardWriterHero'
+import AboutSardGrants from './collections/AboutSardGrants'
+import AboutSardPartners from './collections/AboutSardPartners'
+
 import { ContactSubmissions } from './collections/ContactSubmissions'
 // import AdminLogo from "./assets/favicon.png"
 // import AdminIcon from "./assets/favicon.png"
@@ -72,9 +75,11 @@ export default buildConfig({
     SardLearning,
     // AboutSardMilestones,
     AboutSardAwards,
+    AboutSardGrants,
     TeamMembers,
     Galleries,
     ContactSubmissions,
+    AboutSardPartners,
   ],
   email: nodemailerAdapter({
     defaultFromAddress:
