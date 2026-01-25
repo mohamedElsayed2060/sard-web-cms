@@ -7,6 +7,7 @@ import MainFooter from '@/components/layout/MainFooter'
 import AboutSardWriterHero from '@/components/SardWriterRoom/AboutSardWriterHero'
 import { getSardWriterRoomPageData } from '@/lib/cms'
 import SardWriterRoomGallerySection from '@/components/SardWriterRoom/SardWriterRoomGallerySection'
+import LatestNewsBar from '@/components/layout/LatestNewsBar'
 
 export async function generateMetadata({ params }) {
   const { lang } = await params
@@ -30,10 +31,12 @@ export const revalidate = 60
 export default async function SardWriterRoomPage({ params }) {
   const { lang = 'en' } = await params
 
-  const { header, footer, gallery, hero } = await getSardWriterRoomPageData()
+  const { header, footer, gallery, hero, latestNews } = await getSardWriterRoomPageData()
   return (
     <main className="min-h-[100dvh] bg-black text-white">
       <MainHeader header={header} bgImage={marim_bg} />
+      <LatestNewsBar data={latestNews} bgImage={marim_bg} lang={lang} />
+
       <AboutSardWriterHero data={hero} bgImage={marim_bg} lang={lang} />
 
       <SardWriterRoomGallerySection gallery={gallery} bgImage={writer_room} />

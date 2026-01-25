@@ -11,8 +11,9 @@ import PageContentReveal from '../PageContentReveal'
 import { useTransitionUI } from '../transition/TransitionProvider'
 import { getLangFromPath, navigateSard } from '@/lib/sardNavigation'
 
-const ACCENT = '#871D3F'
+const ACCENT = '#fff'
 const EPS = 0.5
+const USE_MOBILE_POINTS = false
 
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
 const pickText = (en, ar, lang) => (lang === 'ar' ? ar || en || '' : en || ar || '')
@@ -338,6 +339,8 @@ export default function SceneHome({ scene, hotspots }) {
             {hotspots?.map((spot, index) => {
               const xPct = isMobile && spot.xMobile != null ? spot.xMobile : spot.x
               const yPct = isMobile && spot.yMobile != null ? spot.yMobile : spot.y
+              // const xPct = USE_MOBILE_POINTS && isMobile && spot.xMobile != null ? spot.xMobile : spot.x
+              // const yPct = USE_MOBILE_POINTS && isMobile && spot.yMobile != null ? spot.yMobile : spot.y
 
               const wx = (Number(xPct) / 100) * canvasSize.w
               const wy = (Number(yPct) / 100) * canvasSize.h

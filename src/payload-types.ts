@@ -105,6 +105,7 @@ export interface Config {
   globals: {
     'site-header': SiteHeader;
     'site-footer': SiteFooter;
+    'latest-news-bar': LatestNewsBar;
     scene: Scene;
     'mariam-about': MariamAbout;
     'learning-about': LearningAbout;
@@ -116,6 +117,7 @@ export interface Config {
   globalsSelect: {
     'site-header': SiteHeaderSelect<false> | SiteHeaderSelect<true>;
     'site-footer': SiteFooterSelect<false> | SiteFooterSelect<true>;
+    'latest-news-bar': LatestNewsBarSelect<false> | LatestNewsBarSelect<true>;
     scene: SceneSelect<false> | SceneSelect<true>;
     'mariam-about': MariamAboutSelect<false> | MariamAboutSelect<true>;
     'learning-about': LearningAboutSelect<false> | LearningAboutSelect<true>;
@@ -1010,6 +1012,30 @@ export interface SiteFooter {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "latest-news-bar".
+ */
+export interface LatestNewsBar {
+  id: string;
+  enabled?: boolean | null;
+  accentColor?: string | null;
+  items: {
+    isActive?: boolean | null;
+    order?: number | null;
+    thumb?: (string | null) | Media;
+    dateText?: string | null;
+    titleEn: string;
+    titleAr: string;
+    summaryEn?: string | null;
+    summaryAr?: string | null;
+    href?: string | null;
+    newTab?: boolean | null;
+    id?: string | null;
+  }[];
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "scene".
  */
 export interface Scene {
@@ -1609,6 +1635,32 @@ export interface SiteFooterSelect<T extends boolean = true> {
       };
   copyrightEn?: T;
   copyrightAr?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "latest-news-bar_select".
+ */
+export interface LatestNewsBarSelect<T extends boolean = true> {
+  enabled?: T;
+  accentColor?: T;
+  items?:
+    | T
+    | {
+        isActive?: T;
+        order?: T;
+        thumb?: T;
+        dateText?: T;
+        titleEn?: T;
+        titleAr?: T;
+        summaryEn?: T;
+        summaryAr?: T;
+        href?: T;
+        newTab?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

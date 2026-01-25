@@ -47,9 +47,15 @@ export async function fetchJSON(path, options = {}) {
   if (!res.ok) throw new Error(`Failed to fetch ${path} (${res.status})`)
   return res.json()
 }
-
+export async function getLatestNewsBar() {
+  const res = await fetchJSON('/api/globals/latest-news-bar?depth=2', {
+    revalidate: 60,
+    tags: ['latest-news-bar'],
+  })
+  return res || null
+}
 export async function getLayoutProps() {
-  const [header, footer] = await Promise.all([
+  const [header, footer, latestNewsBar] = await Promise.all([
     fetchJSON(`/api/globals/site-header?depth=2`, {
       revalidate: RV,
       tags: ['global:site-header'],
@@ -58,8 +64,12 @@ export async function getLayoutProps() {
       revalidate: RV,
       tags: ['global:site-footer'],
     }).catch(() => null),
+    fetchJSON('/api/globals/latest-news-bar?depth=2', {
+      revalidate: 60,
+      tags: ['latest-news-bar'],
+    }).catch(() => null),
   ])
-  return { header, footer }
+  return { header, footer, latestNewsBar }
 }
 
 // HOC بسيط يحقن layout في أي getServerSideProps
@@ -199,7 +209,7 @@ export async function getAboutSardPageData() {
 }
 
 export async function getSardProductionPageData() {
-  const [header, footer, gallery, hero] = await Promise.all([
+  const [header, footer, gallery, hero, latestNews] = await Promise.all([
     fetchJSON('/api/globals/site-header?depth=2', { revalidate: RV, tags: ['global:site-header'] }),
     fetchJSON('/api/globals/site-footer?depth=2', { revalidate: RV, tags: ['global:site-footer'] }),
     getGalleryBySlug('sard-production-gallery'),
@@ -207,6 +217,10 @@ export async function getSardProductionPageData() {
       revalidate: RV,
       tags: ['global:sard-production-about-hero'],
     }),
+    fetchJSON('/api/globals/latest-news-bar?depth=2', {
+      revalidate: 60,
+      tags: ['latest-news-bar'],
+    }).catch(() => null),
   ])
 
   return {
@@ -214,10 +228,11 @@ export async function getSardProductionPageData() {
     footer,
     gallery,
     hero,
+    latestNews,
   }
 }
 export async function getSardWriterRoomPageData() {
-  const [header, footer, gallery, hero] = await Promise.all([
+  const [header, footer, gallery, hero, latestNews] = await Promise.all([
     fetchJSON('/api/globals/site-header?depth=2', { revalidate: RV, tags: ['global:site-header'] }),
     fetchJSON('/api/globals/site-footer?depth=2', { revalidate: RV, tags: ['global:site-footer'] }),
     getGalleryBySlug('sard-writer-room-gallery'),
@@ -225,6 +240,10 @@ export async function getSardWriterRoomPageData() {
       revalidate: RV,
       tags: ['global:sard-writer-about-hero'],
     }),
+    fetchJSON('/api/globals/latest-news-bar?depth=2', {
+      revalidate: 60,
+      tags: ['latest-news-bar'],
+    }).catch(() => null),
   ])
 
   return {
@@ -232,5 +251,6 @@ export async function getSardWriterRoomPageData() {
     footer,
     gallery,
     hero,
+    latestNews,
   }
 }

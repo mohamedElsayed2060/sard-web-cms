@@ -36,6 +36,7 @@ import AboutSardGrants from './collections/AboutSardGrants'
 import AboutSardPartners from './collections/AboutSardPartners'
 
 import { ContactSubmissions } from './collections/ContactSubmissions'
+import LatestNewsBar from './globals/LatestNewsBar'
 // import AdminLogo from "./assets/favicon.png"
 // import AdminIcon from "./assets/favicon.png"
 
@@ -43,6 +44,7 @@ export default buildConfig({
   globals: [
     Header,
     Footer,
+    LatestNewsBar,
     Scene,
     MariamAbout,
     learningAbout,

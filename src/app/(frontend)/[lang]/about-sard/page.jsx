@@ -2,7 +2,7 @@
 import MainHeader from '@/components/layout/MainHeader'
 import MainFooter from '@/components/layout/MainFooter'
 
-import { getAboutSardPageData } from '@/lib/cms'
+import { getAboutSardPageData, getLatestNewsBar } from '@/lib/cms'
 import { getSiteHeader, getSiteFooter } from '@/lib/cms'
 import marim_bg from '@/assets/marim-bg.png'
 
@@ -17,6 +17,7 @@ import AboutSardTeam from '@/components/AboutSard/AboutSardTeam'
 import AboutSardNewestProduction from '@/components/AboutSard/AboutSardNewestProduction'
 import AboutSardGrants from '@/components/AboutSard/AboutSardGrants'
 import AboutSardPartners from '@/components/AboutSard/AboutSardPartners'
+import LatestNewsBar from '@/components/layout/LatestNewsBar'
 
 export async function generateMetadata({ params }) {
   const { lang } = await params
@@ -39,15 +40,18 @@ export const revalidate = 60
 
 export default async function AboutSardPage({ params }) {
   const { lang = 'en' } = await params
-  const [pageData, header, footer] = await Promise.all([
+  const [pageData, header, footer, latestNews] = await Promise.all([
     getAboutSardPageData(),
     getSiteHeader(),
     getSiteFooter(),
+    getLatestNewsBar(),
   ])
   return (
     <main className="min-h-[100dvh] bg-black text-white">
       <MainHeader header={header} bgImage={marim_bg} />
+      <LatestNewsBar data={latestNews} bgImage={marim_bg} lang={lang} />
       <AboutSardHero data={pageData?.hero} bgImage={marim_bg} lang={lang} />
+
       {/* <AboutSardWork works={pageData?.sardAboutSard?.docs} bgImage={sard_milston} /> */}
       <AboutSardVisionMission data={pageData?.visionMission} bgImage={marim_bg} />
       <AboutSardAwards awards={pageData?.awards} bgImage={marim_bg} />
