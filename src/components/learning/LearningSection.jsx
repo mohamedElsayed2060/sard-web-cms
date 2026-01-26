@@ -121,7 +121,7 @@ export default function LearningSection({ works, bgImage, lang: langProp }) {
                     type: 'slide',
                     pagination: false,
                     gap: '0.75rem',
-                    arrows: works.length > 3,
+                    arrows: false,
                     drag: 'free',
                     autoWidth: true,
                   }}

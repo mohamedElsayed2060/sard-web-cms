@@ -344,3 +344,6 @@ html[lang='ar'],
   --font-title: var(--font-title-ar);
   --font-body: var(--font-body-ar);
 }
+.splide__arrow {
+  display: none;
+}
