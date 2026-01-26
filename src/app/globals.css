@@ -345,5 +345,11 @@ html[lang='ar'],
   --font-body: var(--font-body-ar);
 }
 .splide__arrow {
-  display: none;
+  display: none !important;
+}
+.splide__arrow .splide__arrow--prev {
+  display: none !important;
+}
+.splide__arrow .splide__arrow--next {
+  display: none !important;
 }
