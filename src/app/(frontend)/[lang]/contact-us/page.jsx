@@ -1,7 +1,7 @@
 import MainHeader from '@/components/layout/MainHeader'
 import MainFooter from '@/components/layout/MainFooter'
 import LatestNewsBar from '@/components/layout/LatestNewsBar'
-import ContactForm from '@/components/contact/ContactForm'
+import ContactForm from '@/components/Contact/ContactForm'
 
 import { getSiteHeader, getSiteFooter, getLatestNewsBar, getContactUsPage } from '@/lib/cms'
 import marim_bg from '@/assets/marim-bg.png'
