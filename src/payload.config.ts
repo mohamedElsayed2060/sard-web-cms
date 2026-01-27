@@ -39,6 +39,7 @@ import { ContactSubmissions } from './collections/ContactSubmissions'
 import LatestNewsBar from './globals/LatestNewsBar'
 // import AdminLogo from "./assets/favicon.png"
 // import AdminIcon from "./assets/favicon.png"
+import ContactUs from './globals/ContactUs'
 
 export default buildConfig({
   globals: [
@@ -52,6 +53,7 @@ export default buildConfig({
     SardVisionMission,
     SardProductionAbout,
     SardWriterAbout,
+    ContactUs,
   ],
   admin: {
     user: Users.slug,

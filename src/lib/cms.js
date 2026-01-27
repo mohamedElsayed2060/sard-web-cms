@@ -254,3 +254,11 @@ export async function getSardWriterRoomPageData() {
     latestNews,
   }
 }
+export async function getContactUsPage() {
+  const data = await fetchJSON('/api/globals/contact-us?depth=0', {
+    revalidate: RV,
+    tags: ['global:contact-us'],
+  }).catch(() => null)
+
+  return data || null
+}

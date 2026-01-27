@@ -1,6 +1,7 @@
 // src/app/layout.jsx
 import './globals.css'
 import { Inter } from 'next/font/google'
+import DisableCtrlWheelZoom from '@/components/DisableCtrlWheelZoom'
 
 const inter = Inter({ subsets: ['latin'] })
 const SITE_URL =
@@ -22,7 +23,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className + ' bg-black text-white overflow-x-hidden'}>{children}</body>
+      <body className={inter.className + ' bg-black text-white overflow-x-hidden'}>
+        <DisableCtrlWheelZoom />
+        {children}
+      </body>
     </html>
   )
 }

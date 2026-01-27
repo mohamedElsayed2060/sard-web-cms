@@ -75,7 +75,7 @@ export default function AboutSardPartners({ doc, bgImage, lang: langProp }) {
                     1024: { perPage: 3 },
                     768: { perPage: 2.5 },
                     640: { perPage: 2 },
-                    480: { perPage: 1.4 },
+                    480: { perPage: 1.5 },
                   },
 
                   // ✅ Auto Scroll

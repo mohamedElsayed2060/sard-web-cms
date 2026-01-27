@@ -113,6 +113,7 @@ export interface Config {
     'sard-vision-mission': SardVisionMission;
     'sard-production-about-hero': SardProductionAboutHero;
     'sard-writer-about-hero': SardWriterAboutHero;
+    'contact-us': ContactUs;
   };
   globalsSelect: {
     'site-header': SiteHeaderSelect<false> | SiteHeaderSelect<true>;
@@ -125,6 +126,7 @@ export interface Config {
     'sard-vision-mission': SardVisionMissionSelect<false> | SardVisionMissionSelect<true>;
     'sard-production-about-hero': SardProductionAboutHeroSelect<false> | SardProductionAboutHeroSelect<true>;
     'sard-writer-about-hero': SardWriterAboutHeroSelect<false> | SardWriterAboutHeroSelect<true>;
+    'contact-us': ContactUsSelect<false> | ContactUsSelect<true>;
   };
   locale: null;
   user: User & {
@@ -1581,6 +1583,84 @@ export interface SardWriterAboutHero {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-us".
+ */
+export interface ContactUs {
+  id: string;
+  en: {
+    pageTitle: string;
+    contactLines: {
+      phoneLabel: string;
+      phoneValue: string;
+      emailLabel: string;
+      emailValue: string;
+    };
+    locationCard: {
+      title: string;
+      subtitle: string;
+      /**
+       * Google Maps EMBED url (starts with https://www.google.com/maps/embed?pb=...)
+       */
+      mapEmbedUrl: string;
+      mapHeight: number;
+    };
+    formCard: {
+      title: string;
+      endpoint: string;
+      nameLabel: string;
+      namePlaceholder: string;
+      emailLabel: string;
+      emailPlaceholder: string;
+      subjectLabel: string;
+      subjectPlaceholder: string;
+      messageLabel: string;
+      messagePlaceholder: string;
+      requiredError: string;
+      successMessage: string;
+      genericError: string;
+      networkError: string;
+      sendButton: string;
+      sendingButton: string;
+    };
+  };
+  ar: {
+    pageTitle: string;
+    contactLines: {
+      phoneLabel: string;
+      phoneValue: string;
+      emailLabel: string;
+      emailValue: string;
+    };
+    locationCard: {
+      title: string;
+      subtitle: string;
+      mapEmbedUrl: string;
+      mapHeight: number;
+    };
+    formCard: {
+      title: string;
+      endpoint: string;
+      nameLabel: string;
+      namePlaceholder: string;
+      emailLabel: string;
+      emailPlaceholder: string;
+      subjectLabel: string;
+      subjectPlaceholder: string;
+      messageLabel: string;
+      messagePlaceholder: string;
+      requiredError: string;
+      successMessage: string;
+      genericError: string;
+      networkError: string;
+      sendButton: string;
+      sendingButton: string;
+    };
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-header_select".
  */
 export interface SiteHeaderSelect<T extends boolean = true> {
@@ -1887,6 +1967,97 @@ export interface SardWriterAboutHeroSelect<T extends boolean = true> {
     | {
         en?: T;
         ar?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-us_select".
+ */
+export interface ContactUsSelect<T extends boolean = true> {
+  en?:
+    | T
+    | {
+        pageTitle?: T;
+        contactLines?:
+          | T
+          | {
+              phoneLabel?: T;
+              phoneValue?: T;
+              emailLabel?: T;
+              emailValue?: T;
+            };
+        locationCard?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              mapEmbedUrl?: T;
+              mapHeight?: T;
+            };
+        formCard?:
+          | T
+          | {
+              title?: T;
+              endpoint?: T;
+              nameLabel?: T;
+              namePlaceholder?: T;
+              emailLabel?: T;
+              emailPlaceholder?: T;
+              subjectLabel?: T;
+              subjectPlaceholder?: T;
+              messageLabel?: T;
+              messagePlaceholder?: T;
+              requiredError?: T;
+              successMessage?: T;
+              genericError?: T;
+              networkError?: T;
+              sendButton?: T;
+              sendingButton?: T;
+            };
+      };
+  ar?:
+    | T
+    | {
+        pageTitle?: T;
+        contactLines?:
+          | T
+          | {
+              phoneLabel?: T;
+              phoneValue?: T;
+              emailLabel?: T;
+              emailValue?: T;
+            };
+        locationCard?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              mapEmbedUrl?: T;
+              mapHeight?: T;
+            };
+        formCard?:
+          | T
+          | {
+              title?: T;
+              endpoint?: T;
+              nameLabel?: T;
+              namePlaceholder?: T;
+              emailLabel?: T;
+              emailPlaceholder?: T;
+              subjectLabel?: T;
+              subjectPlaceholder?: T;
+              messageLabel?: T;
+              messagePlaceholder?: T;
+              requiredError?: T;
+              successMessage?: T;
+              genericError?: T;
+              networkError?: T;
+              sendButton?: T;
+              sendingButton?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

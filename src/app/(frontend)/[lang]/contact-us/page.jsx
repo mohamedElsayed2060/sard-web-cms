@@ -1,105 +1,92 @@
-// src/app/(frontend)/contact-us/page.jsx
 import MainHeader from '@/components/layout/MainHeader'
 import MainFooter from '@/components/layout/MainFooter'
+import LatestNewsBar from '@/components/layout/LatestNewsBar'
+import ContactForm from '@/components/contact/ContactForm'
+
+import { getSiteHeader, getSiteFooter, getLatestNewsBar, getContactUsPage } from '@/lib/cms'
+import marim_bg from '@/assets/marim-bg.png'
 import PageContentReveal from '@/components/PageContentReveal'
-import mar_bg from '@/assets/marim-bg.png'
-
-export async function generateMetadata({ params }) {
-  const { lang } = await params
-  const path = `/${lang}/contact-us`
-
-  return {
-    title: 'Contact Us',
-    description: 'Get in touch with Sard.',
-    alternates: {
-      canonical: path,
-      languages: {
-        en: `/en/contact-us`,
-        ar: `/ar/contact-us`,
-      },
-    },
-  }
-}
 
 export const revalidate = 60
 
-import ContactForm from './ContactForm'
-import { getSiteFooter, getSiteHeader } from '@/lib/cms'
+const pickLang = (data, lang) => {
+  if (!data) return {}
+  if (lang === 'ar') return data.ar || data.en || {}
+  return data.en || data.ar || {}
+}
 
-export default async function AboutSardPage() {
-  const [header, footer] = await Promise.all([getSiteHeader(), getSiteFooter()])
+export default async function ContactUsPage({ params }) {
+  const { lang = 'en' } = (await Promise.resolve(params)) || {}
+
+  const [header, footer, latestNews, pageData] = await Promise.all([
+    getSiteHeader(),
+    getSiteFooter(),
+    getLatestNewsBar(),
+    getContactUsPage(),
+  ])
+
+  const t = pickLang(pageData, lang)
+
   return (
-    <>
-      <main className="min-h-[100dvh] bg-black text-white">
-        <MainHeader header={header} bgImage={mar_bg} />
+    <div className={['bg-black  max-w-[1490px] mx-auto'].join(' ')}>
+      <MainHeader header={header} bgImage={marim_bg} />
+      <LatestNewsBar data={latestNews} bgImage={marim_bg} lang={lang} />
 
-        <section className="pt-6 px-3 max-w-[1490px] mx-auto relative z-10">
-          <PageContentReveal
-            bgImage={mar_bg}
-            paperColor=""
-            className="rounded-[24px] px-4 py-6 md:px-14 md:py-10"
-          >
-            {/* Title */}
-            <div className="mb-8 md:mb-10">
-              {/* <p className="text-[11px] uppercase tracking-[0.25em] text-black/55">Contact</p> */}
-              <h1 className="mt-2 text-[36px] md:text-[54px] italic text-black">
-                How to Contact us
-              </h1>
+      {/* نفس شكل الصفحة */}
+      <div className="pt-5 px-3">
+        <PageContentReveal
+          variant="slideUp"
+          className="rounded-[24px] px-3 py-7 md:px-18 md:py-10"
+          bgImage={marim_bg}
+        >
+          <section className="">
+            <h1 className="text-black italic text-[44px] md:text-[56px] leading-none mb-6">
+              {t.pageTitle}
+            </h1>
 
-              <div className="mt-4 flex flex-col gap-2 text-black/70">
-                <div className="text-[15px] md:text-[16px]">
-                  <span className="font-medium text-black/80">Phone: </span>
-                  <a className="hover:text-black" href="tel:+20233351757">
-                    +202 333 51 757
-                  </a>
-                </div>
-                <div className="text-[15px] md:text-[16px]">
-                  <span className="font-medium text-black/80">Email: </span>
-                  <a className="hover:text-black" href="mailto:mailbox@sard-eg.com">
-                    mailbox@sard-eg.com
-                  </a>
-                </div>
+            <div className="text-black/80 text-[14px] space-y-2 mb-8">
+              <div>
+                <span className="font-medium">{t.contactLines?.phoneLabel}</span>{' '}
+                {t.contactLines?.phoneValue}
+              </div>
+              <div>
+                <span className="font-medium">{t.contactLines?.emailLabel}</span>{' '}
+                {t.contactLines?.emailValue}
               </div>
             </div>
 
-            {/* Content */}
-            <div className="grid grid-cols-1 gap-6 md:gap-8 md:grid-cols-2">
-              {/* Map */}
-              <div className="rounded-[22px] border border-black/10 overflow-hidden bg-white/40">
-                <div className="px-6 md:px-8 py-5 border-b border-black/10">
-                  <h2 className="text-[18px] md:text-[20px] italic text-black/90">Location</h2>
-                  <p className="mt-1 text-[13px] text-black/60">
-                    Al Dokki, Giza Governorate, Egypt
-                  </p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Location card */}
+              <div className="rounded-[22px] bg-white/50 text-black p-4 border border-black/10">
+                <div className="mb-4">
+                  <h2 className="italic text-[20px]">{t.locationCard?.title}</h2>
+                  <p className="text-[12px] text-black/60 mt-1">{t.locationCard?.subtitle}</p>
                 </div>
 
-                {/* Replace the src with your preferred Google Maps embed */}
-                <div className="h-[360px] md:h-[460px] bg-black/5">
+                <div className="overflow-hidden rounded-[18px] border border-black/10">
                   <iframe
-                    title="Sard location map"
-                    className="w-full h-full"
+                    src={t.locationCard?.mapEmbedUrl}
+                    width="100%"
+                    height={t.locationCard?.mapHeight || 420}
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    src="https://www.google.com/maps?q=Dokki%2C%20Giza%20Governorate%2C%20Egypt&output=embed"
+                    style={{ border: 0 }}
+                    allowFullScreen
                   />
                 </div>
               </div>
 
-              {/* Form */}
-              <div className="rounded-[22px] border border-black/10 bg-white/40 overflow-hidden">
-                <div className="px-6 md:px-8 py-5 border-b border-black/10 flex items-center justify-between">
-                  <h2 className="text-[18px] md:text-[20px] italic text-black/90">Get in Touch!</h2>
-                </div>
-
-                <div className="p-6 md:p-8">
-                  <ContactForm />
-                </div>
+              {/* Form card */}
+              <div className="rounded-[22px] bg-white/50 text-black p-4 border border-black/10">
+                <h2 className="italic text-[20px] mb-4">{t.formCard?.title}</h2>
+                <ContactForm formCard={t.formCard} />
               </div>
             </div>
-          </PageContentReveal>
-        </section>
-        <MainFooter footer={footer} bgImage={mar_bg} />
-      </main>
-    </>
+          </section>
+        </PageContentReveal>
+      </div>
+
+      <MainFooter footer={footer} bgImage={marim_bg} />
+    </div>
   )
 }

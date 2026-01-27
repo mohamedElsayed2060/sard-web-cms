@@ -345,23 +345,19 @@ export default function SceneHome({ scene, hotspots }) {
               const wx = (Number(xPct) / 100) * canvasSize.w
               const wy = (Number(yPct) / 100) * canvasSize.h
 
-              const isActive = hoveredId === spot.id
+              // const isActive = hoveredId === spot.id
+              const tooltipVisible = isMobile ? true : hoveredId === spot.id
+              const pulseActive = !isMobile && hoveredId === spot.id
               const pulseDelay = (index % 5) * 0.6
 
               const handleHotspotPointerDown = (e) => {
                 // يمنع map-drag لما تمسك الهوتسبوت
                 e.stopPropagation()
               }
-
               const handleHotspotClick = (e) => {
                 e.stopPropagation()
-                if (isMobile) {
-                  setHoveredId((prev) => (prev === spot.id ? null : spot.id))
-                } else {
-                  go(spot.targetPath || '/')
-                }
+                go(spot.targetPath || '/')
               }
-
               return (
                 <div
                   key={spot.id}
@@ -374,8 +370,12 @@ export default function SceneHome({ scene, hotspots }) {
                 >
                   <div
                     className="relative"
-                    onMouseEnter={() => setHoveredId(spot.id)}
-                    onMouseLeave={() => setHoveredId(null)}
+                    onMouseEnter={() => {
+                      if (!isMobile) setHoveredId(spot.id)
+                    }}
+                    onMouseLeave={() => {
+                      if (!isMobile) setHoveredId(null)
+                    }}
                   >
                     <motion.button
                       type="button"
@@ -396,12 +396,12 @@ export default function SceneHome({ scene, hotspots }) {
                           boxShadow: '0 0 18px rgba(135, 29, 63, 0.55)',
                         }}
                         animate={
-                          isActive
+                          pulseActive
                             ? { scale: 1.2, opacity: 0.9 }
                             : { scale: [0.4, 2.0], opacity: [0.9, 0] }
                         }
                         transition={
-                          isActive
+                          pulseActive
                             ? { duration: 0.2 }
                             : {
                                 duration: 3.2,
@@ -423,7 +423,8 @@ export default function SceneHome({ scene, hotspots }) {
                     </motion.button>
 
                     <AnimatePresence>
-                      {isActive && (
+                      {/* {isActive && ( */}
+                      {tooltipVisible && (
                         <motion.div
                           initial={{ opacity: 0, y: 4 }}
                           animate={{ opacity: 1, y: 0 }}
