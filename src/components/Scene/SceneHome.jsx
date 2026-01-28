@@ -3,7 +3,7 @@
 
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue } from 'framer-motion'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { imgUrl } from '@/lib/cms'
@@ -13,16 +13,15 @@ import { getLangFromPath, navigateSard } from '@/lib/sardNavigation'
 
 const ACCENT = '#fff'
 const EPS = 0.5
-const USE_MOBILE_POINTS = false
 
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
 const pickText = (en, ar, lang) => (lang === 'ar' ? ar || en || '' : en || ar || '')
+
 const pickUploadUrl = (enFile, arFile, lang) => {
   const chosen = lang === 'ar' ? arFile || enFile : enFile || arFile
   return chosen ? imgUrl(chosen) : null
 }
 
-// ✅ label support: labelEn/labelAr or label
 const pickSpotLabel = (spot, lang) => {
   if (!spot) return ''
   const en = spot.labelEn || spot.label
@@ -55,18 +54,41 @@ function pickCanvasWidth(scene, vw) {
   const md = Number(scene?.canvasWidthMd || 1400)
   const sm = Number(scene?.canvasWidthSm || 1100)
 
-  // breakpoints
   if (vw >= 1024) return lg
   if (vw >= 768) return md
   return sm
 }
 
-export default function SceneHome({ scene, hotspots }) {
+function anchorTranslate(anchor = 'center') {
+  // returns translate(x,y) values in %
+  switch (anchor) {
+    case 'top-left':
+      return { tx: 0, ty: 0 }
+    case 'top':
+      return { tx: -50, ty: 0 }
+    case 'top-right':
+      return { tx: -100, ty: 0 }
+    case 'left':
+      return { tx: 0, ty: -50 }
+    case 'right':
+      return { tx: -100, ty: -50 }
+    case 'bottom-left':
+      return { tx: 0, ty: -100 }
+    case 'bottom':
+      return { tx: -50, ty: -100 }
+    case 'bottom-right':
+      return { tx: -100, ty: -100 }
+    case 'center':
+    default:
+      return { tx: -50, ty: -50 }
+  }
+}
+
+export default function SceneHome({ scene, hotspots, propsItems = [] }) {
   const router = useRouter()
   const pathnameRaw = usePathname() || '/'
   const lang = useMemo(() => getLangFromPath(pathnameRaw), [pathnameRaw])
   const { runSequence } = useTransitionUI()
-
   const bg = useMemo(
     () => pickUploadUrl(scene?.backgroundImageEn, scene?.backgroundImageAr, lang),
     [scene, lang],
@@ -80,23 +102,48 @@ export default function SceneHome({ scene, hotspots }) {
 
   // ===== viewport + image sizing =====
   const viewportRef = useRef(null)
-
   const [viewport, setViewport] = useState({ vw: 0, vh: 0 })
+
+  // ✅ مهم: هنقيس الـ natural size الحقيقي للصورة
   const [imgNatural, setImgNatural] = useState({ w: 1600, h: 900 })
   const [canvasSize, setCanvasSize] = useState({ w: 1600, h: 900 })
+  const [bgReady, setBgReady] = useState(false)
 
-  // cam in screen px
-  const [cam, setCam] = useState({ x: 0, y: 0 })
-  const camRef = useRef({ x: 0, y: 0 })
-  useEffect(() => {
-    camRef.current = cam
-  }, [cam])
-
-  // mobile toggle (note: switching to xMobile/yMobile will cause jumps between breakpoints)
+  // mobile behavior (tooltip mode فقط)
   const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // ===== cam: motion values (less rerenders) =====
+  const camX = useMotionValue(0)
+  const camY = useMotionValue(0)
+  const camRef = useRef({ x: 0, y: 0 })
+
+  // UI state throttled (for pan arrows only)
+  const [camUI, setCamUI] = useState({ x: 0, y: 0 })
+  const lastUIUpdateRef = useRef(0)
+  const pushCamUIThrottled = (now) => {
+    // update at most every ~80ms
+    if (now - lastUIUpdateRef.current < 80) return
+    lastUIUpdateRef.current = now
+    setCamUI({ ...camRef.current })
+  }
+
+  const setCamInstant = (next) => {
+    camRef.current = next
+    camX.set(next.x)
+    camY.set(next.y)
+  }
 
   // tooltip hover
   const [hoveredId, setHoveredId] = useState(null)
+
+  // dragging state (cursor)
+  const [isDragging, setIsDragging] = useState(false)
 
   // ===== inertia refs =====
   const draggingRef = useRef(false)
@@ -112,8 +159,8 @@ export default function SceneHome({ scene, hotspots }) {
 
   const startInertia = () => {
     stopInertia()
-    const frictionPer16ms = 0.92 // smaller = more braking
-    const minVel = 0.02 // px/ms
+    const frictionPer16ms = 0.92
+    const minVel = 0.02
 
     let lastT = performance.now()
 
@@ -123,14 +170,12 @@ export default function SceneHome({ scene, hotspots }) {
 
       let { vx, vy } = velRef.current
 
-      // stop condition
       if (Math.abs(vx) < minVel && Math.abs(vy) < minVel) {
         velRef.current = { vx: 0, vy: 0 }
         rafRef.current = null
         return
       }
 
-      // apply friction (normalized to 16ms frames)
       const f = Math.pow(frictionPer16ms, dt / 16.67)
       vx *= f
       vy *= f
@@ -138,17 +183,15 @@ export default function SceneHome({ scene, hotspots }) {
       const { vw, vh } = viewport
       const { w: imgW, h: imgH } = canvasSize
 
-      setCam((c) => {
-        const next = { x: c.x + vx * dt, y: c.y + vy * dt }
-        const clamped = clampCam(next, vw, vh, imgW, imgH)
+      const next = { x: camRef.current.x + vx * dt, y: camRef.current.y + vy * dt }
+      const clamped = clampCam(next, vw, vh, imgW, imgH)
 
-        // if clamped hard on an axis, kill that velocity axis (prevents “vibration” on edges)
-        if (Math.abs(clamped.x - next.x) > 0.1) vx = 0
-        if (Math.abs(clamped.y - next.y) > 0.1) vy = 0
+      if (Math.abs(clamped.x - next.x) > 0.1) vx = 0
+      if (Math.abs(clamped.y - next.y) > 0.1) vy = 0
 
-        velRef.current = { vx, vy }
-        return clamped
-      })
+      velRef.current = { vx, vy }
+      setCamInstant(clamped)
+      pushCamUIThrottled(now)
 
       rafRef.current = requestAnimationFrame(tick)
     }
@@ -187,13 +230,6 @@ export default function SceneHome({ scene, hotspots }) {
     return () => window.removeEventListener('resize', measure)
   }, [])
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
-
   // compute canvas from CMS widths + natural aspect
   useEffect(() => {
     if (!viewport.vw) return
@@ -213,7 +249,8 @@ export default function SceneHome({ scene, hotspots }) {
     velRef.current = { vx: 0, vy: 0 }
 
     const centered = clampCam({ x: (vw - imgW) / 2, y: (vh - imgH) / 2 }, vw, vh, imgW, imgH)
-    setCam(centered)
+    setCamInstant(centered)
+    setCamUI(centered)
   }, [viewport.vw, viewport.vh, canvasSize.w, canvasSize.h])
 
   // ===== drag events (pointer) =====
@@ -226,6 +263,7 @@ export default function SceneHome({ scene, hotspots }) {
     velRef.current = { vx: 0, vy: 0 }
 
     draggingRef.current = true
+    setIsDragging(true)
     pointerIdRef.current = e.pointerId
 
     lastRef.current = { x: e.clientX, y: e.clientY, t: performance.now() }
@@ -246,13 +284,17 @@ export default function SceneHome({ scene, hotspots }) {
     const { vw, vh } = viewport
     const { w: imgW, h: imgH } = canvasSize
 
-    // velocity (px/ms) for inertia
-    velRef.current = {
-      vx: dx / dt,
-      vy: dy / dt,
-    }
+    velRef.current = { vx: dx / dt, vy: dy / dt }
 
-    setCam((c) => clampCam({ x: c.x + dx, y: c.y + dy }, vw, vh, imgW, imgH))
+    const next = clampCam(
+      { x: camRef.current.x + dx, y: camRef.current.y + dy },
+      vw,
+      vh,
+      imgW,
+      imgH,
+    )
+    setCamInstant(next)
+    pushCamUIThrottled(now)
   }
 
   const onPointerUp = (e) => {
@@ -260,26 +302,33 @@ export default function SceneHome({ scene, hotspots }) {
     if (pointerIdRef.current != null && e.pointerId !== pointerIdRef.current) return
 
     draggingRef.current = false
+    setIsDragging(false)
+
+    try {
+      e.currentTarget.releasePointerCapture?.(e.pointerId)
+    } catch {}
+
     pointerIdRef.current = null
 
-    // start inertia if there is velocity
-    startInertia()
+    const { vw, vh } = viewport
+    const { w: imgW, h: imgH } = canvasSize
+    if (canPan(vw, vh, imgW, imgH)) startInertia()
   }
 
-  // ===== pan arrows state =====
+  // ===== pan arrows state (based on throttled camUI) =====
   const panState = useMemo(() => {
     const { vw, vh } = viewport
     const { w: imgW, h: imgH } = canvasSize
     if (!vw || !vh) return { left: false, right: false, up: false, down: false, any: false }
 
-    const leftHidden = imgW > vw + EPS && cam.x < -EPS
-    const rightHidden = imgW > vw + EPS && cam.x > vw - imgW + EPS
-    const upHidden = imgH > vh + EPS && cam.y < -EPS
-    const downHidden = imgH > vh + EPS && cam.y > vh - imgH + EPS
+    const leftHidden = imgW > vw + EPS && camUI.x < -EPS
+    const rightHidden = imgW > vw + EPS && camUI.x > vw - imgW + EPS
+    const upHidden = imgH > vh + EPS && camUI.y < -EPS
+    const downHidden = imgH > vh + EPS && camUI.y > vh - imgH + EPS
 
     const any = leftHidden || rightHidden || upHidden || downHidden
     return { left: leftHidden, right: rightHidden, up: upHidden, down: downHidden, any }
-  }, [viewport, canvasSize, cam.x, cam.y])
+  }, [viewport, canvasSize, camUI.x, camUI.y])
 
   // periodic arrow pulse
   const [hintPulseOn, setHintPulseOn] = useState(false)
@@ -291,7 +340,20 @@ export default function SceneHome({ scene, hotspots }) {
     return () => clearInterval(t)
   }, [])
 
-  const cursor = panState.any ? (draggingRef.current ? 'grabbing' : 'grab') : 'default'
+  const cursor = panState.any ? (isDragging ? 'grabbing' : 'grab') : 'default'
+
+  // sort layers
+  const sortedProps = useMemo(() => {
+    const arr = Array.isArray(propsItems) ? [...propsItems] : []
+    arr.sort((a, b) => Number(a?.order || 0) - Number(b?.order || 0))
+    return arr
+  }, [propsItems])
+
+  const sortedHotspots = useMemo(() => {
+    const arr = Array.isArray(hotspots) ? [...hotspots] : []
+    arr.sort((a, b) => Number(a?.order || 0) - Number(b?.order || 0))
+    return arr
+  }, [hotspots])
 
   return (
     <div className="fixed inset-0 bg-black overflow-hidden">
@@ -299,7 +361,15 @@ export default function SceneHome({ scene, hotspots }) {
         <div
           ref={viewportRef}
           className="absolute inset-0"
-          style={{ touchAction: 'none', cursor }}
+          style={{
+            touchAction: 'none',
+            cursor,
+            overscrollBehavior: 'none',
+            userSelect: 'none',
+            WebkitUserSelect: 'none',
+            WebkitUserDrag: 'none',
+          }}
+          onDragStart={(e) => e.preventDefault()}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
@@ -307,16 +377,17 @@ export default function SceneHome({ scene, hotspots }) {
           onPointerLeave={onPointerUp}
         >
           {/* Canvas (moves with cam) */}
-          <div
+          <motion.div
             style={{
               position: 'absolute',
               left: 0,
               top: 0,
               width: canvasSize.w,
               height: canvasSize.h,
-              transform: `translate3d(${cam.x}px, ${cam.y}px, 0)`,
+              x: camX,
+              y: camY,
               transformOrigin: '0 0',
-              willChange: draggingRef.current || rafRef.current ? 'transform' : 'auto',
+              willChange: 'transform',
             }}
           >
             {/* Background */}
@@ -326,137 +397,203 @@ export default function SceneHome({ scene, hotspots }) {
                 alt={scene?.title || 'Sard scene'}
                 fill
                 priority
+                fetchPriority="high"
+                sizes={`${canvasSize.w}px`}
+                quality={90}
+                placeholder="blur"
+                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMiIgaGVpZ2h0PSIyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciLz4="
                 className="object-contain object-center select-none pointer-events-none"
-                onLoadingComplete={(img) => {
-                  const w = img?.naturalWidth || 1600
-                  const h = img?.naturalHeight || 900
-                  setImgNatural({ w, h })
-                }}
+                onLoadingComplete={() => setBgReady(true)}
+                onError={() => setBgReady(true)} // عشان ما نفضلش واقفين لو حصل مشكلة
               />
             )}
 
-            {/* Hotspots — IMPORTANT: absolute INSIDE CANVAS (world space) */}
-            {hotspots?.map((spot, index) => {
-              const xPct = isMobile && spot.xMobile != null ? spot.xMobile : spot.x
-              const yPct = isMobile && spot.yMobile != null ? spot.yMobile : spot.y
-              // const xPct = USE_MOBILE_POINTS && isMobile && spot.xMobile != null ? spot.xMobile : spot.x
-              // const yPct = USE_MOBILE_POINTS && isMobile && spot.yMobile != null ? spot.yMobile : spot.y
+            <>
+              {bgReady && (
+                <>
+                  {/* ===== Props Layer (UNDER hotspots) ===== */}
+                  {sortedProps.map((item) => {
+                    const url = item?.image ? imgUrl(item.image) : null
+                    if (!url) return null
 
-              const wx = (Number(xPct) / 100) * canvasSize.w
-              const wy = (Number(yPct) / 100) * canvasSize.h
+                    const xPct = Number(item?.x ?? 50)
+                    const yPct = Number(item?.y ?? 50)
+                    const wx = (xPct / 100) * canvasSize.w
+                    const wy = (yPct / 100) * canvasSize.h
 
-              // const isActive = hoveredId === spot.id
-              const tooltipVisible = isMobile ? true : hoveredId === spot.id
-              const pulseActive = !isMobile && hoveredId === spot.id
-              const pulseDelay = (index % 5) * 0.6
+                    const widthPct = Number(item?.widthPct ?? 18)
+                    const targetW = Math.max(1, (widthPct / 100) * canvasSize.w)
 
-              const handleHotspotPointerDown = (e) => {
-                // يمنع map-drag لما تمسك الهوتسبوت
-                e.stopPropagation()
-              }
-              const handleHotspotClick = (e) => {
-                e.stopPropagation()
-                go(spot.targetPath || '/')
-              }
-              return (
-                <div
-                  key={spot.id}
-                  style={{
-                    position: 'absolute',
-                    left: wx,
-                    top: wy,
-                    transform: 'translate(-50%, -50%)',
-                  }}
-                >
-                  <div
-                    className="relative"
-                    onMouseEnter={() => {
-                      if (!isMobile) setHoveredId(spot.id)
-                    }}
-                    onMouseLeave={() => {
-                      if (!isMobile) setHoveredId(null)
-                    }}
-                  >
-                    <motion.button
-                      type="button"
-                      onPointerDown={handleHotspotPointerDown}
-                      className="relative flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-sm"
-                      style={{
-                        background: 'rgba(135, 29, 63, 0.08)',
-                        border: `1px solid rgba(135, 29, 63, 0.85)`,
-                      }}
-                      whileHover={{ scale: 1.04 }}
-                      whileTap={{ scale: 0.96 }}
-                      onClick={handleHotspotClick}
-                    >
-                      <motion.span
-                        className="pointer-events-none absolute inset-[-6px] rounded-full border-2 mix-blend-screen"
+                    // payload media غالبًا فيها width/height
+                    const mediaW = Number(
+                      item?.image?.width || item?.image?.sizes?.original?.width || 0,
+                    )
+                    const mediaH = Number(
+                      item?.image?.height || item?.image?.sizes?.original?.height || 0,
+                    )
+                    const ratio = mediaW > 0 && mediaH > 0 ? mediaH / mediaW : 1
+                    const targetH = Math.max(1, targetW * ratio)
+
+                    const rot = Number(item?.rotation || 0)
+                    const opacity = clamp(Number(item?.opacity ?? 100), 0, 100) / 100
+                    const blendMode = item?.blendMode || 'normal'
+                    const pe = item?.pointerEvents || 'none'
+
+                    const { tx, ty } = anchorTranslate(item?.anchor || 'center')
+
+                    return (
+                      <div
+                        key={item.id}
                         style={{
-                          borderColor: 'rgba(135, 29, 63, 0.85)',
-                          boxShadow: '0 0 18px rgba(135, 29, 63, 0.55)',
+                          position: 'absolute',
+                          left: wx,
+                          top: wy,
+                          width: targetW,
+                          height: targetH,
+                          transform: `translate(${tx}%, ${ty}%) rotate(${rot}deg)`,
+                          opacity,
+                          mixBlendMode: blendMode,
+                          pointerEvents: pe,
                         }}
-                        animate={
-                          pulseActive
-                            ? { scale: 1.2, opacity: 0.9 }
-                            : { scale: [0.4, 2.0], opacity: [0.9, 0] }
-                        }
-                        transition={
-                          pulseActive
-                            ? { duration: 0.2 }
-                            : {
-                                duration: 3.2,
-                                repeat: Infinity,
-                                repeatDelay: 1.2,
-                                ease: 'easeOut',
-                                delay: pulseDelay,
-                              }
-                        }
-                      />
+                      >
+                        {/* هنا استخدمنا img عشان يبقى بسيط ومش dependent على Next sizes */}
+                        <img
+                          src={url}
+                          alt={item?.title || 'Scene prop'}
+                          draggable={false}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                            display: 'block',
+                          }}
+                        />
+                      </div>
+                    )
+                  })}
 
-                      <span
-                        className="block h-2 w-2 rounded-full"
+                  {/* ===== Hotspots Layer (TOP) ===== */}
+                  {sortedHotspots.map((spot, index) => {
+                    const xPct = spot.x
+                    const yPct = spot.y
+
+                    const wx = (Number(xPct) / 100) * canvasSize.w
+                    const wy = (Number(yPct) / 100) * canvasSize.h
+
+                    const tooltipVisible = isMobile ? true : hoveredId === spot.id
+                    const pulseActive = !isMobile && hoveredId === spot.id
+                    const pulseDelay = (index % 5) * 0.6
+
+                    const handleHotspotPointerDown = (e) => {
+                      e.stopPropagation()
+                    }
+                    const handleHotspotClick = (e) => {
+                      e.stopPropagation()
+                      go(spot.targetPath || '/')
+                    }
+
+                    return (
+                      <div
+                        key={spot.id}
                         style={{
-                          background: ACCENT,
-                          boxShadow: '0 0 10px rgba(135, 29, 63, 0.85)',
+                          position: 'absolute',
+                          left: wx,
+                          top: wy,
+                          transform: 'translate(-50%, -50%)',
                         }}
-                      />
-                    </motion.button>
-
-                    <AnimatePresence>
-                      {/* {isActive && ( */}
-                      {tooltipVisible && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 4 }}
-                          transition={{ duration: 0.2 }}
-                          className="absolute left-1/2 top-full mt-2 -translate-x-1/2 pointer-events-none"
+                      >
+                        <div
+                          className="relative"
+                          onMouseEnter={() => {
+                            if (!isMobile) setHoveredId(spot.id)
+                          }}
+                          onMouseLeave={() => {
+                            if (!isMobile) setHoveredId(null)
+                          }}
                         >
-                          <button
+                          <motion.button
                             type="button"
-                            className="pointer-events-auto rounded-full px-3 py-1 text-[11px] leading-tight text-white shadow-[0_10px_24px_rgba(0,0,0,0.45)]"
+                            aria-label={pickSpotLabel(spot, lang)}
+                            onPointerDown={handleHotspotPointerDown}
+                            className="relative flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-sm"
                             style={{
-                              background: 'rgba(135, 29, 63, 0.88)',
-                              border: '1px solid rgba(255,255,255,0.16)',
+                              background: 'rgba(135, 29, 63, 0.08)',
+                              border: `1px solid rgba(135, 29, 63, 0.85)`,
                             }}
-                            onPointerDown={(e) => e.stopPropagation()}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              go(spot.targetPath || '/')
-                            }}
+                            whileHover={{ scale: 1.04 }}
+                            whileTap={{ scale: 0.96 }}
+                            onClick={handleHotspotClick}
                           >
-                            <span className="typewriter whitespace-nowrap">
-                              {pickSpotLabel(spot, lang)}
-                            </span>
-                          </button>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+                            <motion.span
+                              className="pointer-events-none absolute inset-[-6px] rounded-full border-2 mix-blend-screen"
+                              style={{
+                                borderColor: 'rgba(135, 29, 63, 0.85)',
+                                boxShadow: '0 0 18px rgba(135, 29, 63, 0.55)',
+                              }}
+                              animate={
+                                pulseActive
+                                  ? { scale: 1.2, opacity: 0.9 }
+                                  : { scale: [0.4, 2.0], opacity: [0.9, 0] }
+                              }
+                              transition={
+                                pulseActive
+                                  ? { duration: 0.2 }
+                                  : {
+                                      duration: 3.2,
+                                      repeat: Infinity,
+                                      repeatDelay: 1.2,
+                                      ease: 'easeOut',
+                                      delay: pulseDelay,
+                                    }
+                              }
+                            />
+
+                            <span
+                              className="block h-2 w-2 rounded-full"
+                              style={{
+                                background: ACCENT,
+                                boxShadow: '0 0 10px rgba(135, 29, 63, 0.85)',
+                              }}
+                            />
+                          </motion.button>
+
+                          <AnimatePresence>
+                            {tooltipVisible && (
+                              <motion.div
+                                initial={{ opacity: 0, y: 4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 4 }}
+                                transition={{ duration: 0.2 }}
+                                className="absolute left-1/2 top-full mt-2 -translate-x-1/2 pointer-events-none"
+                              >
+                                <button
+                                  type="button"
+                                  className="pointer-events-auto rounded-full px-3 py-1 text-[11px] leading-tight text-white shadow-[0_10px_24px_rgba(0,0,0,0.45)]"
+                                  style={{
+                                    background: 'rgba(135, 29, 63, 0.88)',
+                                    border: '1px solid rgba(255,255,255,0.16)',
+                                  }}
+                                  onPointerDown={(e) => e.stopPropagation()}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    go(spot.targetPath || '/')
+                                  }}
+                                >
+                                  <span className="typewriter whitespace-nowrap">
+                                    {pickSpotLabel(spot, lang)}
+                                  </span>
+                                </button>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </>
+              )}
+            </>
+          </motion.div>
 
           {/* Hint text */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-sm text-white/80">

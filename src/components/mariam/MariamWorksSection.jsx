@@ -167,7 +167,6 @@ export default function MariamWorksSection({ works, bgImage, lang: langProp }) {
                   {works.map((work, index) => {
                     const isActive = index === safeIndex
                     const tabTitle = pickText(work?.titleEn, work?.titleAr, lang)
-                    console.log(dir)
                     return (
                       <SplideSlide key={work.id || work.slug || index}>
                         <button

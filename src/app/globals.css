@@ -146,6 +146,7 @@
 html,
 body {
   scroll-behavior: smooth !important;
+  overscroll-behavior: none;
 }
 body {
   background: var(--background);

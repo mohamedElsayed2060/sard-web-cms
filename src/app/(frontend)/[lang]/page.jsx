@@ -1,6 +1,7 @@
 // src/app/page.jsx
 import SceneHome from '@/components/Scene/SceneHome'
 import { fetchJSON } from '@/lib/cms'
+import { getHomeSceneData } from '@/lib/cms'
 
 export async function generateMetadata({ params }) {
   const { lang } = await params
@@ -22,17 +23,7 @@ export async function generateMetadata({ params }) {
 export const revalidate = 60
 
 export default async function HomePage() {
-  const [scene, hotspotsRes] = await Promise.all([
-    fetchJSON('/api/globals/scene?depth=2', { revalidate: 60, tags: ['global:scene'] }).catch(
-      () => null,
-    ),
-    fetchJSON('/api/scene-hotspots?limit=100', {
-      revalidate: 60,
-      tags: ['collection:scene-hotspots'],
-    }).catch(() => null),
-  ])
+  const { scene, hotspots, propsItems } = await getHomeSceneData()
 
-  const hotspots = hotspotsRes?.docs || []
-
-  return <SceneHome scene={scene} hotspots={hotspots} />
+  return <SceneHome scene={scene} hotspots={hotspots} propsItems={propsItems} />
 }

@@ -5,13 +5,12 @@ const SceneHotspots: CollectionConfig = {
   slug: 'scene-hotspots',
   admin: {
     useAsTitle: 'labelEn',
-    defaultColumns: ['labelEn', 'labelAr', 'targetPath', 'x', 'y', 'xMobile', 'yMobile', 'order'],
+    defaultColumns: ['labelEn', 'labelAr', 'targetPath', 'x', 'y', 'order'],
   },
   access: {
     read: () => true,
   },
   fields: [
-    // ===== Label EN/AR =====
     {
       name: 'labelEn',
       label: 'Label (EN)',
@@ -25,7 +24,6 @@ const SceneHotspots: CollectionConfig = {
       required: true,
     },
 
-    // ===== Description EN/AR (optional) =====
     {
       name: 'descriptionEn',
       label: 'Description (EN) (optional)',
@@ -41,7 +39,7 @@ const SceneHotspots: CollectionConfig = {
 
     {
       name: 'x',
-      label: 'X Position Desktop (%)',
+      label: 'X Position (%)',
       type: 'number',
       required: true,
       min: 0,
@@ -50,29 +48,14 @@ const SceneHotspots: CollectionConfig = {
     },
     {
       name: 'y',
-      label: 'Y Position Desktop (%)',
+      label: 'Y Position (%)',
       type: 'number',
       required: true,
       min: 0,
       max: 100,
       defaultValue: 50,
     },
-    {
-      name: 'xMobile',
-      label: 'X Position Mobile (%)',
-      type: 'number',
-      min: 0,
-      max: 100,
-    },
-    {
-      name: 'yMobile',
-      label: 'Y Position Mobile (%)',
-      type: 'number',
-      min: 0,
-      max: 100,
-    },
 
-    // ✅ هنسيبه language-agnostic (هنضيف /en أو /ar في الفرونت تلقائيًا زي اللي عملناه)
     {
       name: 'targetPath',
       label: 'Target Path (e.g. /about-sard)',

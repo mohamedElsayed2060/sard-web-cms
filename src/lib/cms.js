@@ -49,7 +49,7 @@ export async function fetchJSON(path, options = {}) {
 }
 export async function getLatestNewsBar() {
   const res = await fetchJSON('/api/globals/latest-news-bar?depth=2', {
-    revalidate: 60,
+    revalidate: 30,
     tags: ['latest-news-bar'],
   })
   return res || null
@@ -65,7 +65,7 @@ export async function getLayoutProps() {
       tags: ['global:site-footer'],
     }).catch(() => null),
     fetchJSON('/api/globals/latest-news-bar?depth=2', {
-      revalidate: 60,
+      revalidate: 30,
       tags: ['latest-news-bar'],
     }).catch(() => null),
   ])
@@ -194,8 +194,6 @@ export async function getAboutSardPageData() {
     // ✅ Reusable gallery doc slug (create it from Payload admin)
     getGalleryBySlug('about-sard-newest-production'),
   ])
-  console.log(grantsRes?.docs[0])
-
   return {
     hero,
     // sardAboutSard,
@@ -218,7 +216,7 @@ export async function getSardProductionPageData() {
       tags: ['global:sard-production-about-hero'],
     }),
     fetchJSON('/api/globals/latest-news-bar?depth=2', {
-      revalidate: 60,
+      revalidate: 30,
       tags: ['latest-news-bar'],
     }).catch(() => null),
   ])
@@ -241,7 +239,7 @@ export async function getSardWriterRoomPageData() {
       tags: ['global:sard-writer-about-hero'],
     }),
     fetchJSON('/api/globals/latest-news-bar?depth=2', {
-      revalidate: 60,
+      revalidate: 30,
       tags: ['latest-news-bar'],
     }).catch(() => null),
   ])
@@ -261,4 +259,31 @@ export async function getContactUsPage() {
   }).catch(() => null)
 
   return data || null
+}
+// src/lib/cms.js
+
+export async function getHomeSceneData() {
+  const [scene, hotspotsRes, propsRes] = await Promise.all([
+    fetchJSON('/api/globals/scene?depth=2', {
+      revalidate: RV,
+      tags: ['global:scene'],
+    }).catch(() => null),
+
+    fetchJSON('/api/scene-hotspots?limit=200&sort=order', {
+      revalidate: RV,
+      tags: ['collection:scene-hotspots'],
+    }).catch(() => null),
+
+    // ✅ NEW: Scene Props (chair/table/poster/etc.)
+    fetchJSON('/api/scene-props?limit=200&sort=order&depth=2', {
+      revalidate: RV,
+      tags: ['collection:scene-props'],
+    }).catch(() => null),
+  ])
+
+  return {
+    scene,
+    hotspots: hotspotsRes?.docs ?? [],
+    propsItems: propsRes?.docs ?? [],
+  }
 }

@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     'scene-hotspots': SceneHotspot;
+    'scene-props': SceneProp;
     'mariam-works': MariamWork;
     'sard-learning': SardLearning;
     'about-sard-awards': AboutSardAward;
@@ -87,6 +88,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'scene-hotspots': SceneHotspotsSelect<false> | SceneHotspotsSelect<true>;
+    'scene-props': ScenePropsSelect<false> | ScenePropsSelect<true>;
     'mariam-works': MariamWorksSelect<false> | MariamWorksSelect<true>;
     'sard-learning': SardLearningSelect<false> | SardLearningSelect<true>;
     'about-sard-awards': AboutSardAwardsSelect<false> | AboutSardAwardsSelect<true>;
@@ -210,10 +212,28 @@ export interface SceneHotspot {
   descriptionAr?: string | null;
   x: number;
   y: number;
-  xMobile?: number | null;
-  yMobile?: number | null;
   targetPath: string;
   order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scene-props".
+ */
+export interface SceneProp {
+  id: string;
+  title: string;
+  image: string | Media;
+  x: number;
+  y: number;
+  widthPct: number;
+  anchor: 'center' | 'top-left' | 'top' | 'top-right' | 'left' | 'right' | 'bottom-left' | 'bottom' | 'bottom-right';
+  rotation?: number | null;
+  opacity?: number | null;
+  blendMode?: ('normal' | 'multiply' | 'screen' | 'overlay') | null;
+  order?: number | null;
+  pointerEvents?: ('none' | 'auto') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -602,6 +622,10 @@ export interface PayloadLockedDocument {
         value: string | SceneHotspot;
       } | null)
     | ({
+        relationTo: 'scene-props';
+        value: string | SceneProp;
+      } | null)
+    | ({
         relationTo: 'mariam-works';
         value: string | MariamWork;
       } | null)
@@ -726,10 +750,27 @@ export interface SceneHotspotsSelect<T extends boolean = true> {
   descriptionAr?: T;
   x?: T;
   y?: T;
-  xMobile?: T;
-  yMobile?: T;
   targetPath?: T;
   order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "scene-props_select".
+ */
+export interface ScenePropsSelect<T extends boolean = true> {
+  title?: T;
+  image?: T;
+  x?: T;
+  y?: T;
+  widthPct?: T;
+  anchor?: T;
+  rotation?: T;
+  opacity?: T;
+  blendMode?: T;
+  order?: T;
+  pointerEvents?: T;
   updatedAt?: T;
   createdAt?: T;
 }

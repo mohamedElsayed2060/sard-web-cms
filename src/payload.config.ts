@@ -40,6 +40,7 @@ import LatestNewsBar from './globals/LatestNewsBar'
 // import AdminLogo from "./assets/favicon.png"
 // import AdminIcon from "./assets/favicon.png"
 import ContactUs from './globals/ContactUs'
+import SceneProps from './collections/SceneProps'
 
 export default buildConfig({
   globals: [
@@ -75,6 +76,7 @@ export default buildConfig({
     Users,
     Media,
     SceneHotspots,
+    SceneProps,
     MariamWorks,
     SardLearning,
     // AboutSardMilestones,
@@ -84,6 +86,7 @@ export default buildConfig({
     Galleries,
     ContactSubmissions,
     AboutSardPartners,
+    
   ],
   email: nodemailerAdapter({
     defaultFromAddress:
