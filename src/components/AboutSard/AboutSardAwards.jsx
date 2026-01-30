@@ -112,7 +112,7 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
   const MOBILE_TABS_COUNT = 5
   // variant="scrollFlip"
   return (
-    <SectionReveal once={true} delay={0.1}>
+    <SectionReveal once={true} delay={0.1} id="awards">
       <section className="bg-black">
         <div className="bg-black px-3 pb-5 max-w-[1490px] mx-auto">
           {/* Title line */}

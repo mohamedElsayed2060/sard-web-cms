@@ -41,7 +41,7 @@ import LatestNewsBar from './globals/LatestNewsBar'
 // import AdminIcon from "./assets/favicon.png"
 import ContactUs from './globals/ContactUs'
 import SceneProps from './collections/SceneProps'
-
+import News from './collections/News'
 export default buildConfig({
   globals: [
     Header,
@@ -86,7 +86,7 @@ export default buildConfig({
     Galleries,
     ContactSubmissions,
     AboutSardPartners,
-    
+    News,
   ],
   email: nodemailerAdapter({
     defaultFromAddress:

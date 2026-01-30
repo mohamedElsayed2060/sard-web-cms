@@ -13,7 +13,12 @@
   /* AR */
   --font-title-ar: 'LAXR';
   --font-body-ar: 'Cairo';
+
+  --sb-track: rgba(0, 0, 0, 0.06);
+  --sb-thumb: rgba(161, 129, 86, 0.45);
+  --sb-thumb-hover: rgba(161, 129, 86, 0.65);
 }
+
 @import '@splidejs/react-splide/css';
 @import 'swiper/css';
 @import 'swiper/css/navigation';
@@ -156,6 +161,38 @@ body {
   font-family: var(--font-title), serif;
   font-weight: 600;
   font-style: italic;
+}
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sb-thumb) var(--sb-track);
+}
+
+/* WebKit (Chrome/Edge/Safari) */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--sb-track);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb);
+  border-radius: 999px;
+  border: 2px solid transparent; /* يخلي الthumb “أرفع” وناعم */
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--sb-thumb-hover);
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: var(--sb-track);
 }
 
 body * {
@@ -353,4 +390,58 @@ html[lang='ar'],
 }
 .splide__arrow .splide__arrow--next {
   display: none !important;
+}
+@keyframes arrow-wiggle-right {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes arrow-wiggle-left {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-6px);
+  }
+}
+
+/* شغّل الأنيميشن بس وقت الـ hover على الكرت */
+.group:hover .arrow-wiggle-right {
+  animation: arrow-wiggle-right 1s ease-in-out infinite;
+}
+
+.group:hover .arrow-wiggle-left {
+  animation: arrow-wiggle-left 1s ease-in-out infinite;
+}
+@keyframes card-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* الحركة الأساسية */
+.card-enter {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: card-in-up 520ms ease-out forwards;
+}
+
+/* احترام تقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+  .card-enter {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
 }

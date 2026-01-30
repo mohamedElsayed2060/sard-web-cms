@@ -79,6 +79,7 @@ export interface Config {
     galleries: Gallery;
     'contact-submissions': ContactSubmission;
     'about-sard-partners': AboutSardPartner;
+    news: News;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -97,6 +98,7 @@ export interface Config {
     galleries: GalleriesSelect<false> | GalleriesSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     'about-sard-partners': AboutSardPartnersSelect<false> | AboutSardPartnersSelect<true>;
+    news: NewsSelect<false> | NewsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -604,6 +606,88 @@ export interface AboutSardPartner {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news".
+ */
+export interface News {
+  id: string;
+  titleEn: string;
+  titleAr: string;
+  /**
+   * Used in frontend: /news/<slug>
+   */
+  slug: string;
+  publishedAt?: string | null;
+  coverImage?: (string | null) | Media;
+  coverHeightPreset?: ('default' | 'compact' | 'tall') | null;
+  excerptEn?: string | null;
+  excerptAr?: string | null;
+  contentEn: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  contentAr: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  media?: {
+    type?: ('none' | 'youtube' | 'vimeo' | 'facebook' | 'external' | 'direct') | null;
+    /**
+     * Paste the full video URL (YouTube/Vimeo/Facebook). For External Link: any URL.
+     */
+    url?: string | null;
+  };
+  poster?: (string | null) | Media;
+  /**
+   * Add one or more sources. You can reorder them.
+   */
+  sources?:
+    | {
+        /**
+         * e.g., Netflix, Ahram, Instagram
+         */
+        label?: string | null;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  relatedNews?:
+    | {
+        news: string | News;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Lower comes first. Leave empty to rely on publishedAt.
+   */
+  displayOrder?: number | null;
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -656,6 +740,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'about-sard-partners';
         value: string | AboutSardPartner;
+      } | null)
+    | ({
+        relationTo: 'news';
+        value: string | News;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -954,6 +1042,46 @@ export interface AboutSardPartnersSelect<T extends boolean = true> {
         sortOrder?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "news_select".
+ */
+export interface NewsSelect<T extends boolean = true> {
+  titleEn?: T;
+  titleAr?: T;
+  slug?: T;
+  publishedAt?: T;
+  coverImage?: T;
+  coverHeightPreset?: T;
+  excerptEn?: T;
+  excerptAr?: T;
+  contentEn?: T;
+  contentAr?: T;
+  media?:
+    | T
+    | {
+        type?: T;
+        url?: T;
+      };
+  poster?: T;
+  sources?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  relatedNews?:
+    | T
+    | {
+        news?: T;
+        id?: T;
+      };
+  displayOrder?: T;
+  isActive?: T;
   updatedAt?: T;
   createdAt?: T;
 }
