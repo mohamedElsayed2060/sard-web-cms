@@ -34,7 +34,7 @@ export default async function NewsPage({ params, searchParams }) {
   const [header, footer, newsRes] = await Promise.all([
     getSiteHeader(),
     getSiteFooter(),
-    getNewsList({ page, limit: 6 }),
+    getNewsList({ page, limit: 8 }),
   ])
 
   const items = newsRes?.docs ?? []

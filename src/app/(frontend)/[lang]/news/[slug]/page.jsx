@@ -218,7 +218,7 @@ export default async function NewsDetailsPage({ params }) {
           <div className="flex justify-center">
             <NewsMedia media={item?.media} lang={lang} />
           </div>
-          <div className="rounded-[22px] bg-white/55 border border-black/10 p-5">
+          <div className="rounded-[22px] bg-white/40 border border-black/10 p-5">
             <RichColumn value={content} textColor="text-black/80" />
           </div>
 

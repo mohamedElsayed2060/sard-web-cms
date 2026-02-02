@@ -128,7 +128,7 @@ export default function LearningHighlightsSection({
     (lang === 'ar' ? stripTitle?.ar : stripTitle?.en) ||
     (lang === 'ar' ? 'سرد · التعلم · أبرز الفعاليات' : 'Sard · Learning · Highlights')
   return (
-    <section ref={sectionRef} className="bg-black px-3 pb-5 max-w-[1490px] mx-auto">
+    <section ref={sectionRef} className="bg-black px-3 max-w-[1490px] mx-auto">
       <div className="mx-auto max-w-[1490px]">
         <PageContentReveal
           bgImage={bgImage}
