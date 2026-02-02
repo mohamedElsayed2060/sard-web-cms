@@ -445,3 +445,16 @@ html[lang='ar'],
     animation: none;
   }
 }
+/* Hide horizontal scrollbar but keep scroll */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* Prevent scroll anchoring "jump" when content height changes */
+.no-scroll-anchor {
+  overflow-anchor: none;
+}

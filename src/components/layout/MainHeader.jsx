@@ -399,7 +399,7 @@ function HeaderMenuOverlay({
                       className="h-full flex items-center justify-between text-[11px] uppercase tracking-[0.25em] text-black/60 md:px-10 px-6 rounded-[22px] border border-black/10"
                       style={{ minHeight: minCardH, backgroundImage: `url('${bgImage.src}')` }}
                     >
-                      <div className="flex items-center justify-center gap-5">
+                      <div className="flex flex-wrap items-center justify-center gap-5">
                         {socialLinks?.map((s, idx) => {
                           const iconSrc = s?.icon ? imgUrl(s.icon) : null
                           const href = s?.href || '#'

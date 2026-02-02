@@ -65,7 +65,11 @@ export default async function AboutSardPage({ params }) {
       />
       <AboutSardPartners doc={pageData?.partnersDoc} bgImage={marim_bg} lang={lang} />
       {/* ✅ New reusable gallery section (data from Payload: Galleries collection) */}
-      <AboutSardNewestProduction gallery={pageData?.newestProduction} bgImage={marim_bg} />
+      <AboutSardNewestProduction
+        gallery={pageData?.newestProduction}
+        bgImage={marim_bg}
+        latestNewsBar={latestNews}
+      />
       <MainFooter footer={footer} bgImage={marim_bg} />
     </main>
   )

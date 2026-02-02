@@ -104,7 +104,11 @@ const Galleries: CollectionConfig = {
           label: 'Background image (EN)',
           type: 'upload',
           relationTo: 'media',
-          required: true,
+          required: false,
+          admin: {
+            description:
+              'Optional. If empty and Video URL is YouTube, a thumbnail will be generated automatically. For mp4/webm please upload an image.',
+          },
         },
         {
           name: 'backgroundAr',

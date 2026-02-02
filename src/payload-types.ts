@@ -73,6 +73,7 @@ export interface Config {
     'scene-props': SceneProp;
     'mariam-works': MariamWork;
     'sard-learning': SardLearning;
+    'learning-highlights': LearningHighlight;
     'about-sard-awards': AboutSardAward;
     'about-sard-grants': AboutSardGrant;
     'team-members': TeamMember;
@@ -92,6 +93,7 @@ export interface Config {
     'scene-props': ScenePropsSelect<false> | ScenePropsSelect<true>;
     'mariam-works': MariamWorksSelect<false> | MariamWorksSelect<true>;
     'sard-learning': SardLearningSelect<false> | SardLearningSelect<true>;
+    'learning-highlights': LearningHighlightsSelect<false> | LearningHighlightsSelect<true>;
     'about-sard-awards': AboutSardAwardsSelect<false> | AboutSardAwardsSelect<true>;
     'about-sard-grants': AboutSardGrantsSelect<false> | AboutSardGrantsSelect<true>;
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
@@ -359,6 +361,30 @@ export interface SardLearning {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-highlights".
+ */
+export interface LearningHighlight {
+  id: string;
+  titleEn: string;
+  titleAr?: string | null;
+  startYear?: number | null;
+  endYear: number;
+  pinToTop?: boolean | null;
+  coverImage: string | Media;
+  photos?: (string | Media)[] | null;
+  groups?:
+    | {
+        title: string;
+        photos?: (string | Media)[] | null;
+        id?: string | null;
+      }[]
+    | null;
+  sortOrder?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "about-sard-awards".
  */
 export interface AboutSardAward {
@@ -555,7 +581,10 @@ export interface Gallery {
         titleAr: string;
         descriptionEn?: string | null;
         descriptionAr?: string | null;
-        backgroundEn: string | Media;
+        /**
+         * Optional. If empty and Video URL is YouTube, a thumbnail will be generated automatically. For mp4/webm please upload an image.
+         */
+        backgroundEn?: (string | null) | Media;
         backgroundAr?: (string | null) | Media;
         directorEn?: string | null;
         directorAr?: string | null;
@@ -716,6 +745,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'sard-learning';
         value: string | SardLearning;
+      } | null)
+    | ({
+        relationTo: 'learning-highlights';
+        value: string | LearningHighlight;
       } | null)
     | ({
         relationTo: 'about-sard-awards';
@@ -916,6 +949,29 @@ export interface SardLearningSelect<T extends boolean = true> {
     | {
         nameEn?: T;
         nameAr?: T;
+        id?: T;
+      };
+  sortOrder?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-highlights_select".
+ */
+export interface LearningHighlightsSelect<T extends boolean = true> {
+  titleEn?: T;
+  titleAr?: T;
+  startYear?: T;
+  endYear?: T;
+  pinToTop?: T;
+  coverImage?: T;
+  photos?: T;
+  groups?:
+    | T
+    | {
+        title?: T;
+        photos?: T;
         id?: T;
       };
   sortOrder?: T;
@@ -1384,6 +1440,10 @@ export interface LearningAbout {
       };
       [k: string]: unknown;
     } | null;
+  };
+  highlightsStripTitle?: {
+    en?: string | null;
+    ar?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1992,6 +2052,12 @@ export interface LearningAboutSelect<T extends boolean = true> {
         ar?: T;
       };
   rightColumn?:
+    | T
+    | {
+        en?: T;
+        ar?: T;
+      };
+  highlightsStripTitle?:
     | T
     | {
         en?: T;

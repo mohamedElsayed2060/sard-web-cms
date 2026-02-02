@@ -8,6 +8,7 @@ import { getSiteHeader, getSiteFooter, getLatestNewsBar } from '@/lib/cms'
 import marim_bg from '@/assets/marim-bg.png'
 import work_bg from '@/assets/work-bg.png'
 import LatestNewsBar from '@/components/layout/LatestNewsBar'
+import MariamVideosSection from '@/components/mariam/MariamVideosSection'
 
 export async function generateMetadata({ params }) {
   const { lang } = await params
@@ -43,6 +44,8 @@ export default async function AboutPage({ params }) {
       <LatestNewsBar data={latestNews} bgImage={marim_bg} lang={lang} />
       <AboutMariamHero data={pageData?.hero} bgImage={marim_bg} lang={lang} />
       <MariamWorksSection works={pageData?.works} bgImage={work_bg} />
+      <MariamVideosSection gallery={pageData?.mariamVideos} bgImage={marim_bg} lang={lang} />
+
       <MainFooter footer={footer} bgImage={marim_bg} />
     </main>
   )

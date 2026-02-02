@@ -36,6 +36,24 @@ const pickUploadUrl = (enFile, arFile, lang) => {
   const chosen = lang === 'ar' ? arFile || enFile : enFile || arFile
   return chosen ? imgUrl(chosen) : null
 }
+const buildNewsHref = (n) => {
+  // 1) لو عندك href جاهز (زي LatestNewsBar غالبًا)
+  if (n?.href) return n.href
+
+  // 2) external
+  const external = n?.externalUrl || n?.url
+  const isExternal = n?.isExternal || n?.type === 'external' || n?.linkType === 'external'
+  if (isExternal && external) return external
+
+  // 3) internal details (slug)
+  const slug = n?.slug || n?.newsSlug
+  if (slug) return `/news/${slug}`
+
+  // 4) لو في nested link object
+  if (n?.link?.href) return n.link.href
+
+  return ''
+}
 
 function renderVideo(url, title = 'Video') {
   if (!url) return null
@@ -72,7 +90,12 @@ function renderVideo(url, title = 'Video') {
   return <video src={u} controls autoPlay playsInline className="h-full w-full object-contain" />
 }
 
-export default function AboutSardNewestProduction({ gallery, bgImage, lang: langProp }) {
+export default function AboutSardNewestProduction({
+  gallery,
+  bgImage,
+  lang: langProp,
+  latestNewsBar, // ✅ جديد
+}) {
   const pathname = usePathname()
   const lang = langProp || getLangFromPath(pathname || '')
   const t = UI[lang] || UI.en
@@ -88,6 +111,32 @@ export default function AboutSardNewestProduction({ gallery, bgImage, lang: lang
   )
 
   const items = useMemo(() => {
+    // ✅ 1) لو latestNewsBar موجودة: استخدمها
+    const rawNews = latestNewsBar?.items || latestNewsBar?.docs || latestNewsBar || []
+    if (Array.isArray(rawNews) && rawNews.length) {
+      return rawNews
+        .filter(Boolean)
+        .map((n, idx) => {
+          const href = buildNewsHref(n)
+          const newTab =
+            n?.newTab ??
+            n?.openInNewTab ??
+            (n?.isExternal || n?.type === 'external' || n?.linkType === 'external')
+
+          return {
+            id: n?.id || n?._id || idx,
+            title: pickText(n?.titleEn, n?.titleAr, lang),
+            description: pickText(n?.summaryEn, n?.summaryAr, lang),
+            background: imgUrl(n?.image || n?.thumb || n?.coverImage),
+            href,
+            newTab: newTab !== false,
+            // مفيش فيديو هنا لأن behavior لازم يبقى زي LatestNewsBar
+          }
+        })
+        .filter((x) => x?.href) // لازم يبقى عنده لينك
+    }
+
+    // ✅ 2) fallback: الجاليري القديمة زي ما هي (فيديو مودال)
     const raw = gallery?.items || []
     return [...raw]
       .sort((a, b) => (a?.sortOrder ?? 0) - (b?.sortOrder ?? 0))
@@ -98,7 +147,7 @@ export default function AboutSardNewestProduction({ gallery, bgImage, lang: lang
         background: pickUploadUrl(it?.backgroundEn, it?.backgroundAr, lang),
         videoUrl: it?.videoUrl,
       }))
-  }, [gallery, lang])
+  }, [gallery, latestNewsBar, lang])
 
   if (!gallery || gallery?.isActive === false) return null
   if (!items.length) return null
@@ -113,6 +162,10 @@ export default function AboutSardNewestProduction({ gallery, bgImage, lang: lang
     setActiveItem(null)
   }
   // variant="scrollFlip"
+  const usingNews = Boolean(
+    latestNewsBar?.items || latestNewsBar?.docs || Array.isArray(latestNewsBar),
+  )
+
   return (
     <SectionReveal delay={0.12} ease={EASE}>
       <section className="max-w-[1490px] mx-auto px-3">
@@ -142,19 +195,32 @@ export default function AboutSardNewestProduction({ gallery, bgImage, lang: lang
               </div>
             )}
 
-            <GalleryCarousel items={items} onPlay={openVideo} variant="default" />
+            <GalleryCarousel
+              items={items}
+              variant="default"
+              lang={lang}
+              linkItems={Boolean(
+                latestNewsBar?.items || latestNewsBar?.docs || Array.isArray(latestNewsBar),
+              )} // ✅ لو في LatestNewsBar
+              onPlay={
+                Boolean(latestNewsBar?.items || latestNewsBar?.docs || Array.isArray(latestNewsBar))
+                  ? undefined
+                  : openVideo
+              }
+            />
           </div>
         </PageContentReveal>
-
-        <BookModal open={modalOpen} onClose={closeVideo} maxWidth={1100} maxHeight={720}>
-          <div className="h-full w-full bg-black">
-            {activeItem?.videoUrl ? (
-              renderVideo(activeItem.videoUrl, t.videoTitle)
-            ) : (
-              <div className="grid h-full place-items-center text-white/80">{t.noVideoUrl}</div>
-            )}
-          </div>
-        </BookModal>
+        {!usingNews && (
+          <BookModal open={modalOpen} onClose={closeVideo} maxWidth={1100} maxHeight={720}>
+            <div className="h-full w-full bg-black">
+              {activeItem?.videoUrl ? (
+                renderVideo(activeItem.videoUrl, t.videoTitle)
+              ) : (
+                <div className="grid h-full place-items-center text-white/80">{t.noVideoUrl}</div>
+              )}
+            </div>
+          </BookModal>
+        )}
       </section>
     </SectionReveal>
   )

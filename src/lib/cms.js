@@ -72,7 +72,16 @@ export async function getLayoutProps() {
   ])
   return { header, footer, latestNewsBar }
 }
-
+// ===== Galleries (Reusable carousel data) =====
+export async function getGalleryBySlug(slug) {
+  if (!slug) return null
+  const safe = encodeURIComponent(slug)
+  const res = await fetchJSON(`/api/galleries?depth=2&limit=1&where[slug][equals]=${safe}`, {
+    revalidate: RV,
+    tags: [`collection:galleries:${slug}`],
+  })
+  return res?.docs?.[0] ?? null
+}
 // HOC بسيط يحقن layout في أي getServerSideProps
 export function withLayout(gssp) {
   return async (ctx) => {
@@ -85,7 +94,7 @@ export function withLayout(gssp) {
   }
 }
 export async function getMariamPageData() {
-  const [hero, worksRes] = await Promise.all([
+  const [hero, worksRes, mariamVideos] = await Promise.all([
     fetchJSON('/api/globals/mariam-about?depth=2', {
       revalidate: RV,
       tags: ['global:mariam-about'],
@@ -94,11 +103,12 @@ export async function getMariamPageData() {
       revalidate: RV,
       tags: ['collection:mariam-works'],
     }),
+    getGalleryBySlug('about-mariam-videos'),
   ])
 
   const works = worksRes?.docs ?? []
 
-  return { hero, works }
+  return { hero, works, mariamVideos }
 }
 export async function getSiteHeader() {
   // slug بتاع الـ Global في Payload
@@ -117,7 +127,7 @@ export async function getSiteFooter() {
   return data
 }
 export async function getLearningPageData() {
-  const [hero, sardLearning] = await Promise.all([
+  const [hero, sardLearning, learningHighlights] = await Promise.all([
     fetchJSON('/api/globals/learning-about?depth=2', {
       revalidate: RV,
       tags: ['global:learning-about'],
@@ -126,15 +136,19 @@ export async function getLearningPageData() {
       revalidate: RV,
       tags: ['collection:sard-learning'],
     }),
+    fetchJSON('/api/learning-highlights?depth=2&limit=100&sort=-pinToTop,-endYear,sortOrder', {
+      revalidate: RV,
+      tags: ['collection:learning-highlights'],
+    }).catch(() => null),
   ])
-
-  // const works = worksRes?.docs ?? [];
 
   return {
     hero,
     sardLearning,
+    learningHighlights,
   }
 }
+
 export async function getTeamMembers(section = 'aboutSard') {
   // Payload where للـ select hasMany:
   // where[displayOn][contains]=aboutSard
@@ -144,17 +158,6 @@ export async function getTeamMembers(section = 'aboutSard') {
   )
 
   return res?.docs ?? []
-}
-
-// ===== Galleries (Reusable carousel data) =====
-export async function getGalleryBySlug(slug) {
-  if (!slug) return null
-  const safe = encodeURIComponent(slug)
-  const res = await fetchJSON(`/api/galleries?depth=2&limit=1&where[slug][equals]=${safe}`, {
-    revalidate: RV,
-    tags: [`collection:galleries:${slug}`],
-  })
-  return res?.docs?.[0] ?? null
 }
 
 export async function getAboutSardPageData() {

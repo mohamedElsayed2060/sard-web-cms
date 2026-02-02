@@ -24,6 +24,8 @@ import MariamAbout from './globals/mariamAbout'
 import MariamWorks from './collections/MariamWorks'
 import learningAbout from './globals/learningAbout'
 import SardLearning from './collections/SardLearning'
+import LearningHighlights from './collections/LearningHighlights'
+
 // import AboutSardMilestones from './collections/AboutSardMilestones'
 import SardMilestonesAbout from './globals/SardMilestonesAbout'
 import SardVisionMission from './globals/SardVisionMission'
@@ -79,6 +81,7 @@ export default buildConfig({
     SceneProps,
     MariamWorks,
     SardLearning,
+    LearningHighlights,
     // AboutSardMilestones,
     AboutSardAwards,
     AboutSardGrants,

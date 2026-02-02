@@ -64,6 +64,15 @@ const learningAbout: GlobalConfig = {
         },
       ],
     },
+    {
+      name: 'highlightsStripTitle',
+      label: 'Highlights strip title',
+      type: 'group',
+      fields: [
+        { name: 'en', type: 'text', defaultValue: 'Sard · Learning · Highlights' },
+        { name: 'ar', type: 'text', defaultValue: 'سرد · التعلم · أبرز الفعاليات' },
+      ],
+    },
   ],
 }
 
