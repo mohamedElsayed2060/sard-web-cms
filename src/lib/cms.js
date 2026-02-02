@@ -234,7 +234,7 @@ export async function getSardProductionPageData() {
   }
 }
 export async function getSardWriterRoomPageData() {
-  const [header, footer, gallery, hero, latestNews] = await Promise.all([
+  const [header, footer, gallery, hero, latestNews, services] = await Promise.all([
     fetchJSON('/api/globals/site-header?depth=2', { revalidate: RV, tags: ['global:site-header'] }),
     fetchJSON('/api/globals/site-footer?depth=2', { revalidate: RV, tags: ['global:site-footer'] }),
     getGalleryBySlug('sard-writer-room-gallery'),
@@ -246,6 +246,12 @@ export async function getSardWriterRoomPageData() {
       revalidate: 30,
       tags: ['latest-news-bar'],
     }).catch(() => null),
+
+    // ✅ NEW
+    fetchJSON('/api/globals/sard-writer-room-services?depth=2', {
+      revalidate: RV,
+      tags: ['global:sard-writer-room-services'],
+    }).catch(() => null),
   ])
 
   return {
@@ -254,8 +260,10 @@ export async function getSardWriterRoomPageData() {
     gallery,
     hero,
     latestNews,
+    services, // ✅ NEW
   }
 }
+
 export async function getContactUsPage() {
   const data = await fetchJSON('/api/globals/contact-us?depth=0', {
     revalidate: RV,
@@ -265,7 +273,6 @@ export async function getContactUsPage() {
   return data || null
 }
 // src/lib/cms.js
-
 export async function getHomeSceneData() {
   const [scene, hotspotsRes, propsRes] = await Promise.all([
     fetchJSON('/api/globals/scene?depth=2', {

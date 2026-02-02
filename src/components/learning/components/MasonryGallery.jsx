@@ -25,7 +25,7 @@ export default function MasonryGallery({ photos, onOpenLightbox, lang }) {
             key={m?.id || i}
             type="button"
             onClick={() => onOpenLightbox?.(i)}
-            className="mb-3 w-full break-inside-avoid rounded-[18px] overflow-hidden border border-black/10 shadow-[0_14px_26px_rgba(0,0,0,0.12)] bg-white/40"
+            className="group cursor-pointer mb-3 w-full break-inside-avoid rounded-[18px] overflow-hidden border border-black/10 shadow-[0_14px_26px_rgba(0,0,0,0.12)] bg-white/40"
           >
             <div className="relative w-full" style={{ aspectRatio: ar }}>
               {src ? (
@@ -34,7 +34,7 @@ export default function MasonryGallery({ photos, onOpenLightbox, lang }) {
                   alt={m?.alt || 'photo'}
                   fill
                   sizes="(max-width: 768px) 50vw, 33vw"
-                  className="object-cover"
+                  className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.19,1,0.22,1)] group-hover:scale-[1.06]"
                 />
               ) : (
                 <div className="absolute inset-0 bg-black/10" />

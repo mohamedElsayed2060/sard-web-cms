@@ -11,7 +11,7 @@ import PageContentReveal from '../PageContentReveal'
 import { useTransitionUI } from '../transition/TransitionProvider'
 import { getLangFromPath, navigateSard } from '@/lib/sardNavigation'
 
-const ACCENT = '#fff'
+const ACCENT = '#000000'
 const EPS = 0.5
 
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
@@ -518,7 +518,7 @@ export default function SceneHome({ scene, hotspots, propsItems = [] }) {
                             className="relative flex h-7 w-7 items-center justify-center rounded-full backdrop-blur-sm"
                             style={{
                               background: 'rgba(135, 29, 63, 0.08)',
-                              border: `1px solid rgba(135, 29, 63, 0.85)`,
+                              border: `1px solid rgba(0, 0, 0, 0.85)`,
                             }}
                             whileHover={{ scale: 1.04 }}
                             whileTap={{ scale: 0.96 }}
@@ -527,8 +527,8 @@ export default function SceneHome({ scene, hotspots, propsItems = [] }) {
                             <motion.span
                               className="pointer-events-none absolute inset-[-6px] rounded-full border-2 mix-blend-screen"
                               style={{
-                                borderColor: 'rgba(135, 29, 63, 0.85)',
-                                boxShadow: '0 0 18px rgba(135, 29, 63, 0.55)',
+                                borderColor: 'rgba(0, 0, 0, 0.85)',
+                                boxShadow: '0 0 18px rgba(0, 0, 0, 0.55)',
                               }}
                               animate={
                                 pulseActive

@@ -119,6 +119,7 @@ export interface Config {
     'sard-vision-mission': SardVisionMission;
     'sard-production-about-hero': SardProductionAboutHero;
     'sard-writer-about-hero': SardWriterAboutHero;
+    'sard-writer-room-services': SardWriterRoomService;
     'contact-us': ContactUs;
   };
   globalsSelect: {
@@ -132,6 +133,7 @@ export interface Config {
     'sard-vision-mission': SardVisionMissionSelect<false> | SardVisionMissionSelect<true>;
     'sard-production-about-hero': SardProductionAboutHeroSelect<false> | SardProductionAboutHeroSelect<true>;
     'sard-writer-about-hero': SardWriterAboutHeroSelect<false> | SardWriterAboutHeroSelect<true>;
+    'sard-writer-room-services': SardWriterRoomServicesSelect<false> | SardWriterRoomServicesSelect<true>;
     'contact-us': ContactUsSelect<false> | ContactUsSelect<true>;
   };
   locale: null;
@@ -1812,6 +1814,32 @@ export interface SardWriterAboutHero {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sard-writer-room-services".
+ */
+export interface SardWriterRoomService {
+  id: string;
+  isActive?: boolean | null;
+  titleEn: string;
+  titleAr: string;
+  items?:
+    | {
+        labelEn: string;
+        labelAr: string;
+        icon?: ('pen' | 'edit' | 'film' | 'idea' | 'users' | 'sparkle') | null;
+        /**
+         * Prefer SVG or transparent PNG.
+         */
+        art?: (string | null) | Media;
+        anim?: ('float' | 'clapper' | 'pen' | 'sparkle') | null;
+        sortOrder?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contact-us".
  */
 export interface ContactUs {
@@ -2202,6 +2230,29 @@ export interface SardWriterAboutHeroSelect<T extends boolean = true> {
     | {
         en?: T;
         ar?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sard-writer-room-services_select".
+ */
+export interface SardWriterRoomServicesSelect<T extends boolean = true> {
+  isActive?: T;
+  titleEn?: T;
+  titleAr?: T;
+  items?:
+    | T
+    | {
+        labelEn?: T;
+        labelAr?: T;
+        icon?: T;
+        art?: T;
+        anim?: T;
+        sortOrder?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

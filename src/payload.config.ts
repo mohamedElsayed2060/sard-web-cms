@@ -44,6 +44,7 @@ import LatestNewsBar from './globals/LatestNewsBar'
 import ContactUs from './globals/ContactUs'
 import SceneProps from './collections/SceneProps'
 import News from './collections/News'
+import SardWriterRoomServices from './globals/SardWriterRoomServices'
 export default buildConfig({
   globals: [
     Header,
@@ -56,6 +57,7 @@ export default buildConfig({
     SardVisionMission,
     SardProductionAbout,
     SardWriterAbout,
+    SardWriterRoomServices,
     ContactUs,
   ],
   admin: {

@@ -155,9 +155,9 @@ export default function LearningHighlightsSection({
               </motion.div>
 
               {/* Filters */}
-              <motion.div variants={itemVariants} className="mt-6">
+              {/* <motion.div variants={itemVariants} className="mt-6">
                 <ScrollableChips items={filters} activeKey={filter} onChange={setFilter} />
-              </motion.div>
+              </motion.div> */}
 
               {/* Event wall */}
               <motion.div variants={itemVariants} className="no-scroll-anchor">
