@@ -1,7 +1,7 @@
 'use client'
 
 import clsx from 'clsx'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -31,18 +31,46 @@ export default function HighlightDrawer({
   const cover = imgUrl(active?.coverImage)
   const y = yearLabel(active?.startYear, active?.endYear)
 
-  const groups = (active?.groups || []).map((g) => g?.title).filter(Boolean)
-  const tabs = ['all', ...groups]
+  // ✅ groups tabs: stable keys (g-0, g-1...) + localized label (title/titleAr)
+  const groupItems = useMemo(() => {
+    const arr = Array.isArray(active?.groups) ? active.groups : []
+    return arr
+      .map((g, idx) => ({
+        key: `g-${idx}`,
+        label: pickText(g?.title, g?.titleAr, lang),
+      }))
+      .filter((x) => Boolean(x.label))
+  }, [active?.groups, lang])
+
+  const tabItems = useMemo(() => {
+    const allItem = { key: 'all', label: lang === 'ar' ? 'الكل' : 'All' }
+    return [allItem, ...groupItems]
+  }, [groupItems, lang])
+
   const panelSide = dir === 'rtl' ? 'left' : 'right'
 
-  const tabItems = useMemo(
-    () =>
-      tabs.map((k) => ({
-        key: k === 'all' ? 'all' : k,
-        label: k === 'all' ? (lang === 'ar' ? 'الكل' : 'All') : k,
-      })),
-    [tabs, lang],
-  )
+  const drawerOpen = Boolean(active)
+  const lightboxOpen = Number.isFinite(lightboxIndex)
+
+  const drawerPushedRef = useRef(false)
+  const lightboxPushedRef = useRef(false)
+
+  const closeDrawer = () => {
+    // لو اللايتبوكس مفتوح وكان معمول له pushState، اقفل الاتنين بإننا نرجع خطوتين
+    if (lightboxOpen && lightboxPushedRef.current) {
+      window.history.go(-2)
+      return
+    }
+
+    // لو احنا اللي عاملين pushState للـ drawer، نعمل back وسيقوم popstate بإغلاقه
+    if (drawerPushedRef.current && window.history.state?.hlDrawer) {
+      window.history.back()
+      return
+    }
+
+    // fallback
+    onClose?.()
+  }
 
   useEffect(() => {
     const onKey = (e) => {
@@ -52,6 +80,26 @@ export default function HighlightDrawer({
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
+  useEffect(() => {
+    const onPop = () => {
+      const st = window.history.state || {}
+
+      // لو اللايتبوكس كان مفتوح ورجعنا لستيت من غير hlLightbox → اقفل اللايتبوكس فقط
+      if (lightboxOpen && st.hlDrawer && !st.hlLightbox) {
+        setLightboxIndex?.(null)
+        return
+      }
+
+      // لو الـ drawer مفتوح ورجعنا لستيت من غير hlDrawer → اقفل الـ drawer
+      if (drawerOpen && !st.hlDrawer) {
+        onClose?.()
+      }
+    }
+
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [drawerOpen, lightboxOpen, onClose, setLightboxIndex])
+
   return (
     <motion.div className="fixed inset-0 z-[80]">
       {/* Backdrop */}
@@ -59,7 +107,7 @@ export default function HighlightDrawer({
         type="button"
         aria-label="Close"
         className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
-        onClick={onClose}
+        onClick={closeDrawer}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -131,7 +179,7 @@ export default function HighlightDrawer({
             {/* Close */}
             <button
               type="button"
-              onClick={onClose}
+              onClick={closeDrawer}
               className={clsx(
                 'absolute top-4 text-[11px] uppercase tracking-[0.22em] px-3 py-2 rounded-full',
                 'bg-black/35 text-white hover:bg-black/45 transition',

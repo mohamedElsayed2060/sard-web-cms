@@ -72,7 +72,6 @@ export interface Config {
     'scene-hotspots': SceneHotspot;
     'scene-props': SceneProp;
     'mariam-works': MariamWork;
-    'sard-learning': SardLearning;
     'learning-highlights': LearningHighlight;
     'about-sard-awards': AboutSardAward;
     'about-sard-grants': AboutSardGrant;
@@ -92,7 +91,6 @@ export interface Config {
     'scene-hotspots': SceneHotspotsSelect<false> | SceneHotspotsSelect<true>;
     'scene-props': ScenePropsSelect<false> | ScenePropsSelect<true>;
     'mariam-works': MariamWorksSelect<false> | MariamWorksSelect<true>;
-    'sard-learning': SardLearningSelect<false> | SardLearningSelect<true>;
     'learning-highlights': LearningHighlightsSelect<false> | LearningHighlightsSelect<true>;
     'about-sard-awards': AboutSardAwardsSelect<false> | AboutSardAwardsSelect<true>;
     'about-sard-grants': AboutSardGrantsSelect<false> | AboutSardGrantsSelect<true>;
@@ -279,90 +277,6 @@ export interface MariamWork {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sard-learning".
- */
-export interface SardLearning {
-  id: string;
-  titleEn: string;
-  titleAr: string;
-  slug: string;
-  subTitleEn?: string | null;
-  subTitleAr?: string | null;
-  posterEn: string | Media;
-  posterAr?: (string | null) | Media;
-  leftColumnEn: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  rightColumnEn?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  leftColumnAr: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  rightColumnAr?: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  cast?:
-    | {
-        nameEn: string;
-        nameAr: string;
-        id?: string | null;
-      }[]
-    | null;
-  sortOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "learning-highlights".
  */
 export interface LearningHighlight {
@@ -377,6 +291,7 @@ export interface LearningHighlight {
   groups?:
     | {
         title: string;
+        titleAr: string;
         photos?: (string | Media)[] | null;
         id?: string | null;
       }[]
@@ -745,10 +660,6 @@ export interface PayloadLockedDocument {
         value: string | MariamWork;
       } | null)
     | ({
-        relationTo: 'sard-learning';
-        value: string | SardLearning;
-      } | null)
-    | ({
         relationTo: 'learning-highlights';
         value: string | LearningHighlight;
       } | null)
@@ -932,33 +843,6 @@ export interface MariamWorksSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sard-learning_select".
- */
-export interface SardLearningSelect<T extends boolean = true> {
-  titleEn?: T;
-  titleAr?: T;
-  slug?: T;
-  subTitleEn?: T;
-  subTitleAr?: T;
-  posterEn?: T;
-  posterAr?: T;
-  leftColumnEn?: T;
-  rightColumnEn?: T;
-  leftColumnAr?: T;
-  rightColumnAr?: T;
-  cast?:
-    | T
-    | {
-        nameEn?: T;
-        nameAr?: T;
-        id?: T;
-      };
-  sortOrder?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "learning-highlights_select".
  */
 export interface LearningHighlightsSelect<T extends boolean = true> {
@@ -973,6 +857,7 @@ export interface LearningHighlightsSelect<T extends boolean = true> {
     | T
     | {
         title?: T;
+        titleAr?: T;
         photos?: T;
         id?: T;
       };

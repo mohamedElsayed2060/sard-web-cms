@@ -27,6 +27,15 @@ function useLockScroll(locked) {
   }, [locked])
 }
 
+// ✅ helper: convert "g-2" => 2
+function groupIndexFromKey(key) {
+  if (!key || key === 'all') return -1
+  const s = String(key)
+  if (!s.startsWith('g-')) return -1
+  const n = Number(s.slice(2))
+  return Number.isFinite(n) ? n : -1
+}
+
 export default function LearningHighlightsSection({
   highlights,
   bgImage,
@@ -72,11 +81,18 @@ export default function LearningHighlightsSection({
     return items.filter((x) => bucketFromItem(x) === filter)
   }, [items, filter])
 
-  // Active photos based on day tab
+  // ✅ Active photos based on day tab (key-based, not title-based)
   const activeAllPhotos = useMemo(() => {
     if (!active) return []
+
+    // all: flatten (flat + groups)
     if (activeGroup === 'all') return flattenPhotos(active)
-    const g = (active?.groups || []).find((x) => x?.title === activeGroup)
+
+    // group: key "g-0" => index 0
+    const idx = groupIndexFromKey(activeGroup)
+    if (idx < 0) return []
+
+    const g = active?.groups?.[idx]
     return (g?.photos || []).filter(Boolean)
   }, [active, activeGroup])
 
@@ -114,19 +130,18 @@ export default function LearningHighlightsSection({
   // Fix "jump" feeling: keep scroll anchored to this section when filter changes
   const sectionRef = useRef(null)
   useEffect(() => {
-    // لو المستخدم واقف جوه السكشن، نخليه مايحسش بنطة كبيرة بسبب اختلاف الارتفاع
-    // (ده مش بيرجعك لأعلى الصفحة، بيرجعك لأعلى السكشن لو أنت بالفعل قريب منه)
     const el = sectionRef.current
     if (!el) return
     const rect = el.getBoundingClientRect()
     const topInView = rect.top < 120 && rect.bottom > 120
     if (!topInView) return
-    // scroll gently to section top
     window.scrollTo({ top: window.scrollY + rect.top - 80, behavior: 'smooth' })
   }, [filter])
+
   const stripText =
     (lang === 'ar' ? stripTitle?.ar : stripTitle?.en) ||
     (lang === 'ar' ? 'سرد · التعلم · أبرز الفعاليات' : 'Sard · Learning · Highlights')
+
   return (
     <section ref={sectionRef} className="bg-black px-3 max-w-[1490px] mx-auto">
       <div className="mx-auto max-w-[1490px]">

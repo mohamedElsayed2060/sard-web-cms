@@ -140,12 +140,14 @@ export default function LatestNewsBar({ data, bgImage, lang = 'en' }) {
 
                       {/* text */}
                       <div className="min-w-0 flex-1 ">
-                        <div className="md:w-[92%]">
-                          <div className="text-[15px] font-medium text-black/80 mb-1">
-                            {dateText}
+                        {dateText && (
+                          <div className="md:w-[92%]">
+                            <div className="text-[15px] font-medium text-black/80 mb-1">
+                              {dateText}
+                            </div>
+                            <div className="h-[1px] flex-1 bg-black/20" />
                           </div>
-                          <div className="h-[1px] flex-1 bg-black/20" />
-                        </div>
+                        )}
 
                         <div className="italic mt-1 md:text-[18px]  font-semibold tracking-[0.08em] text-black">
                           {title}

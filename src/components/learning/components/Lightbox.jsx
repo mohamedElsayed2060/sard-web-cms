@@ -49,13 +49,12 @@ export default function Lightbox({ photos, index, onClose, onPrev, onNext, lang 
         onClick={onClick}
         aria-label={ariaLabel}
         className={clsx(
-          'absolute top-[12%] bottom-[12%] z-10 bg-white/10 rounded',
+          'absolute top-[12%] bottom-[12%] z-10 bg-white/2 rounded',
           side === 'left' ? 'left-1' : 'right-1',
-          'w-[54px] md:w-[64px]', // ✅ طويلة ومساحتها كبيرة
+          'w-[44px] md:w-[64px]', // ✅ طويلة ومساحتها كبيرة
           'grid place-items-center place-justify-center',
-          'bg-black/0',
           'transition-colors duration-200',
-          'hover:bg-white/15 active:bg-white/18',
+          'hover:bg-white/5 active:bg-white/18',
           '',
         )}
       >
@@ -74,11 +73,12 @@ export default function Lightbox({ photos, index, onClose, onPrev, onNext, lang 
 
   return (
     <motion.div
-      className="fixed inset-0 z-[90] flex items-center justify-center"
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-black/50 p-4 md:p-6 lg:p-8"
       variants={overlayV}
       initial="hidden"
       animate="show"
       exit="exit"
+      onClick={onClose}
     >
       <button
         type="button"

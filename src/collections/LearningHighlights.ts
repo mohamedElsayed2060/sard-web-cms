@@ -83,6 +83,12 @@ const LearningHighlights: CollectionConfig = {
           required: true,
         },
         {
+          name: 'titleAr',
+          label: 'Group title (AR)',
+          type: 'text',
+          required: true,
+        },
+        {
           name: 'photos',
           label: 'Group photos',
           type: 'upload',

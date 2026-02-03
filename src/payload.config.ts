@@ -82,7 +82,7 @@ export default buildConfig({
     SceneHotspots,
     SceneProps,
     MariamWorks,
-    SardLearning,
+    // SardLearning,
     LearningHighlights,
     // AboutSardMilestones,
     AboutSardAwards,

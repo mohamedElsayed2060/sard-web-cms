@@ -102,7 +102,7 @@ export default function WriterRoomServicesSection({ data, bgImage, lang = 'en' }
       <section className="max-w-[1490px] mx-auto px-3 mb-5">
         <PageContentReveal
           paperColor="#F4E8D7"
-          className="relative rounded-[32px] py-10 md:py-14 md:px-16 overflow-hidden shadow-none"
+          className="relative rounded-[32px] px-3 py-7 md:py-14 md:px-16 overflow-hidden shadow-none"
           bgImage={bgImage}
         >
           <div className="relative">
