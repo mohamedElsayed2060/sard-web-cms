@@ -38,6 +38,8 @@ export default async function AboutPage({ params }) {
     getSiteFooter(),
     getLatestNewsBar(),
   ])
+  console.log(pageData)
+
   return (
     <main className="min-h-[100dvh] bg-black text-white">
       <MainHeader header={header} bgImage={marim_bg} />
@@ -45,6 +47,7 @@ export default async function AboutPage({ params }) {
 
       <LearningAboutHero data={pageData?.hero} bgImage={marim_bg} lang={lang} />
       {/* <LearningSection works={pageData?.sardLearning?.docs} bgImage={learning_bg} /> */}
+
       <LearningHighlightsSection
         highlights={pageData?.learningHighlights?.docs}
         bgImage={learning_bg}

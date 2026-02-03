@@ -127,7 +127,7 @@ export async function getSiteFooter() {
   return data
 }
 export async function getLearningPageData() {
-  const [hero, sardLearning, learningHighlights] = await Promise.all([
+  const [hero, learningHighlights] = await Promise.all([
     fetchJSON('/api/globals/learning-about?depth=2', {
       revalidate: RV,
       tags: ['global:learning-about'],
@@ -144,7 +144,6 @@ export async function getLearningPageData() {
 
   return {
     hero,
-    sardLearning,
     learningHighlights,
   }
 }
