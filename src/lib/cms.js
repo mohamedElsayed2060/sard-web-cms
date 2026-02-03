@@ -132,10 +132,10 @@ export async function getLearningPageData() {
       revalidate: RV,
       tags: ['global:learning-about'],
     }),
-    fetchJSON('/api/sard-learning?depth=2&limit=50&sort=sortOrder', {
-      revalidate: RV,
-      tags: ['collection:sard-learning'],
-    }),
+    // fetchJSON('/api/sard-learning?depth=2&limit=50&sort=sortOrder', {
+    //   revalidate: RV,
+    //   tags: ['collection:sard-learning'],
+    // }),
     fetchJSON('/api/learning-highlights?depth=2&limit=100&sort=-pinToTop,-endYear,sortOrder', {
       revalidate: RV,
       tags: ['collection:learning-highlights'],
