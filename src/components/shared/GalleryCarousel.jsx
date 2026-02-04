@@ -288,7 +288,7 @@ export default function GalleryCarousel({
                       <div
                         className={`mt-4 text-[#F0EADB]/85 text-sm ${
                           isTall ? 'md:text-sm' : 'md:text-base'
-                        } leading-relaxed ${lang === 'ar' ? 'text-end' : ''}`}
+                        } leading-relaxed ${lang === 'ar' ? 'text-end' : ''} line-clamp-2`}
                       >
                         {it.description}
                       </div>

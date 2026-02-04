@@ -149,7 +149,7 @@ export default function LatestNewsBar({ data, bgImage, lang = 'en' }) {
                           </div>
                         )}
 
-                        <div className="italic mt-1 md:text-[18px]  font-semibold tracking-[0.08em] text-black">
+                        <div className="italic mt-1 md:text-[18px] font-semibold tracking-[0.08em] text-black line-clamp-1">
                           {title}
                         </div>
 
