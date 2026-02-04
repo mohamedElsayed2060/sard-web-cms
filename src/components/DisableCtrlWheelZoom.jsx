@@ -5,7 +5,6 @@ import { useEffect } from 'react'
 export default function DisableCtrlWheelZoom() {
   useEffect(() => {
     const onWheel = (e) => {
-      // Ctrl + Wheel (Windows/Linux) / Cmd + trackpad zoom أحيانًا
       if (e.ctrlKey || e.metaKey) e.preventDefault()
     }
 
@@ -13,7 +12,6 @@ export default function DisableCtrlWheelZoom() {
       const isZoomModifier = e.ctrlKey || e.metaKey
       if (!isZoomModifier) return
 
-      // بعض المتصفحات بتبعت '=' بدل '+'
       const key = e.key
 
       const isZoomIn = key === '+' || key === '='

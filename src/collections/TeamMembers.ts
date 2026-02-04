@@ -27,7 +27,7 @@ const TeamMembers: CollectionConfig = {
       label: 'Photo (AR) (optional)',
       type: 'upload',
       relationTo: 'media',
-      required: false, // ✅ عربي اختياري
+      required: false,
     },
 
     // ===== Badge Icons (optional, EN/AR) =====
@@ -43,7 +43,7 @@ const TeamMembers: CollectionConfig = {
       label: 'Small badge icon (AR) (optional)',
       type: 'upload',
       relationTo: 'media',
-      required: false, // ✅ عربي اختياري
+      required: false,
     },
 
     // ===== Details RichText (EN/AR) =====

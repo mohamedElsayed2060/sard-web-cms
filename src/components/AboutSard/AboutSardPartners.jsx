@@ -43,7 +43,6 @@ export default function AboutSardPartners({ doc, bgImage, lang: langProp }) {
           className="rounded-[24px] px-3 py-7 md:py-18 md:px-18"
           bgImage={bgImage}
         >
-          {/* Title فقط */}
           <div className="space-y-4 mb-6">
             <div className="flex flex-wrap items-end gap-4">
               <div className="h-px flex-1 bg-black/70" />
@@ -62,7 +61,7 @@ export default function AboutSardPartners({ doc, bgImage, lang: langProp }) {
                 extensions={{ AutoScroll }}
                 options={{
                   direction: dir,
-                  type: 'loop', // ✅ لازم loop عشان يمشي باستمرار
+                  type: 'loop',
                   gap: '1rem',
                   pagination: false,
                   arrows: false,
@@ -80,7 +79,7 @@ export default function AboutSardPartners({ doc, bgImage, lang: langProp }) {
 
                   // ✅ Auto Scroll
                   autoScroll: {
-                    speed: 0.35, // البطء (زود/قلل براحتك: 0.2 أبطأ / 0.6 أسرع)
+                    speed: 0.35,
                     pauseOnHover: true,
                     pauseOnFocus: true,
                     rewind: false,

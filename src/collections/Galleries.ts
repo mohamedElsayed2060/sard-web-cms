@@ -115,7 +115,7 @@ const Galleries: CollectionConfig = {
           label: 'Background image (AR) (optional)',
           type: 'upload',
           relationTo: 'media',
-          required: false, // ✅ اختياري
+          required: false,
         },
         {
           name: 'directorEn',

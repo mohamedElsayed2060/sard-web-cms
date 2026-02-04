@@ -42,9 +42,6 @@ export default function TwoColumnAboutHero({
       : null
     : null
 
-  // دعم الشكلين:
-  // 1) لو عملت i18n: leftColumn: {en: rich, ar: rich}
-  // 2) لو لسه قديم: leftColumn: richText
   const leftValue = left ? left[lang] || left.en : data.leftColumn
   const rightValue = right ? right[lang] || right.en : data.rightColumn
 

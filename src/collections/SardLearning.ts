@@ -61,7 +61,7 @@ const SardLearning: CollectionConfig = {
       label: 'Main poster (AR)',
       type: 'upload',
       relationTo: 'media',
-      required: false, // ✅ "ممكن يحطها" (اختياري)
+      required: false,
     },
 
     // ===== Media (commented) EN/AR =====
@@ -92,7 +92,7 @@ const SardLearning: CollectionConfig = {
     //       label: 'Image / Video thumbnail (AR)',
     //       type: 'upload',
     //       relationTo: 'media',
-    //       required: false, // ✅ اختياري
+    //       required: false,
     //     },
     //     {
     //       name: 'videoUrl',

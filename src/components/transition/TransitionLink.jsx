@@ -35,7 +35,6 @@ export default function TransitionLink({ href, children, timings, onClick, ...pr
         const isHrefString = typeof href === 'string'
         const raw = isHrefString ? href : href?.pathname || href?.href || ''
 
-        // ✅ external/hash => سيبه طبيعي
         if (isHrefString && (isExternalHref(raw) || isHashOnly(raw))) return
 
         // ✅ same page guard (normalize target)

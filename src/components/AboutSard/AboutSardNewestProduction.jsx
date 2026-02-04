@@ -37,7 +37,6 @@ const pickUploadUrl = (enFile, arFile, lang) => {
   return chosen ? imgUrl(chosen) : null
 }
 const buildNewsHref = (n) => {
-  // 1) لو عندك href جاهز (زي LatestNewsBar غالبًا)
   if (n?.href) return n.href
 
   // 2) external
@@ -49,7 +48,6 @@ const buildNewsHref = (n) => {
   const slug = n?.slug || n?.newsSlug
   if (slug) return `/news/${slug}`
 
-  // 4) لو في nested link object
   if (n?.link?.href) return n.link.href
 
   return ''
@@ -94,7 +92,7 @@ export default function AboutSardNewestProduction({
   gallery,
   bgImage,
   lang: langProp,
-  latestNewsBar, // ✅ جديد
+  latestNewsBar,
 }) {
   const pathname = usePathname()
   const lang = langProp || getLangFromPath(pathname || '')
@@ -111,7 +109,6 @@ export default function AboutSardNewestProduction({
   )
 
   const items = useMemo(() => {
-    // ✅ 1) لو latestNewsBar موجودة: استخدمها
     const rawNews = latestNewsBar?.items || latestNewsBar?.docs || latestNewsBar || []
     if (Array.isArray(rawNews) && rawNews.length) {
       return rawNews
@@ -130,13 +127,11 @@ export default function AboutSardNewestProduction({
             background: imgUrl(n?.image || n?.thumb || n?.coverImage),
             href,
             newTab: newTab !== false,
-            // مفيش فيديو هنا لأن behavior لازم يبقى زي LatestNewsBar
           }
         })
-        .filter((x) => x?.href) // لازم يبقى عنده لينك
+        .filter((x) => x?.href)
     }
 
-    // ✅ 2) fallback: الجاليري القديمة زي ما هي (فيديو مودال)
     const raw = gallery?.items || []
     return [...raw]
       .sort((a, b) => (a?.sortOrder ?? 0) - (b?.sortOrder ?? 0))
@@ -201,7 +196,7 @@ export default function AboutSardNewestProduction({
               lang={lang}
               linkItems={Boolean(
                 latestNewsBar?.items || latestNewsBar?.docs || Array.isArray(latestNewsBar),
-              )} // ✅ لو في LatestNewsBar
+              )}
               onPlay={
                 Boolean(latestNewsBar?.items || latestNewsBar?.docs || Array.isArray(latestNewsBar))
                   ? undefined

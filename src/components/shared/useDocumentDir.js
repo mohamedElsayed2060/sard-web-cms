@@ -11,7 +11,6 @@ export default function useDocumentDir(fallback = 'ltr') {
     const read = () => document.documentElement.getAttribute('dir') || fallback
     setDir(read())
 
-    // لو الـ dir اتغير (مثلاً تنقل بين /en و /ar بدون reload كامل)
     const obs = new MutationObserver(() => setDir(read()))
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ['dir'] })
 

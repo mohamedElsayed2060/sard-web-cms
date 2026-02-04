@@ -54,7 +54,7 @@ const AboutSardAwards: CollectionConfig = {
       label: 'Image (AR) (optional)',
       type: 'upload',
       relationTo: 'media',
-      required: false, // ✅ صورة عربي اختياري
+      required: false,
     },
 
     {

@@ -1,6 +1,6 @@
 // src/app/page.jsx
 import SceneHome from '@/components/Scene/SceneHome'
-import { fetchJSON } from '@/lib/cms'
+// import { fetchJSON } from '@/lib/cms'
 import { getHomeSceneData } from '@/lib/cms'
 
 export async function generateMetadata({ params }) {

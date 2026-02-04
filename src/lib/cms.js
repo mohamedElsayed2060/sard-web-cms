@@ -3,7 +3,6 @@
 // This lib is imported by BOTH server components and client components, so it MUST stay
 // client-safe (no `next/headers` import).
 //
-// لذلك لازم يبقى عندنا Origin واضح:
 // - On Railway/Prod: set NEXT_PUBLIC_CMS_URL to your deployed domain (same service).
 // - On local dev: NEXT_PUBLIC_CMS_URL can be http://localhost:3000
 const FALLBACK_ORIGIN = 'http://localhost:3000'
@@ -22,7 +21,6 @@ export async function fetchJSON(path, options = {}) {
 
   const url = new URL(path, CMS).toString()
 
-  // لو فيه revalidate/tags هنخليها قابلة للكاش
   const cache =
     cacheOverride ??
     (typeof revalidate === 'number' || (Array.isArray(tags) && tags.length)
@@ -82,7 +80,6 @@ export async function getGalleryBySlug(slug) {
   })
   return res?.docs?.[0] ?? null
 }
-// HOC بسيط يحقن layout في أي getServerSideProps
 export function withLayout(gssp) {
   return async (ctx) => {
     const layout = await getLayoutProps()
@@ -111,7 +108,6 @@ export async function getMariamPageData() {
   return { hero, works, mariamVideos }
 }
 export async function getSiteHeader() {
-  // slug بتاع الـ Global في Payload
   const data = await fetchJSON('/api/globals/site-header', {
     revalidate: RV,
     tags: ['global:site-header'],
@@ -149,7 +145,6 @@ export async function getLearningPageData() {
 }
 
 export async function getTeamMembers(section = 'aboutSard') {
-  // Payload where للـ select hasMany:
   // where[displayOn][contains]=aboutSard
   const res = await fetchJSON(
     `/api/team-members?depth=2&limit=50&sort=sortOrder&where[isActive][equals]=true&where[displayOn][contains]=${section}`,

@@ -31,7 +31,6 @@ export default function MainFooter({ footer, bgImage }) {
   const lang = getLangFromPath(pathname || '')
   const dir = useDocumentDir(lang === 'ar' ? 'rtl' : 'ltr')
 
-  // ✅ نفس منطق الهيدر: يظهر من opening (مش يستنى idle)
   const phase = ui?.phase || 'idle'
   const showFooter = phase === 'opening' || phase === 'fading' || phase === 'idle'
 

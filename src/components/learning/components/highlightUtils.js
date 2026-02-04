@@ -30,7 +30,6 @@ export const flattenPhotos = (item) => {
 
 export const getDaysCount = (item) => {
   const groups = (item?.groups || []).filter(Boolean)
-  // يعتبر day فقط لو المجموعة فيها صور
   const filled = groups.filter((g) => (g?.photos || []).length > 0)
   return filled.length
 }

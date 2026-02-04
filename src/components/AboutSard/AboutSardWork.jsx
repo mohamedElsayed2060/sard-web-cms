@@ -12,7 +12,7 @@ import RichColumn from '../richtext/RichColumn'
 
 export default function AboutSardWork({ works, bgImage }) {
   const [activeIndex, setActiveIndex] = useState(0)
-  const [isMounted, setIsMounted] = useState(false) // ✅ عشان نمنع مشاكل الـ SSR
+  const [isMounted, setIsMounted] = useState(false)
 
   const tabsSplideRef = useRef(null)
 
@@ -134,7 +134,6 @@ export default function AboutSardWork({ works, bgImage }) {
                           {activeWork?.subTitle || ''}
                         </div>
                       </div>
-                      {/* عمودين باراجرافس من الـ richText */}
                       <div className={`grid gap-6 md:grid-cols-1 md:gap-8 `}>
                         <div className="md:w-[75%] space-y-4">
                           <RichColumn value={activeWork?.leftColumn} textColor={'text-[#252525]'} />

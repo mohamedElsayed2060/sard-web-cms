@@ -182,7 +182,7 @@ body {
 *::-webkit-scrollbar-thumb {
   background: var(--sb-thumb);
   border-radius: 999px;
-  border: 2px solid transparent; /* يخلي الthumb “أرفع” وناعم */
+  border: 2px solid transparent;
   background-clip: content-box;
 }
 
@@ -247,7 +247,7 @@ html[data-transitioning] #app-shell {
 }
 
 html[data-transitioning] {
-  overflow: hidden; /* يمنع السكرول أثناء الترانزيشن */
+  overflow: hidden;
 }
 
 /* ======= Paper / Grainy background ======= */
@@ -264,7 +264,6 @@ html[data-transitioning] {
   inset: 0;
   pointer-events: none;
 
-  /* نقط عشوائية شبيهة بالورق */
   background-image:
     radial-gradient(circle at 10% 20%, rgba(0, 0, 0, 0.721) 0.5px, transparent 2px),
     radial-gradient(circle at 80% 30%, rgba(0, 0, 0, 0.632) 0.6px, transparent 2.4px),
@@ -279,17 +278,16 @@ html[data-transitioning] {
     260px 260px,
     220px 220px;
 
-  opacity: 0.35; /* لو حاسسها تقيلة قلّلها لـ 0.25 مثلاً */
+  opacity: 0.35;
   mix-blend-mode: multiply;
 }
 
-/* عشان المحتوى مايبقاش تحت الـ ::before */
 .paper-noise > * {
   position: relative;
   z-index: 1;
 }
 /* =========================================================
-   GalleryCarousel (scoped) - لا يؤثر على أي Splide آخر
+   GalleryCarousel (scoped)
 ========================================================= */
 
 .galleryCarousel .splide__track {
@@ -310,19 +308,12 @@ html[data-transitioning] {
     opacity 140ms cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-/* ✅ لحظات الـ loop wrap بس */
 .galleryCarousel .galleryCard--noTrans {
   transition: none !important;
 }
 
-/* =========================
-   TALL / PRODUCTION VARIANT
-   ✅ شيلنا/قللنا padding بتاع wrapper عشان مايكبرش الأطراف
-   وبقينا نعتمد على Splide padding في options
-========================= */
-
 .galleryCarousel--tall {
-  padding-inline: 0; /* ✅ كان 18px وده كان بيكبر الأطراف */
+  padding-inline: 0;
   box-sizing: border-box;
 }
 
@@ -348,11 +339,10 @@ html[data-transitioning] {
 
 @media (max-width: 768px) {
   .galleryCarousel--tall .splide__slide {
-    width: 82vw; /* ✅ أقل شوية من الشاشة => يطلع جزء من اللي بعده */
+    width: 82vw;
   }
 }
 
-/* افتراضيًا مخفي */
 .galleryCarousel .galleryPlayBtn {
   opacity: 0;
   transform: scale(0.92);
@@ -363,7 +353,6 @@ html[data-transitioning] {
   color: red;
 }
 
-/* يظهر فقط على السلايد الاكتف */
 .galleryCarousel .splide__slide.is-active .galleryPlayBtn {
   opacity: 1;
   transform: scale(1);
@@ -411,7 +400,6 @@ html[lang='ar'],
   }
 }
 
-/* شغّل الأنيميشن بس وقت الـ hover على الكرت */
 .group:hover .arrow-wiggle-right {
   animation: arrow-wiggle-right 1s ease-in-out infinite;
 }
@@ -430,14 +418,12 @@ html[lang='ar'],
   }
 }
 
-/* الحركة الأساسية */
 .card-enter {
   opacity: 0;
   transform: translateY(14px);
   animation: card-in-up 520ms ease-out forwards;
 }
 
-/* احترام تقليل الحركة */
 @media (prefers-reduced-motion: reduce) {
   .card-enter {
     opacity: 1;

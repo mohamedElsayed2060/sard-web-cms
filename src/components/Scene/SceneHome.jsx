@@ -104,12 +104,10 @@ export default function SceneHome({ scene, hotspots, propsItems = [] }) {
   const viewportRef = useRef(null)
   const [viewport, setViewport] = useState({ vw: 0, vh: 0 })
 
-  // ✅ مهم: هنقيس الـ natural size الحقيقي للصورة
   const [imgNatural, setImgNatural] = useState({ w: 1600, h: 900 })
   const [canvasSize, setCanvasSize] = useState({ w: 1600, h: 900 })
   const [bgReady, setBgReady] = useState(false)
 
-  // mobile behavior (tooltip mode فقط)
   const [isMobile, setIsMobile] = useState(false)
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -404,7 +402,7 @@ export default function SceneHome({ scene, hotspots, propsItems = [] }) {
                 blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMiIgaGVpZ2h0PSIyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciLz4="
                 className="object-contain object-center select-none pointer-events-none"
                 onLoadingComplete={() => setBgReady(true)}
-                onError={() => setBgReady(true)} // عشان ما نفضلش واقفين لو حصل مشكلة
+                onError={() => setBgReady(true)}
               />
             )}
 
@@ -424,7 +422,6 @@ export default function SceneHome({ scene, hotspots, propsItems = [] }) {
                     const widthPct = Number(item?.widthPct ?? 18)
                     const targetW = Math.max(1, (widthPct / 100) * canvasSize.w)
 
-                    // payload media غالبًا فيها width/height
                     const mediaW = Number(
                       item?.image?.width || item?.image?.sizes?.original?.width || 0,
                     )
@@ -456,7 +453,6 @@ export default function SceneHome({ scene, hotspots, propsItems = [] }) {
                           pointerEvents: pe,
                         }}
                       >
-                        {/* هنا استخدمنا img عشان يبقى بسيط ومش dependent على Next sizes */}
                         <img
                           src={url}
                           alt={item?.title || 'Scene prop'}

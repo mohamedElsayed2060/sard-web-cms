@@ -3,7 +3,6 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { NextResponse } from 'next/server'
 
-// عشان نتأكد إنه Node runtime (payload محتاج Node)
 export const runtime = 'nodejs'
 const wait = (ms: number) =>
   new Promise((_, rej) => setTimeout(() => rej(new Error('Email timeout')), ms))
@@ -26,13 +25,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: 'Missing required fields' }, { status: 400 })
     }
 
-    // ✅ Save in Payload
+    // Save in Payload
     await payload.create({
       collection: 'contact-submissions',
       data: { name, email, subject, message },
     })
 
-    // ✅ Send Email (اختياري - لو SMTP متظبط)
+    // Send Email (اختياري - لو SMTP متظبط)
     if (process.env.SMTP_HOST && process.env.CONTACT_TO_EMAIL) {
       try {
         await Promise.race([

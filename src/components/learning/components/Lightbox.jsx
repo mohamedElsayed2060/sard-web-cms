@@ -51,23 +51,20 @@ export default function Lightbox({ photos, index, onClose, onPrev, onNext, lang 
         className={clsx(
           'absolute top-[12%] bottom-[12%] z-10 bg-white/2 rounded',
           side === 'left' ? 'left-1' : 'right-1',
-          'w-[44px] md:w-[64px]', // ✅ طويلة ومساحتها كبيرة
+          'w-[44px] md:w-[64px]',
           'grid place-items-center place-justify-center',
           'transition-colors duration-200',
           'hover:bg-white/5 active:bg-white/18',
           '',
         )}
       >
-        {/* hit area زيادة */}
         <span className="absolute inset-0" />
 
-        {/* زر داخلي (شكل جميل) */}
         <span className={clsx()}>{children}</span>
       </button>
     )
   }
 
-  // في RTL: prev يبقى يمين، next يبقى شمال
   const prevSide = isRTL ? 'right' : 'left'
   const nextSide = isRTL ? 'left' : 'right'
 
@@ -95,7 +92,6 @@ export default function Lightbox({ photos, index, onClose, onPrev, onNext, lang 
         className="relative w-[92vw] max-w-[980px] h-[78vh] rounded-[22px] overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.55)] bg-black"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* crossfade بين الصور */}
         <AnimatePresence mode="wait" initial={false}>
           {src ? (
             <motion.div
@@ -150,12 +146,7 @@ export default function Lightbox({ photos, index, onClose, onPrev, onNext, lang 
         </div>
 
         {/* Arrows */}
-        <ArrowBtn
-          onClick={onPrev}
-          ariaLabel="Previous"
-          side={prevSide}
-          hide={!hasPrev} // ✅ يختفي في أول صورة
-        >
+        <ArrowBtn onClick={onPrev} ariaLabel="Previous" side={prevSide} hide={!hasPrev}>
           <span
             className={clsx(
               'text-white/95 text-4xl leading-none select-none',
@@ -166,12 +157,7 @@ export default function Lightbox({ photos, index, onClose, onPrev, onNext, lang 
           </span>
         </ArrowBtn>
 
-        <ArrowBtn
-          onClick={onNext}
-          ariaLabel="Next"
-          side={nextSide}
-          hide={!hasNext} // ✅ يختفي في آخر صورة
-        >
+        <ArrowBtn onClick={onNext} ariaLabel="Next" side={nextSide} hide={!hasNext}>
           <span
             className={clsx(
               'text-white/95 text-4xl leading-none select-none',

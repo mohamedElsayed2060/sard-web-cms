@@ -89,7 +89,7 @@ export default function WriterRoomServicesSection({ data, bgImage, lang = 'en' }
   useEffect(() => {
     if (!items.length) return
 
-    const STEP_MS = 750 // سرعة التتابع
+    const STEP_MS = 750
     const id = setInterval(() => {
       setActiveIconIdx((v) => (v + 1) % items.length)
     }, STEP_MS)

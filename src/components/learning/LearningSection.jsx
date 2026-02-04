@@ -117,7 +117,7 @@ export default function LearningSection({ works, bgImage, lang: langProp }) {
                   ref={tabsSplideRef}
                   aria-label="Works tabs"
                   options={{
-                    direction: lang === 'ar' ? 'rtl' : '', // ✅ RTL/LTR
+                    direction: lang === 'ar' ? 'rtl' : '',
                     type: 'slide',
                     pagination: false,
                     gap: '0.75rem',
@@ -207,7 +207,6 @@ export default function LearningSection({ works, bgImage, lang: langProp }) {
                         </div>
                       </div>
 
-                      {/* عمودين RichText */}
                       <div className={`grid gap-6 ${hasRight ? 'md:grid-cols-2' : ''} md:gap-8`}>
                         <div className={`space-y-4 ${hasRight ? '' : 'md:w-[70%]'}`}>
                           <RichColumn value={leftColumnValue} textColor="text-[#F0EADB]" />

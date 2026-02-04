@@ -18,7 +18,6 @@ const SceneProps: CollectionConfig = {
       required: true,
     },
 
-    // صورة واحدة (Language-agnostic)
     {
       name: 'image',
       label: 'Prop Image',
@@ -27,7 +26,6 @@ const SceneProps: CollectionConfig = {
       required: true,
     },
 
-    // مكان ثابت على الـ canvas (نسبة مئوية)
     {
       name: 'x',
       label: 'X Position (%)',
@@ -47,7 +45,6 @@ const SceneProps: CollectionConfig = {
       defaultValue: 50,
     },
 
-    // حجم prop كنسبة من عرض الـ canvas (مش محتاج height — بيتحسب من أبعاد الصورة)
     {
       name: 'widthPct',
       label: 'Width (% of Canvas Width)',
@@ -58,7 +55,6 @@ const SceneProps: CollectionConfig = {
       defaultValue: 18,
     },
 
-    // Anchor عشان البوستر مثلًا يبقى top-left بدل center
     {
       name: 'anchor',
       label: 'Anchor',
@@ -78,7 +74,6 @@ const SceneProps: CollectionConfig = {
       ],
     },
 
-    // اختيارات شكلية (اختياري)
     {
       name: 'rotation',
       label: 'Rotation (deg) (optional)',
@@ -108,7 +103,6 @@ const SceneProps: CollectionConfig = {
       ],
     },
 
-    // ترتيب الطبقات
     {
       name: 'order',
       label: 'Order',
@@ -116,7 +110,6 @@ const SceneProps: CollectionConfig = {
       defaultValue: 0,
     },
 
-    // لو عايز تخليها non-interactive وتسمح بالسحب فوقها بسهولة
     {
       name: 'pointerEvents',
       label: 'Pointer Events',

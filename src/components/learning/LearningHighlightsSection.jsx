@@ -55,7 +55,6 @@ export default function LearningHighlightsSection({
   const isOpen = Boolean(active)
   useLockScroll(isOpen)
 
-  // لما الدرور يفتح/يقفل
   useEffect(() => {
     if (!isOpen) return
     setActiveGroup('all')

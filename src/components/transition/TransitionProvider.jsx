@@ -30,8 +30,8 @@ export function TransitionProvider({ children }) {
   const initialVariant = getTransitionVariantFromEnv()
   const initialUI =
     initialVariant === 'stack'
-      ? { visible: true, phase: 'stack_close', variant: 'stack' } // (اختياري) للستاك
-      : { visible: true, phase: 'boot', variant: 'doors' } // ✅ الأبواب مقفولة من أول رندر
+      ? { visible: true, phase: 'stack_close', variant: 'stack' }
+      : { visible: true, phase: 'boot', variant: 'doors' }
 
   const [ui, setUI] = useState(initialUI)
 
@@ -41,7 +41,6 @@ export function TransitionProvider({ children }) {
 
   const waitForPathChange = useCallback((fromPath, timeoutMs = 8000) => {
     return new Promise((resolve) => {
-      // لو اتغير بالفعل
       if (currentPathRef.current && currentPathRef.current !== fromPath) {
         return resolve(true)
       }
@@ -68,14 +67,13 @@ export function TransitionProvider({ children }) {
     const prev = currentPathRef.current
     currentPathRef.current = pathname
 
-    // ✅ حتى لو prev = null لازم نفك الانتظار
     if (pathname !== prev && pathWaiterRef.current) {
       pathWaiterRef.current()
     }
   }, [])
 
   // =========================
-  // DOORS SEQUENCE (القديم)
+  // DOORS SEQUENCE
   // =========================
   const runDoorsSequence = useCallback(
     async ({ onNavigate, timings, fromPath }) => {
@@ -106,8 +104,7 @@ export function TransitionProvider({ children }) {
   )
 
   // =========================
-  // STACK SEQUENCE (الجديد)
-  // فكرة: page تخرج لفوق + overlay يطلع من تحت ويقفل + استنى path + overlay يفتح
+  // STACK SEQUENCE
   // =========================
   const runStackSequence = useCallback(
     async ({ onNavigate, timings, fromPath }) => {
@@ -116,25 +113,20 @@ export function TransitionProvider({ children }) {
 
       const t = { ...DEFAULT_STACK_TIMINGS, ...timings }
 
-      // 1) ابدأ خروج الصفحة + صعود overlay من تحت
       setUI((p) => ({ ...p, visible: true, phase: 'stack_out', variant: 'stack' }))
       await nextFrame()
       await sleep(t.outMs)
 
-      // 2) overlay يقفل (درفتين) ويظهر د
       setUI((p) => ({ ...p, visible: true, phase: 'stack_close', variant: 'stack' }))
       await sleep(t.closeMs)
 
-      // 3) ناڤيجيت + استنى الصفحة الجديدة تبقى جاهزة (تغيير pathname)
       const beforePath = fromPath ?? currentPathRef.current
       await onNavigate?.()
       await waitForPathChange(beforePath, t.maxWaitMs)
 
-      // 4) overlay يفتح من النص شمال/يمين
       setUI((p) => ({ ...p, visible: true, phase: 'stack_open', variant: 'stack' }))
       await sleep(t.openMs)
 
-      // 5) اخرج overlay
       setUI((p) => ({ ...p, visible: true, phase: 'stack_fade', variant: 'stack' }))
       await sleep(t.fadeMs)
 
@@ -144,9 +136,6 @@ export function TransitionProvider({ children }) {
     [waitForPathChange],
   )
 
-  // ✅ للريفريش / back-forward:
-  // doors: نفس اللي كان عندك
-  // stack: نخلي overlay صغير (اختياري) — أنا خليته بسيط: مفيش قفل، بس فتح سريع
   const runEnterSequence = useCallback(async (timings, variant = 'doors') => {
     if (lockRef.current) return
     lockRef.current = true
@@ -179,18 +168,17 @@ export function TransitionProvider({ children }) {
 
   const runSequence = useCallback(
     async ({ onNavigate, timings, fromPath }) => {
-      const v = getTransitionVariantFromEnv() // ✅ يقرأ ENV
+      const v = getTransitionVariantFromEnv()
       if (v === 'stack') return runStackSequence({ onNavigate, timings, fromPath })
       return runDoorsSequence({ onNavigate, timings, fromPath })
     },
     [runDoorsSequence, runStackSequence],
   )
 
-  // api ثابت (functions ثابتة)
   const apiBase = useMemo(() => {
     return {
       setCurrentPath,
-      runSequence, // ✅ الموحد
+      runSequence,
       runEnterSequence,
     }
   }, [setCurrentPath, runSequence, runEnterSequence])
@@ -208,7 +196,6 @@ export function TransitionProvider({ children }) {
   }, [apiBase])
   useEffect(() => {
     const onPageShow = (e) => {
-      // ✅ لو المتصفح رجّع الصفحة من الـ bfcache
       if (e.persisted) {
         const v = getTransitionVariantFromEnv()
         apiBase.runEnterSequence({ logoMs: 520, openMs: 1050, fadeMs: 550 }, v)
@@ -219,7 +206,6 @@ export function TransitionProvider({ children }) {
     return () => window.removeEventListener('pageshow', onPageShow)
   }, [apiBase])
 
-  // ✅ أول تحميل / ريفريش
   useEffect(() => {
     const v = getTransitionVariantFromEnv()
     apiBase.runEnterSequence({ logoMs: 380, openMs: 1200, fadeMs: 650 }, v)

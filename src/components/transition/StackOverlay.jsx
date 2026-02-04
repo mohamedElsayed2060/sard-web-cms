@@ -22,7 +22,6 @@ export default function StackOverlay() {
   const isClosing = phase === 'stack_close'
   const isOpening = phase === 'stack_open' || phase === 'stack_fade'
 
-  // ✅ overlay يطلع من تحت + يكون ضيق شوية في البداية (scaleX)
   const wrap = {
     hidden: { y: '110%', scaleX: 0.92, opacity: 1, borderRadius: 28 },
     show: {
@@ -38,7 +37,6 @@ export default function StackOverlay() {
     },
   }
 
-  // ✅ الستارة: درفتين يطلعوا من النص ويقفلو (close) ثم يفتحوا (open)
   const left = {
     close: { x: 0, transition: { duration: 0.38, ease: EASE } },
     open: { x: '-105%', transition: { duration: 0.55, ease: EASE } },
@@ -48,7 +46,6 @@ export default function StackOverlay() {
     open: { x: '105%', transition: { duration: 0.55, ease: EASE } },
   }
 
-  // ✅ الدال: يظهر أثناء القفل، ويختفي ناعم أول ما الصفحة الجديدة جاهزة (stack_open)
   const dal = {
     hide: { opacity: 0, scale: 0.98, transition: { duration: 0.22, ease: EASE } },
     show: { opacity: 1, scale: 1, transition: { duration: 0.22, ease: EASE } },
@@ -66,7 +63,6 @@ export default function StackOverlay() {
             className="absolute inset-0 bg-black"
             style={{ transformOrigin: '50% 100%' }}
           >
-            {/* الستارة */}
             <div className="absolute inset-0 overflow-hidden">
               <motion.div
                 className="absolute top-0 bottom-0 left-0 w-1/2 bg-black"
@@ -82,7 +78,6 @@ export default function StackOverlay() {
               />
             </div>
 
-            {/* الدال */}
             <motion.div
               className="absolute inset-0 flex items-center justify-center"
               initial="hide"

@@ -32,7 +32,6 @@ export default async function ContactUsPage({ params }) {
       <MainHeader header={header} bgImage={marim_bg} />
       <LatestNewsBar data={latestNews} bgImage={marim_bg} lang={lang} />
 
-      {/* نفس شكل الصفحة */}
       <div className="pt-5 px-3">
         <PageContentReveal
           variant="slideUp"

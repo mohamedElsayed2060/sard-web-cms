@@ -241,7 +241,6 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
                         `shadow-lg ${lang === 'ar' ? 'border-r' : 'border-l'} border-black/20`,
                         'flex-[0_0_78px]',
                         'hover:shadow-[0_12px_25px_rgba(0,0,0,0.18)]',
-                        // ✅ overlap صح للـ RTL/LTR
                         lang === 'ar' ? '-mr-5' : '-ml-5',
                       ].join(' ')}
                       style={{ backgroundImage: `url('${bgImage?.src}')` }}
@@ -367,12 +366,10 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
                 'relative h-full',
                 'w-[340px] sm:w-[380px] md:w-[440px]',
                 'shadow-[0_30px_80px_rgba(0,0,0,0.35)]',
-                // ✅ corners حسب الاتجاه
                 lang === 'ar' ? 'rounded-r-[24px]' : 'rounded-l-[24px]',
                 'overflow-hidden',
               ].join(' ')}
               style={{
-                // ✅ نفس فكرة PageContentReveal: صورة في الخلف
                 backgroundImage: bgImage?.src ? `url('${bgImage.src}')` : undefined,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
@@ -424,11 +421,9 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
                             'transition',
                             'hover:shadow-[0_10px_18px_rgba(0,0,0,0.12)]',
                             'hover:-translate-y-[1px]',
-                            // ✅ شكل "تاب بالطول لكن بالعرض"
                             'flex items-center gap-3',
                           ].join(' ')}
                         >
-                          {/* small vertical bar (يحاكي التاب) */}
                           <span className="h-8 w-[6px] rounded-full bg-black/15" />
 
                           <div className="flex-1 text-start">
@@ -445,7 +440,6 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
                   </div>
                 </div>
 
-                {/* Footer hint (اختياري) */}
                 <div className="pt-3 mt-3 border-t border-black/10 text-[12px] text-[#252525]/60">
                   {lang === 'ar'
                     ? 'اضغط على أي جائزة لعرض تفاصيلها'

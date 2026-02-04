@@ -224,7 +224,6 @@ export default function GalleryCarousel({
             const isLink = linkItems && !!href
             const internal = isInternalHref(href)
 
-            // ✅ الكارت نفسه (مش هنعيد كتابته 3 مرات)
             const Card = (
               <div
                 className={clsx(
@@ -252,7 +251,6 @@ export default function GalleryCarousel({
                   </div>
                 )}
 
-                {/* ✅ لو احنا في link mode: مش عايزين play button */}
                 {canPlay && !isLink && (
                   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                     <button
@@ -310,7 +308,6 @@ export default function GalleryCarousel({
 
             return (
               <SplideSlide key={it?.id || i}>
-                {/* ✅ 1) لو linkItems شغال و href موجود → نفس Behavior LatestNewsBar */}
                 {isLink ? (
                   internal ? (
                     <TransitionLink href={href} className="block w-full">
@@ -327,7 +324,6 @@ export default function GalleryCarousel({
                     </a>
                   )
                 ) : (
-                  /* ✅ 2) غير كده → السلوك القديم زي ما هو */
                   <div
                     role="button"
                     tabIndex={0}

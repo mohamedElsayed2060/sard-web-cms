@@ -28,7 +28,7 @@ export const revalidate = 60
 
 export default async function NewsPage({ params, searchParams }) {
   const { lang = 'en' } = await params
-  const sp = await searchParams // ✅ مهم في Next 15
+  const sp = await searchParams
   const page = Number(sp?.page ?? 1) || 1
 
   const [header, footer, newsRes] = await Promise.all([

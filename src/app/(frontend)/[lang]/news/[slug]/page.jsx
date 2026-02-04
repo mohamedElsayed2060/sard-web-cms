@@ -99,7 +99,6 @@ function NewsMedia({ media, lang }) {
     )
   }
 
-  // Facebook: أبسط embed iframe باستخدام plugins/video.php
   if (type === 'facebook') {
     const fbSrc =
       `https://www.facebook.com/plugins/video.php?href=` +
@@ -132,7 +131,6 @@ function NewsMedia({ media, lang }) {
     )
   }
 
-  // external: نعرض زرار يفتح الفيديو بره
   if (type === 'external') {
     return (
       <div className="mt-7">
@@ -225,10 +223,10 @@ export default async function NewsDetailsPage({ params }) {
                 'relative',
                 coverH,
                 coverW,
-                'mx-auto', // ✅ يسنتر الكونتينر
+                'mx-auto',
                 'rounded-[22px] overflow-hidden border border-black/10 mb-7',
-                'flex items-center justify-center', // ✅ يسنتر اللي جوّه
-                fit === 'contain' ? 'bg-black/10' : '', // خلفية لطيفة لو في فراغات
+                'flex items-center justify-center',
+                fit === 'contain' ? 'bg-black/10' : '',
               ].join(' ')}
             >
               <CMSImage

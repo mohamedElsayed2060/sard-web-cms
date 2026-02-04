@@ -40,7 +40,6 @@ const UI = {
   },
 }
 
-// pick helper للحقول الجديدة (مع fallback للغة التانية)
 const pickText = (en, ar, lang) => {
   if (lang === 'ar') return ar || en || ''
   return en || ar || ''
@@ -155,7 +154,7 @@ export default function MariamWorksSection({ works, bgImage, lang: langProp }) {
                   ref={tabsSplideRef}
                   aria-label="Works tabs"
                   options={{
-                    direction: lang === 'ar' ? 'rtl' : '', // ✅ RTL/LTR
+                    direction: lang === 'ar' ? 'rtl' : '',
                     type: 'slide',
                     pagination: false,
                     gap: '0.75rem',
@@ -238,14 +237,13 @@ export default function MariamWorksSection({ works, bgImage, lang: langProp }) {
                           aria-label="Selected stills"
                           className="w-full"
                           options={{
-                            direction: lang === 'ar' ? 'rtl' : '', // ✅ RTL/LTR
+                            direction: lang === 'ar' ? 'rtl' : '',
                             type: 'slide',
                             gap: '1rem',
                             pagination: false,
                             arrows: false,
                             drag: 'free',
                             perPage: 2.5,
-                            // ✅ align حسب الاتجاه
                             focus: dir === 'rtl' ? 'start' : 'end',
                             breakpoints: {
                               1024: { perPage: 2 },

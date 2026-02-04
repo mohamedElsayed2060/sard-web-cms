@@ -157,18 +157,12 @@ export default function RichColumn({ value, textColor }) {
       return (
         <blockquote
           key={`q-${index}`}
-          className={clsx(
-            'my-6',
-            // ✅ indent: ادخال البلوك لجوه عن باقي النص
-            isRTL ? 'pr-4 md:pr-6' : 'pl-4 md:pl-6',
-          )}
+          className={clsx('my-6', isRTL ? 'pr-4 md:pr-6' : 'pl-4 md:pl-6')}
         >
           <div
             className={clsx(
-              // ✅ خط عمودي زي CMS
               isRTL ? 'border-r-2 pr-4 md:pr-5' : 'border-l-2 pl-4 md:pl-5',
               'border-black/25',
-              // ✅ شكل لطيف
               'text-sm leading-relaxed italic',
               colorClass,
             )}

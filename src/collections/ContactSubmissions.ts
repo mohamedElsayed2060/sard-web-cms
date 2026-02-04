@@ -7,10 +7,8 @@ export const ContactSubmissions: CollectionConfig = {
     defaultColumns: ['name', 'email', 'createdAt'],
   },
   access: {
-    // أي حد يقدر يبعت
     create: () => true,
 
-    // القراءه/التعديل للأدمن فقط
     read: ({ req }) => Boolean(req.user),
     update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => Boolean(req.user),
@@ -21,7 +19,6 @@ export const ContactSubmissions: CollectionConfig = {
     { name: 'subject', type: 'text' },
     { name: 'message', type: 'textarea', required: true },
 
-    // Honeypot (سبام)
     {
       name: 'company', // hidden fake field
       type: 'text',

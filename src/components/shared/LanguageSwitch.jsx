@@ -5,13 +5,10 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
 function swapLangPath(pathname) {
-  // pathname مثال: /en/about-sard
-  // أو: /ar/sard-production
   const parts = (pathname || '/').split('/')
   const current = parts[1]
   const next = current === 'ar' ? 'en' : 'ar'
 
-  // لو مفيش lang أصلاً
   if (current !== 'en' && current !== 'ar') {
     return `/${next}${pathname}`
   }

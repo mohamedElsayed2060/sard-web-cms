@@ -72,7 +72,6 @@ export default function MainHeader({ header, bgImage }) {
 
   return (
     <>
-      {/* ✅ الهيدر نفسه بدون أي motion/transition — لكن لسه بنخفيه فورياً أثناء closing/logo */}
       <section
         className={[
           'bg-black pt-5 px-3 max-w-[1490px] mx-auto relative z-30',

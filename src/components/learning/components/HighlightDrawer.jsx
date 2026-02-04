@@ -56,13 +56,11 @@ export default function HighlightDrawer({
   const lightboxPushedRef = useRef(false)
 
   const closeDrawer = () => {
-    // لو اللايتبوكس مفتوح وكان معمول له pushState، اقفل الاتنين بإننا نرجع خطوتين
     if (lightboxOpen && lightboxPushedRef.current) {
       window.history.go(-2)
       return
     }
 
-    // لو احنا اللي عاملين pushState للـ drawer، نعمل back وسيقوم popstate بإغلاقه
     if (drawerPushedRef.current && window.history.state?.hlDrawer) {
       window.history.back()
       return
@@ -84,13 +82,11 @@ export default function HighlightDrawer({
     const onPop = () => {
       const st = window.history.state || {}
 
-      // لو اللايتبوكس كان مفتوح ورجعنا لستيت من غير hlLightbox → اقفل اللايتبوكس فقط
       if (lightboxOpen && st.hlDrawer && !st.hlLightbox) {
         setLightboxIndex?.(null)
         return
       }
 
-      // لو الـ drawer مفتوح ورجعنا لستيت من غير hlDrawer → اقفل الـ drawer
       if (drawerOpen && !st.hlDrawer) {
         onClose?.()
       }

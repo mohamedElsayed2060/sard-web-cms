@@ -8,7 +8,6 @@ const MariamWorks: CollectionConfig = {
     plural: 'Mariam Works',
   },
   admin: {
-    // أسهل للـ Admin: العنوان الظاهر يبقى Title EN
     useAsTitle: 'titleEn',
     defaultColumns: ['titleEn', 'year', 'directorEn', 'sortOrder'],
   },
@@ -90,7 +89,6 @@ const MariamWorks: CollectionConfig = {
           ],
         },
 
-        // ✅ Upload للثَمب إنجليزي
         {
           name: 'thumbEn',
           label: 'Thumbnail (EN)',
@@ -99,7 +97,6 @@ const MariamWorks: CollectionConfig = {
           required: true,
         },
 
-        // ✅ Upload للثَمب عربي
         {
           name: 'thumbAr',
           label: 'Thumbnail (AR)',

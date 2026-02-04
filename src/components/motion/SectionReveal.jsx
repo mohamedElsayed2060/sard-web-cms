@@ -58,7 +58,6 @@ const VARIANTS = {
     show: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' },
   },
 
-  // Blur-only (لو عندك layout حساس مش عايز y/x)
   blurFade: {
     hidden: { opacity: 0, filter: 'blur(14px)' },
     show: { opacity: 1, filter: 'blur(0px)' },
@@ -89,12 +88,6 @@ const VARIANTS = {
   },
 }
 
-/**
- * ✅ Scroll-linked effect (زي الفيديو):
- * - وهو داخل من تحت: صغير ويكبر تدريجيًا
- * - في النص: 1.0
- * - وهو خارج لفوق: يبدأ يصغر تدريجيًا قبل ما يختفي
- */
 function ScrollFlipReveal({
   children,
   className,
@@ -210,8 +203,8 @@ function ScrollStackReveal({
   outRotate = 10,
 
   // how "fast" exit happens vs enter
-  exitStart = 0.58, // بعد النص يبدأ يطلع بسرعة
-  exitEnd = 0.78, // عندها يكون "طلع" تقريبًا
+  exitStart = 0.58,
+  exitEnd = 0.78,
 }) {
   const ref = useRef(null)
 
@@ -220,13 +213,11 @@ function ScrollStackReveal({
     offset: ['start end', 'end start'],
   })
 
-  // دخول ناعم: 0 -> 0.55
   const scaleIn = useTransform(scrollYProgress, [0, 0.55], [inScaleFrom, 1])
   const yIn = useTransform(scrollYProgress, [0, 0.55], [inYFrom, 0])
   const rIn = useTransform(scrollYProgress, [0, 0.55], [inRotate, 0])
   const oIn = useTransform(scrollYProgress, [0, 0.18], [0, 1])
 
-  // خروج أسرع (snap): exitStart -> exitEnd
   const scaleOut = useTransform(
     scrollYProgress,
     [exitStart, exitEnd, 1],
@@ -237,7 +228,6 @@ function ScrollStackReveal({
   const oOut = useTransform(scrollYProgress, [exitStart, 1], [1, 0])
 
   // combine (Framer: values are MotionValues)
-  // هنا بنستخدم transform تاني يختار بين in/out حسب progress
   const scale = useTransform(scrollYProgress, (p) =>
     p < exitStart ? scaleIn.get() : scaleOut.get(),
   )

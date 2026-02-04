@@ -42,7 +42,6 @@ export default function LatestNewsBar({ data, bgImage, lang = 'en' }) {
           bgImage={bgImage}
         >
           <div className="relative mx-auto max-w-[1400px] md:px-8 ">
-            {/* subtle grain (بدون صور) */}
             <div
               aria-hidden
               className="pointer-events-none absolute inset-0 opacity-[0.35]"

@@ -149,7 +149,6 @@ const News: CollectionConfig = {
       },
     },
 
-    // Source (اختياري حتى لو الخبر داخلي… لو جاي من موقع تاني حطه هنا)
     {
       name: 'sources',
       label: 'Sources (optional)',

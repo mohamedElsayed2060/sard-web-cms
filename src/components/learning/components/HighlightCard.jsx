@@ -47,13 +47,10 @@ export default function HighlightCard({ item, lang, onClick }) {
               )}
             />
 
-            {/* overlay black (يبان في العادي ويختفي على hover) */}
             <div className="absolute inset-0 bg-black/20 transition-opacity duration-700 group-hover:opacity-0" />
 
-            {/* gradient for text readability */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/5 to-transparent opacity-90" />
 
-            {/* Hover badge (Photos + Days) */}
             <div
               className={clsx(
                 'absolute top-3 opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300',

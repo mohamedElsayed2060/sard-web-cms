@@ -41,7 +41,6 @@ const pickUploadUrl = (enFile, arFile, lang) => {
 const pickUploadObj = (enFile, arFile, lang) =>
   lang === 'ar' ? arFile || enFile : enFile || arFile
 
-/** استخراج نص بسيط من Lexical/Array عشان نعمل excerpt */
 function plainTextFromRich(value) {
   const nodes = Array.isArray(value) ? value : value?.root?.children || []
 
@@ -102,7 +101,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
               <Splide
                 className="w-full"
                 options={{
-                  direction: dir, // ✅ RTL/LTR
+                  direction: dir,
                   type: 'slide',
                   gap: '1rem',
                   pagination: false,

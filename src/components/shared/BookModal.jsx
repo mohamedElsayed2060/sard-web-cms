@@ -149,10 +149,8 @@ export default function BookModal({
   const leftDoorTarget = isBoot || isClosing ? CLOSED_LEFT : OPEN_LEFT
   const rightDoorTarget = isBoot || isClosing ? CLOSED_RIGHT : OPEN_RIGHT
 
-  // شفافية الدرفتين: بعد الفتح تختفي، وعند القفل ترجع تظهر
   const doorsOpacityTarget = isFading ? 0 : isShown ? 0 : isRestore ? 1 : 1
 
-  // خلفية سوداء تمنع “فلاش” أثناء boot/closing/restore فقط
   const solidBackdropTarget = isBoot || isClosing || isRestore ? 1 : 0
 
   // حرف (د)
@@ -172,12 +170,10 @@ export default function BookModal({
         exit={{ opacity: 0 }}
         transition={{ duration: isExiting ? EXIT_FADE_MS / 1000 : 0.25, ease: EASE }}
       >
-        {/* خلفية المودال (dim) */}
         <motion.button
           type="button"
           aria-label="Close"
           className="absolute inset-0 bg-black/70"
-          // ✅ امنع القفل أثناء الانيميشن + أثناء الخروج
           onClick={() => (canClose && !isExiting ? onClose?.() : null)}
           initial={{ opacity: 0 }}
           animate={{ opacity: isExiting ? 0 : 1 }}
@@ -185,7 +181,6 @@ export default function BookModal({
           transition={{ duration: isExiting ? EXIT_FADE_MS / 1000 : 0.25, ease: EASE }}
         />
 
-        {/* جسم المودال */}
         <motion.div
           className="relative overflow-hidden rounded-2xl"
           style={modalSizeStyle}
@@ -198,7 +193,6 @@ export default function BookModal({
           exit={{ opacity: 0, y: 18, scale: 0.98 }}
           transition={{ duration: isExiting ? EXIT_FADE_MS / 1000 : 0.5, ease: EASE }}
         >
-          {/* ✅ الكونتنت: سكرول داخلي Y يظهر فقط لو محتاج */}
           <div className="absolute inset-0" style={{ background: paperBg }}>
             <div
               className={[
@@ -210,15 +204,13 @@ export default function BookModal({
             </div>
           </div>
 
-          {/* طبقة الباب */}
           <motion.div
             className="absolute inset-0"
             style={{
               perspective: 1400,
-              pointerEvents: isShown ? 'none' : 'auto', // ✅ مهم
+              pointerEvents: isShown ? 'none' : 'auto',
             }}
           >
-            {/* solid backdrop أثناء boot/closing فقط */}
             <motion.div
               className="absolute inset-0 bg-black"
               initial={{ opacity: 1 }}
@@ -226,7 +218,6 @@ export default function BookModal({
               transition={{ duration: 0.45, ease: EASE }}
             />
 
-            {/* حرف (د) فوق الباب */}
             <motion.div
               className="absolute inset-0 grid place-items-center"
               initial={{ opacity: 0, scale: 0.98 }}
@@ -237,7 +228,6 @@ export default function BookModal({
               <img src={dalUrl} alt="Dal" style={{ width: 100, height: 'auto' }} />
             </motion.div>
 
-            {/* الدرفتين */}
             <motion.div
               className="absolute inset-0 flex"
               style={{ transformStyle: 'preserve-3d', zIndex: 20 }}
@@ -311,7 +301,6 @@ export default function BookModal({
             />
           </motion.div>
 
-          {/* زر إغلاق */}
           <button
             type="button"
             className="absolute right-3 top-3 z-[100] rounded-full bg-black/40 px-3 py-2 text-xs text-white hover:bg-black/60"

@@ -73,13 +73,6 @@ export function withLangPrefix(lang, targetPath) {
   return `/${L}${path}`
 }
 
-/**
- * ✅ الموحد: يشتغل doors أو stack حسب ENV
- * - external/hash سيبه طبيعي
- * - same page guard
- * - في doors: runSequence بيقفل/يفتح
- * - في stack: runSequence هيعمل overlay loading + enter/exit
- */
 export async function navigateSard({ href, lang, pathname, router, runSequence, timings }) {
   if (!href) return
 
