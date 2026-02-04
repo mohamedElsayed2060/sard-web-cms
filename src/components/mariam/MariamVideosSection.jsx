@@ -90,7 +90,7 @@ export default function MariamVideosSection({ gallery, bgImage, lang = 'en' }) {
         >
           <div className="relative">
             {(sectionTitle || sectionDescription) && (
-              <div className="mb-6 md:mb-8">
+              <div className="mb-6 md:mb-8 px-3 md:px-0 ">
                 {sectionTitle && (
                   <div className="">
                     <div className="h-px bg-black/20" />

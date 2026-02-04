@@ -250,7 +250,7 @@ export interface MariamWork {
   titleEn: string;
   titleAr: string;
   slug: string;
-  year: number;
+  year?: number | null;
   directorEn: string;
   directorAr: string;
   posterEn: string | Media;

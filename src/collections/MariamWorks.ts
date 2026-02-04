@@ -42,7 +42,7 @@ const MariamWorks: CollectionConfig = {
       name: 'year',
       label: 'Year',
       type: 'number',
-      required: true,
+      required: false,
     },
 
     // ===== Director (NEW ONLY) =====
