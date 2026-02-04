@@ -29,7 +29,6 @@ const MariamWorks: CollectionConfig = {
       type: 'text',
       required: true,
     },
-
     {
       name: 'slug',
       label: 'Slug (for tabs)',
@@ -37,7 +36,6 @@ const MariamWorks: CollectionConfig = {
       required: true,
       unique: true,
     },
-
     {
       name: 'year',
       label: 'Year',

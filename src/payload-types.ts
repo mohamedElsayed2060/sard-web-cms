@@ -565,6 +565,8 @@ export interface News {
   publishedAt?: string | null;
   coverImage?: (string | null) | Media;
   coverHeightPreset?: ('default' | 'compact' | 'tall') | null;
+  coverWidthPreset?: ('full' | 'wide' | 'medium' | 'narrow') | null;
+  coverFit?: ('cover' | 'contain') | null;
   excerptEn?: string | null;
   excerptAr?: string | null;
   contentEn: {
@@ -999,6 +1001,8 @@ export interface NewsSelect<T extends boolean = true> {
   publishedAt?: T;
   coverImage?: T;
   coverHeightPreset?: T;
+  coverWidthPreset?: T;
+  coverFit?: T;
   excerptEn?: T;
   excerptAr?: T;
   contentEn?: T;

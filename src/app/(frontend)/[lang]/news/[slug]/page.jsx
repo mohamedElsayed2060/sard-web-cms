@@ -185,6 +185,17 @@ export default async function NewsDetailsPage({ params }) {
     tall: 'h-[380px] md:h-[720px]',
   }
   const coverH = HEIGHTS[item?.coverHeightPreset] || HEIGHTS.default
+
+  const WIDTHS = {
+    full: 'w-full',
+    wide: 'w-full md:w-[92%] lg:w-[86%]',
+    medium: 'w-full md:w-[78%] lg:w-[70%]',
+    narrow: 'w-full md:w-[64%] lg:w-[56%]',
+  }
+  const coverW = WIDTHS[item?.coverWidthPreset] || WIDTHS.wide
+
+  const fit = item?.coverFit === 'contain' ? 'contain' : 'cover'
+
   return (
     <div className={['bg-black max-w-[1490px] mx-auto'].join(' ')}>
       <MainHeader header={header} bgImage={marim_bg} />
@@ -210,11 +221,25 @@ export default async function NewsDetailsPage({ params }) {
 
           {cover ? (
             <div
-              className={`relative ${coverH} rounded-[22px] overflow-hidden border border-black/10 mb-7`}
+              className={[
+                'relative',
+                coverH,
+                coverW,
+                'mx-auto', // ✅ يسنتر الكونتينر
+                'rounded-[22px] overflow-hidden border border-black/10 mb-7',
+                'flex items-center justify-center', // ✅ يسنتر اللي جوّه
+                fit === 'contain' ? 'bg-black/10' : '', // خلفية لطيفة لو في فراغات
+              ].join(' ')}
             >
-              <CMSImage src={cover} alt={title} fill className="object-cover" />
+              <CMSImage
+                src={cover}
+                alt={title}
+                fill
+                className={fit === 'contain' ? 'object-contain' : 'object-cover'}
+              />
             </div>
           ) : null}
+
           <div className="flex justify-center">
             <NewsMedia media={item?.media} lang={lang} />
           </div>
@@ -271,8 +296,8 @@ export default async function NewsDetailsPage({ params }) {
                       {rCover ? (
                         <div className="relative h-[220px] overflow-hidden">
                           <CMSImage
-                            src={cover}
-                            alt={title}
+                            src={rCover}
+                            alt={rTitle}
                             fill
                             className="
                             object-cover

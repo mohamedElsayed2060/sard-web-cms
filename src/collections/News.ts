@@ -60,6 +60,28 @@ const News: CollectionConfig = {
       ],
     },
     {
+      name: 'coverWidthPreset',
+      label: 'Cover width',
+      type: 'select',
+      defaultValue: 'wide',
+      options: [
+        { label: 'Full', value: 'full' }, // 100%
+        { label: 'Wide', value: 'wide' }, // centered, wide
+        { label: 'Medium', value: 'medium' }, // centered, medium
+        { label: 'Narrow', value: 'narrow' }, // centered, narrow
+      ],
+    },
+    {
+      name: 'coverFit',
+      label: 'Cover fit',
+      type: 'select',
+      defaultValue: 'cover',
+      options: [
+        { label: 'Cover (crop)', value: 'cover' },
+        { label: 'Contain (no upscale)', value: 'contain' },
+      ],
+    },
+    {
       name: 'excerptEn',
       label: 'Excerpt (EN) (optional)',
       type: 'textarea',
