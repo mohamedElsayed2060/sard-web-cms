@@ -296,8 +296,9 @@ export async function getHomeSceneData() {
   }
 }
 export async function getNewsList({ page = 1, limit = 12 } = {}) {
+  // الترتيب هنا: هيجيب اللي واخد رقم order صغير الأول، ولو مفيش أو تساووا، يرتب بالتاريخ الأحدث
   const res = await fetchJSON(
-    `/api/news?depth=2&limit=${limit}&page=${page}&sort=-publishedAt&where[isActive][equals]=true`,
+    `/api/news?depth=2&limit=${limit}&page=${page}&sort=displayOrder,-publishedAt&where[isActive][equals]=true`,
     { revalidate: 60, tags: ['collection:news'] },
   )
   return res || null
@@ -315,7 +316,7 @@ export async function getNewsBySlug(slug) {
 export async function getLatestNewsExcludeSlug(slug, { limit = 3 } = {}) {
   const safe = encodeURIComponent(slug || '')
   const res = await fetchJSON(
-    `/api/news?depth=2&limit=${limit}&sort=-publishedAt&where[isActive][equals]=true&where[slug][not_equals]=${safe}`,
+    `/api/news?depth=2&limit=${limit}&sort=displayOrder,-publishedAt&where[isActive][equals]=true&where[slug][not_equals]=${safe}`,
     { revalidate: 60, tags: ['collection:news'] },
   )
   return res || null

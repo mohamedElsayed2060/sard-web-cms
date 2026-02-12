@@ -6,7 +6,15 @@ const News: CollectionConfig = {
   labels: { singular: 'News Item', plural: 'News' },
   admin: {
     useAsTitle: 'titleEn',
-    defaultColumns: ['titleEn', 'titleAr', 'slug', 'publishedAt', 'isActive', 'updatedAt'],
+    defaultColumns: [
+      'titleEn',
+      'titleAr',
+      'slug',
+      'publishedAt',
+      'isActive',
+      'updatedAt',
+      'displayOrder',
+    ],
   },
   access: { read: () => true },
   fields: [
