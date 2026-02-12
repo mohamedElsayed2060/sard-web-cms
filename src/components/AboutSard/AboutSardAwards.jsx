@@ -150,11 +150,11 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
   const visibleOrdered = ordered.slice(0, MAX_DESKTOP_TABS)
   const hiddenOrdered = ordered.slice(MAX_DESKTOP_TABS)
   const hiddenCount = hiddenOrdered.length
-
+  const sectionId = 'awards'
   // variant="scrollFlip"
   return (
-    <>
-      <SectionReveal once={true} delay={0.1} id="awards">
+    <section id={sectionId}>
+      <SectionReveal once={true} delay={0.1}>
         <section className="bg-black">
           <div className="bg-black px-3 pb-5 max-w-[1490px] mx-auto">
             {/* Title line */}
@@ -548,6 +548,6 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </>
+    </section>
   )
 }
