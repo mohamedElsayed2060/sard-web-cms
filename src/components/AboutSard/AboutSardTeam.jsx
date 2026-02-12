@@ -196,8 +196,8 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
                             }}
                           >
                             <div className="flex items-start justify-between gap-3">
-                              <div className="min-w-0">
-                                <h3 className="italic text-lg md:text-3xl font-semibold text-[#252525] leading-none">
+                              <div className="min-w-0 text-start">
+                                <h3 className="italic text-lg md:text-2xl font-semibold text-[#252525] leading-none">
                                   {name}
                                 </h3>
                                 {jobTitle ? (
@@ -221,7 +221,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
                             <div className="h-px bg-black/35 mt-3 mb-4" />
 
                             <p
-                              className="text-sm text-[#252525]/80"
+                              className="text-sm text-[#252525]/80 text-start"
                               style={{
                                 display: '-webkit-box',
                                 WebkitLineClamp: 2,
@@ -285,7 +285,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
                 </div>
 
                 {/* Content */}
-                <div className="text-[#252525]">
+                <div className="text-[#252525] text-start">
                   {active
                     ? (() => {
                         const name = pickText(active?.nameEn, active?.nameAr, lang) || t.member
@@ -305,7 +305,9 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
 
                         return (
                           <>
-                            <div className="flex items-center gap-3">
+                            <div
+                              className={`flex items-center ${lang === 'ar' ? 'flex-row-reverse' : ''} gap-3`}
+                            >
                               <h3 className="italic text-2xl md:text-4xl font-semibold">{name}</h3>
 
                               {badgeSrc ? (
@@ -320,27 +322,34 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
                             </div>
 
                             {jobTitle ? (
-                              <div className="mt-2 text-[14px] md:text-[15px] text-black/70">
+                              <div
+                                className={`mt-2 text-[14px] md:text-[15px] text-black/70  ${lang === 'ar' ? 'text-end' : 'text-start'}`}
+                              >
                                 {jobTitle}
                               </div>
                             ) : null}
 
                             <div className="h-px bg-black/35 mt-4 mb-5" />
 
-                            {details ? (
-                              <RichColumn value={details} textColor="text-[#252525]" />
-                            ) : null}
+                            <div dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+                              {details ? (
+                                <RichColumn value={details} textColor="text-[#252525]" />
+                              ) : null}
+                            </div>
 
                             {/* ✅ Previous works list */}
                             {works.length ? (
                               <div className="mt-8">
-                                <div className="text-black font-semibold tracking-[0.08em] text-[14px] md:text-[16px]">
+                                <div
+                                  className={`text-sm text-[#252525]/80 font-medium ${lang === 'ar' ? 'text-right' : 'text-left'}`}
+                                >
                                   {t.prevWorks}
                                 </div>
                                 <div className="mt-3 h-[1px] w-full bg-black/10" />
 
                                 <ul
-                                  className={`mt-4 space-y-2 ${lang === 'ar' ? 'text-right' : ''}`}
+                                  dir={lang === 'ar' ? 'rtl' : 'ltr'}
+                                  className={`mt-4 space-y-2`}
                                 >
                                   {works.map((w, i) => {
                                     const title = pickText(w?.titleEn, w?.titleAr, lang)
@@ -348,7 +357,9 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
 
                                     const meta = [
                                       w?.year ? String(w.year) : '',
-                                      w?.type ? typeLabel(lang, w.type) : '',
+                                      w?.type && String(w.type).toLowerCase() !== 'other'
+                                        ? typeLabel(lang, w.type)
+                                        : '',
                                     ].filter(Boolean)
 
                                     return (
