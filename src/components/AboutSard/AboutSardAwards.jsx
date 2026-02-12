@@ -8,7 +8,9 @@ import SectionReveal from '../motion/SectionReveal'
 import { imgUrl } from '@/lib/cms'
 import RichColumn from '../richtext/RichColumn'
 import PinnedSection from '@/components/motion/PinnedSection'
-
+import { Splide, SplideSlide } from '@splidejs/react-splide'
+import '@splidejs/react-splide/css'
+import useDocumentDir from '../shared/useDocumentDir'
 const ANIM_MS = 900
 const EASE = [0.19, 1, 0.22, 1]
 
@@ -35,6 +37,26 @@ const pickText = (en, ar, lang) => {
   if (lang === 'ar') return ar || en || ''
   return en || ar || ''
 }
+const pickTabTitle = (item, lang, fallback = '') => {
+  // 1) جرّب tabTitle حسب اللغة
+  const tab = pickText(item?.tabTitleEn, item?.tabTitleAr, lang)
+
+  if (tab) return tab
+
+  // 2) لو فاضي، ارجع للعنوان الكامل
+  const full = pickText(item?.titleEn, item?.titleAr, lang)
+  return full || fallback || ''
+}
+const pickGallery = (gallery = []) => {
+  const items = Array.isArray(gallery) ? gallery : []
+  return items
+    .map((g) => {
+      const src = g?.image ? imgUrl(g.image) : null
+      const alt = g?.alt || ''
+      return src ? { src, alt } : null
+    })
+    .filter(Boolean)
+}
 
 const pickRich = (enVal, arVal, lang) => {
   if (lang === 'ar') return arVal || enVal || null
@@ -50,6 +72,7 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
   const pathname = usePathname()
   const lang = langProp || getLangFromPath(pathname || '')
   const t = UI[lang] || UI.en
+  const dir = useDocumentDir(lang === 'ar' ? 'rtl' : 'ltr')
 
   const activeAwards = useMemo(() => (awards || []).filter((a) => a?.isActive !== false), [awards])
 
@@ -91,6 +114,8 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
   // ✅ image: EN required? (in CMS it’s optional) + AR optional
   const awardImgSrc = pickUpload(activeAward?.imageEn, activeAward?.imageAr, lang)
   const awardImgAlt = activeTitle || t.award
+  const galleryItems = pickGallery(activeAward?.gallery)
+  const hasGallery = galleryItems.length > 0
 
   const reorderOnClick = (clickedIdx) => {
     setOrder((prev) => {
@@ -121,7 +146,7 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
 
   const ordered = order.map((idx) => ({ idx, item: activeAwards[idx] })).filter((x) => x.item)
   const MOBILE_TABS_COUNT = 5
-  const MAX_DESKTOP_TABS = 12
+  const MAX_DESKTOP_TABS = 11
   const visibleOrdered = ordered.slice(0, MAX_DESKTOP_TABS)
   const hiddenOrdered = ordered.slice(MAX_DESKTOP_TABS)
   const hiddenCount = hiddenOrdered.length
@@ -148,11 +173,11 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
             >
               {/* ===================== DESKTOP ===================== */}
               <div className="hidden md:block relative">
-                <div className="flex items-stretch min-h-[300px]">
+                <div className="flex items-stretch min-h-[350px]">
                   {visibleOrdered.map(({ item, idx }, renderIndex) => {
                     const isActive = renderIndex === 0
 
-                    const tabTitle = pickText(item?.titleEn, item?.titleAr, lang) || t.award
+                    const tabTitle = pickTabTitle(item, lang, t.award)
 
                     return (
                       <motion.button
@@ -190,7 +215,41 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
                                   </h3>
 
                                   {/* ✅ IMAGE تحت العنوان مباشرة */}
-                                  {awardImgSrc ? (
+                                  {/* ✅ Gallery slider (لو موجود) وإلا fallback لصورة واحدة */}
+                                  {hasGallery ? (
+                                    <div className="mt-4">
+                                      <Splide
+                                        options={{
+                                          direction: dir,
+                                          focus: dir === 'rtl' ? 'start' : 'end',
+
+                                          type: 'slide',
+                                          arrows: false,
+                                          pagination: false,
+                                          drag: 'free',
+                                          gap: '12px',
+                                          perPage: 3.5,
+                                          breakpoints: {
+                                            1024: { perPage: 2.5 },
+                                            640: { perPage: 2 },
+                                          },
+                                        }}
+                                        className="w-full"
+                                      >
+                                        {galleryItems.map((g, i) => (
+                                          <SplideSlide key={g.src + i}>
+                                            <div className="h-[56px] md:h-[64px] flex items-center justify-center rounded-[14px] border border-black/10">
+                                              <img
+                                                src={g.src}
+                                                alt={g.alt || awardImgAlt}
+                                                className="max-h-[40px] md:max-h-[56px] w-auto object-contain"
+                                              />
+                                            </div>
+                                          </SplideSlide>
+                                        ))}
+                                      </Splide>
+                                    </div>
+                                  ) : awardImgSrc ? (
                                     <div className="mt-3">
                                       <img src={awardImgSrc} alt={awardImgAlt} />
                                     </div>
@@ -198,8 +257,11 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
 
                                   {/* description اختياري */}
                                   {activeDesc ? (
-                                    <div className="mt-3 text-sm text-[#252525]/80">
-                                      <RichColumn value={activeDesc} textColor="text-[#252525]" />
+                                    <div className="mt-3 text-sm text-[#252525]/80 text-start">
+                                      <RichColumn
+                                        value={activeDesc}
+                                        textColor="text-[#252525]"
+                                      />{' '}
                                     </div>
                                   ) : null}
                                 </motion.div>
@@ -266,7 +328,7 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
                     className="rounded-[22px] overflow-hidden shadow-[0_12px_25px_rgba(0,0,0,0.22)]"
                     style={{ backgroundImage: `url('${bgImage?.src}')` }}
                   >
-                    <motion.div layout className="p-5 pr-[70px] min-h-[250px]">
+                    <motion.div layout className="p-5 pr-[70px] min-h-[270px]">
                       <AnimatePresence mode="wait">
                         {showContent && (
                           <motion.div
@@ -280,12 +342,49 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
                               {activeTitle}
                             </h3>
 
-                            {/* ✅ IMAGE تحت العنوان مباشرة (موبايل) */}
-                            {awardImgSrc ? (
-                              <div className="mt-3">
-                                <img src={awardImgSrc} alt={awardImgAlt} />
-                              </div>
-                            ) : null}
+                            {/* ✅ MEDIA تحت العنوان مباشرة (موبايل) — Gallery لو موجود وإلا صورة واحدة */}
+                            {(() => {
+                              const mobileGalleryItems = pickGallery(activeAward?.gallery)
+                              const hasGallery = mobileGalleryItems.length > 0
+
+                              if (hasGallery) {
+                                return (
+                                  <div className="mt-4">
+                                    <Splide
+                                      className="w-full"
+                                      options={{
+                                        direction: dir,
+                                        focus: dir === 'rtl' ? 'start' : 'end',
+                                        type: 'slide',
+                                        gap: '1rem',
+                                        arrows: false,
+                                        pagination: false,
+                                        drag: 'free',
+                                        perPage: 1.5,
+                                      }}
+                                    >
+                                      {mobileGalleryItems.map((g, i) => (
+                                        <SplideSlide key={g.src + i}>
+                                          <div className="h-[65px] flex items-center justify-center rounded-[14px]  border border-black/10">
+                                            <img
+                                              src={g.src}
+                                              alt={g.alt || awardImgAlt}
+                                              className="max-h-[40px] w-auto object-contain"
+                                            />
+                                          </div>
+                                        </SplideSlide>
+                                      ))}
+                                    </Splide>
+                                  </div>
+                                )
+                              }
+
+                              return awardImgSrc ? (
+                                <div className="mt-3">
+                                  <img src={awardImgSrc} alt={awardImgAlt} />
+                                </div>
+                              ) : null
+                            })()}
 
                             {activeDesc ? (
                               <div className="mt-3 text-sm text-[#252525]/80">
@@ -302,8 +401,7 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
                   <div className="absolute top-4 right-4 w-[50px]">
                     {ordered.slice(1, 1 + MOBILE_TABS_COUNT).map(({ item, idx }, i) => {
                       const y = i * 13
-                      const tabTitle = pickText(item?.titleEn, item?.titleAr, lang) || t.award
-
+                      const tabTitle = pickTabTitle(item, lang, t.award)
                       return (
                         <motion.button
                           key={item?.id || idx}
@@ -313,7 +411,7 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
                           onClick={() => onPick(idx)}
                           className={[
                             'absolute -right-2',
-                            'w-[50px] h-[140px]',
+                            'w-[50px] h-[180px]',
                             'rounded-[18px]',
                             'border border-black/15',
                             'shadow-md',
@@ -401,7 +499,7 @@ export default function AboutSardAwards({ awards = [], bgImage, lang: langProp }
                 <div className="flex-1 overflow-y-auto pr-1">
                   <div className="space-y-2">
                     {hiddenOrdered.map(({ item, idx }) => {
-                      const tabTitle = pickText(item?.titleEn, item?.titleAr, lang) || t.award
+                      const tabTitle = pickTabTitle(item, lang, t.award)
 
                       return (
                         <button

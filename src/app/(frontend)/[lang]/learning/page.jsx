@@ -9,7 +9,8 @@ import marim_bg from '@/assets/marim-bg.png'
 import learning_bg from '@/assets/learning-bg.png'
 import LatestNewsBar from '@/components/layout/LatestNewsBar'
 import LearningHighlightsSection from '@/components/learning/LearningHighlightsSection'
-
+import ApplyNowSection from '@/components/learning/ApplyNowSection'
+import ScrollToHash from '@/components/shared/ScrollToHash'
 export async function generateMetadata({ params }) {
   const { lang } = await params
   const path = `/${lang}/learning`
@@ -38,7 +39,6 @@ export default async function AboutPage({ params }) {
     getSiteFooter(),
     getLatestNewsBar(),
   ])
-  console.log(pageData)
 
   return (
     <main className="min-h-[100dvh] bg-black text-white">
@@ -54,6 +54,8 @@ export default async function AboutPage({ params }) {
         lang={lang}
         stripTitle={pageData?.hero?.highlightsStripTitle}
       />
+      <ApplyNowSection data={pageData?.applyNow} bgImage={marim_bg} lang={lang} />
+      <ScrollToHash enabled={true} offset={0} />
 
       <MainFooter footer={footer} bgImage={marim_bg} />
     </main>

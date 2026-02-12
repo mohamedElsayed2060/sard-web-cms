@@ -123,24 +123,27 @@ export async function getSiteFooter() {
   return data
 }
 export async function getLearningPageData() {
-  const [hero, learningHighlights] = await Promise.all([
+  const [hero, learningHighlights, applyNow] = await Promise.all([
     fetchJSON('/api/globals/learning-about?depth=2', {
       revalidate: RV,
       tags: ['global:learning-about'],
     }),
-    // fetchJSON('/api/sard-learning?depth=2&limit=50&sort=sortOrder', {
-    //   revalidate: RV,
-    //   tags: ['collection:sard-learning'],
-    // }),
     fetchJSON('/api/learning-highlights?depth=2&limit=100&sort=-pinToTop,-endYear,sortOrder', {
       revalidate: RV,
       tags: ['collection:learning-highlights'],
+    }).catch(() => null),
+
+    // ✅ NEW: Apply Now global
+    fetchJSON('/api/globals/learning-apply-now?depth=2', {
+      revalidate: RV,
+      tags: ['global:learning-apply-now'],
     }).catch(() => null),
   ])
 
   return {
     hero,
     learningHighlights,
+    applyNow, // ✅ NEW
   }
 }
 
@@ -259,7 +262,7 @@ export async function getSardWriterRoomPageData() {
 }
 
 export async function getContactUsPage() {
-  const data = await fetchJSON('/api/globals/contact-us?depth=0', {
+  const data = await fetchJSON('/api/globals/contact-us?depth=2', {
     revalidate: RV,
     tags: ['global:contact-us'],
   }).catch(() => null)

@@ -45,6 +45,9 @@ import ContactUs from './globals/ContactUs'
 import SceneProps from './collections/SceneProps'
 import News from './collections/News'
 import SardWriterRoomServices from './globals/SardWriterRoomServices'
+import learningApplyNow from './globals/learningApplyNow'
+import ApplySubmissions from './collections/ApplySubmissions'
+
 export default buildConfig({
   globals: [
     Header,
@@ -59,6 +62,7 @@ export default buildConfig({
     SardWriterAbout,
     SardWriterRoomServices,
     ContactUs,
+    learningApplyNow,
   ],
   admin: {
     user: Users.slug,
@@ -90,6 +94,7 @@ export default buildConfig({
     TeamMembers,
     Galleries,
     ContactSubmissions,
+    ApplySubmissions,
     AboutSardPartners,
     News,
   ],

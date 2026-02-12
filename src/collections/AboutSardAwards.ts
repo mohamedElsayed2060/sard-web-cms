@@ -9,7 +9,7 @@ const AboutSardAwards: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'titleEn',
-    defaultColumns: ['titleEn', 'titleAr', 'sortOrder', 'isActive'],
+    defaultColumns: ['titleEn', 'titleAr', 'tabTitleEn', 'tabTitleAr', 'sortOrder', 'isActive'],
   },
   access: { read: () => true },
   fields: [
@@ -25,6 +25,18 @@ const AboutSardAwards: CollectionConfig = {
       label: 'Award name (AR)',
       type: 'text',
       required: true,
+    },
+    {
+      name: 'tabTitleEn',
+      label: 'Tab title (EN) (short)',
+      type: 'text',
+      required: false,
+    },
+    {
+      name: 'tabTitleAr',
+      label: 'Tab title (AR) (short)',
+      type: 'text',
+      required: false,
     },
 
     // ===== Description (EN/AR) (optional) =====
@@ -42,6 +54,7 @@ const AboutSardAwards: CollectionConfig = {
     },
 
     // ===== Images (EN/AR) (optional) =====
+
     {
       name: 'imageEn',
       label: 'Image (EN) (optional)',
@@ -50,11 +63,25 @@ const AboutSardAwards: CollectionConfig = {
       required: false,
     },
     {
-      name: 'imageAr',
-      label: 'Image (AR) (optional)',
-      type: 'upload',
-      relationTo: 'media',
+      name: 'gallery',
+      label: 'Gallery (optional) — multiple images',
+      type: 'array',
       required: false,
+      fields: [
+        {
+          name: 'image',
+          label: 'Image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'alt',
+          label: 'Alt (optional)',
+          type: 'text',
+          required: false,
+        },
+      ],
     },
 
     {

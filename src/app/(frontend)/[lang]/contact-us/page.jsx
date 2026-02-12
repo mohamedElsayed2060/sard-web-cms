@@ -6,7 +6,8 @@ import ContactForm from '@/components/Contact/ContactForm'
 import { getSiteHeader, getSiteFooter, getLatestNewsBar, getContactUsPage } from '@/lib/cms'
 import marim_bg from '@/assets/marim-bg.png'
 import PageContentReveal from '@/components/PageContentReveal'
-
+import Image from 'next/image'
+import { imgUrl } from '@/lib/cms'
 export const revalidate = 60
 
 const pickLang = (data, lang) => {
@@ -39,7 +40,7 @@ export default async function ContactUsPage({ params }) {
           bgImage={marim_bg}
         >
           <section className="">
-            <h1 className="text-black italic text-[44px] md:text-[56px] leading-none mb-6">
+            <h1 className="text-black  italic text-[32px] md:text-[54px] leading-none mb-6">
               {t.pageTitle}
             </h1>
 
@@ -52,6 +53,39 @@ export default async function ContactUsPage({ params }) {
                 <span className="font-medium">{t.contactLines?.emailLabel}</span>{' '}
                 {t.contactLines?.emailValue}
               </div>
+              {Array.isArray(pageData?.socialLinks) && pageData.socialLinks.length ? (
+                <div className="mt-4 flex flex-wrap items-center  gap-3">
+                  {pageData.socialLinks
+                    .filter((x) => x?.isEnabled !== false)
+                    .map((x, i) => {
+                      const src = imgUrl(x?.icon)
+                      console.log('social link icon src:', src)
+
+                      if (!x?.url) return null
+                      return (
+                        <a
+                          key={x?.id || i}
+                          href={x.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center  rounded-full border border-black/10 bg-white/40 p-2 transition hover:bg-white/60"
+                        >
+                          {src ? (
+                            <Image
+                              src={src}
+                              alt={x?.alt || 'social'}
+                              width={20}
+                              height={20}
+                              className="object-contain"
+                            />
+                          ) : (
+                            <span className="text-[12px] text-black/60">link</span>
+                          )}
+                        </a>
+                      )
+                    })}
+                </div>
+              ) : null}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

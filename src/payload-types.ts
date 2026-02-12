@@ -78,6 +78,7 @@ export interface Config {
     'team-members': TeamMember;
     galleries: Gallery;
     'contact-submissions': ContactSubmission;
+    'apply-submissions': ApplySubmission;
     'about-sard-partners': AboutSardPartner;
     news: News;
     'payload-locked-documents': PayloadLockedDocument;
@@ -97,6 +98,7 @@ export interface Config {
     'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
     galleries: GalleriesSelect<false> | GalleriesSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
+    'apply-submissions': ApplySubmissionsSelect<false> | ApplySubmissionsSelect<true>;
     'about-sard-partners': AboutSardPartnersSelect<false> | AboutSardPartnersSelect<true>;
     news: NewsSelect<false> | NewsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -119,6 +121,7 @@ export interface Config {
     'sard-writer-about-hero': SardWriterAboutHero;
     'sard-writer-room-services': SardWriterRoomService;
     'contact-us': ContactUs;
+    'learning-apply-now': LearningApplyNow;
   };
   globalsSelect: {
     'site-header': SiteHeaderSelect<false> | SiteHeaderSelect<true>;
@@ -133,6 +136,7 @@ export interface Config {
     'sard-writer-about-hero': SardWriterAboutHeroSelect<false> | SardWriterAboutHeroSelect<true>;
     'sard-writer-room-services': SardWriterRoomServicesSelect<false> | SardWriterRoomServicesSelect<true>;
     'contact-us': ContactUsSelect<false> | ContactUsSelect<true>;
+    'learning-apply-now': LearningApplyNowSelect<false> | LearningApplyNowSelect<true>;
   };
   locale: null;
   user: User & {
@@ -218,6 +222,7 @@ export interface SceneHotspot {
   y: number;
   targetPath: string;
   order?: number | null;
+  isEnabled?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -308,6 +313,8 @@ export interface AboutSardAward {
   id: string;
   titleEn: string;
   titleAr: string;
+  tabTitleEn?: string | null;
+  tabTitleAr?: string | null;
   descriptionEn?: {
     root: {
       type: string;
@@ -339,7 +346,13 @@ export interface AboutSardAward {
     [k: string]: unknown;
   } | null;
   imageEn?: (string | null) | Media;
-  imageAr?: (string | null) | Media;
+  gallery?:
+    | {
+        image: string | Media;
+        alt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   isActive?: boolean | null;
   sortOrder?: number | null;
   updatedAt: string;
@@ -437,6 +450,26 @@ export interface TeamMember {
   nameAr: string;
   photoEn: string | Media;
   photoAr?: (string | null) | Media;
+  jobTitleEn?: string | null;
+  jobTitleAr?: string | null;
+  /**
+   * Short teaser (1–3 lines). Used on the card instead of cutting from details.
+   */
+  shortBioEn?: string | null;
+  /**
+   * نبذة قصيرة (سطر-٣). تُستخدم في الكارت بدل القص من التفاصيل.
+   */
+  shortBioAr?: string | null;
+  previousWorks?:
+    | {
+        titleEn?: string | null;
+        titleAr?: string | null;
+        year?: number | null;
+        type?: ('series' | 'film' | 'short' | 'program' | 'other') | null;
+        link?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   badgeIconEn?: (string | null) | Media;
   badgeIconAr?: (string | null) | Media;
   detailsEn: {
@@ -525,6 +558,22 @@ export interface ContactSubmission {
   name: string;
   email: string;
   subject?: string | null;
+  message: string;
+  company?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "apply-submissions".
+ */
+export interface ApplySubmission {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  program: string;
+  portfolio?: string | null;
   message: string;
   company?: string | null;
   updatedAt: string;
@@ -686,6 +735,10 @@ export interface PayloadLockedDocument {
         value: string | ContactSubmission;
       } | null)
     | ({
+        relationTo: 'apply-submissions';
+        value: string | ApplySubmission;
+      } | null)
+    | ({
         relationTo: 'about-sard-partners';
         value: string | AboutSardPartner;
       } | null)
@@ -788,6 +841,7 @@ export interface SceneHotspotsSelect<T extends boolean = true> {
   y?: T;
   targetPath?: T;
   order?: T;
+  isEnabled?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -874,10 +928,18 @@ export interface LearningHighlightsSelect<T extends boolean = true> {
 export interface AboutSardAwardsSelect<T extends boolean = true> {
   titleEn?: T;
   titleAr?: T;
+  tabTitleEn?: T;
+  tabTitleAr?: T;
   descriptionEn?: T;
   descriptionAr?: T;
   imageEn?: T;
-  imageAr?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        alt?: T;
+        id?: T;
+      };
   isActive?: T;
   sortOrder?: T;
   updatedAt?: T;
@@ -917,6 +979,20 @@ export interface TeamMembersSelect<T extends boolean = true> {
   nameAr?: T;
   photoEn?: T;
   photoAr?: T;
+  jobTitleEn?: T;
+  jobTitleAr?: T;
+  shortBioEn?: T;
+  shortBioAr?: T;
+  previousWorks?:
+    | T
+    | {
+        titleEn?: T;
+        titleAr?: T;
+        year?: T;
+        type?: T;
+        link?: T;
+        id?: T;
+      };
   badgeIconEn?: T;
   badgeIconAr?: T;
   detailsEn?: T;
@@ -966,6 +1042,21 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   name?: T;
   email?: T;
   subject?: T;
+  message?: T;
+  company?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "apply-submissions_select".
+ */
+export interface ApplySubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  program?: T;
+  portfolio?: T;
   message?: T;
   company?: T;
   updatedAt?: T;
@@ -1120,6 +1211,15 @@ export interface SiteFooter {
         labelEn: string;
         labelAr: string;
         href: string;
+        id?: string | null;
+      }[]
+    | null;
+  socialLinks?:
+    | {
+        icon: string | Media;
+        url: string;
+        alt?: string | null;
+        isEnabled?: boolean | null;
         id?: string | null;
       }[]
     | null;
@@ -1802,6 +1902,91 @@ export interface ContactUs {
       sendingButton: string;
     };
   };
+  socialLinks?:
+    | {
+        icon: string | Media;
+        url: string;
+        alt?: string | null;
+        isEnabled?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-apply-now".
+ */
+export interface LearningApplyNow {
+  id: string;
+  enabled?: boolean | null;
+  sectionId?: string | null;
+  endpoint: string;
+  en: {
+    title: string;
+    description?: string | null;
+    form: {
+      nameLabel: string;
+      namePlaceholder: string;
+      emailLabel: string;
+      emailPlaceholder: string;
+      phoneLabel: string;
+      phonePlaceholder: string;
+      programLabel: string;
+      programPlaceholder: string;
+      programOptions?:
+        | {
+            value: string;
+            id?: string | null;
+          }[]
+        | null;
+      portfolioLabel?: string | null;
+      portfolioPlaceholder?: string | null;
+      messageLabel: string;
+      messagePlaceholder: string;
+      applyButton: string;
+      applyingButton: string;
+    };
+    messages: {
+      requiredError: string;
+      successMessage: string;
+      genericError: string;
+      networkError: string;
+    };
+  };
+  ar: {
+    title: string;
+    description?: string | null;
+    form: {
+      nameLabel: string;
+      namePlaceholder: string;
+      emailLabel: string;
+      emailPlaceholder: string;
+      phoneLabel: string;
+      phonePlaceholder: string;
+      programLabel: string;
+      programPlaceholder: string;
+      programOptions?:
+        | {
+            value: string;
+            id?: string | null;
+          }[]
+        | null;
+      portfolioLabel?: string | null;
+      portfolioPlaceholder?: string | null;
+      messageLabel: string;
+      messagePlaceholder: string;
+      applyButton: string;
+      applyingButton: string;
+    };
+    messages: {
+      requiredError: string;
+      successMessage: string;
+      genericError: string;
+      networkError: string;
+    };
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1857,6 +2042,15 @@ export interface SiteFooterSelect<T extends boolean = true> {
         labelEn?: T;
         labelAr?: T;
         href?: T;
+        id?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        icon?: T;
+        url?: T;
+        alt?: T;
+        isEnabled?: T;
         id?: T;
       };
   copyrightEn?: T;
@@ -2232,6 +2426,103 @@ export interface ContactUsSelect<T extends boolean = true> {
               networkError?: T;
               sendButton?: T;
               sendingButton?: T;
+            };
+      };
+  socialLinks?:
+    | T
+    | {
+        icon?: T;
+        url?: T;
+        alt?: T;
+        isEnabled?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "learning-apply-now_select".
+ */
+export interface LearningApplyNowSelect<T extends boolean = true> {
+  enabled?: T;
+  sectionId?: T;
+  endpoint?: T;
+  en?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        form?:
+          | T
+          | {
+              nameLabel?: T;
+              namePlaceholder?: T;
+              emailLabel?: T;
+              emailPlaceholder?: T;
+              phoneLabel?: T;
+              phonePlaceholder?: T;
+              programLabel?: T;
+              programPlaceholder?: T;
+              programOptions?:
+                | T
+                | {
+                    value?: T;
+                    id?: T;
+                  };
+              portfolioLabel?: T;
+              portfolioPlaceholder?: T;
+              messageLabel?: T;
+              messagePlaceholder?: T;
+              applyButton?: T;
+              applyingButton?: T;
+            };
+        messages?:
+          | T
+          | {
+              requiredError?: T;
+              successMessage?: T;
+              genericError?: T;
+              networkError?: T;
+            };
+      };
+  ar?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        form?:
+          | T
+          | {
+              nameLabel?: T;
+              namePlaceholder?: T;
+              emailLabel?: T;
+              emailPlaceholder?: T;
+              phoneLabel?: T;
+              phonePlaceholder?: T;
+              programLabel?: T;
+              programPlaceholder?: T;
+              programOptions?:
+                | T
+                | {
+                    value?: T;
+                    id?: T;
+                  };
+              portfolioLabel?: T;
+              portfolioPlaceholder?: T;
+              messageLabel?: T;
+              messagePlaceholder?: T;
+              applyButton?: T;
+              applyingButton?: T;
+            };
+        messages?:
+          | T
+          | {
+              requiredError?: T;
+              successMessage?: T;
+              genericError?: T;
+              networkError?: T;
             };
       };
   updatedAt?: T;

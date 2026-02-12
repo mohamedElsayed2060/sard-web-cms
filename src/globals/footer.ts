@@ -88,7 +88,34 @@ const SiteFooter: GlobalConfig = {
         },
       ],
     },
-
+    {
+      name: 'socialLinks',
+      label: 'Social Links Row',
+      type: 'array',
+      fields: [
+        {
+          name: 'icon',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+        {
+          name: 'url',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'alt',
+          type: 'text',
+          required: false,
+        },
+        {
+          name: 'isEnabled',
+          type: 'checkbox',
+          defaultValue: true,
+        },
+      ],
+    },
     // ===== Copyright (EN/AR) =====
     {
       name: 'copyrightEn',

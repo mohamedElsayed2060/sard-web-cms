@@ -349,8 +349,12 @@ export default function SceneHome({ scene, hotspots, propsItems = [] }) {
 
   const sortedHotspots = useMemo(() => {
     const arr = Array.isArray(hotspots) ? [...hotspots] : []
-    arr.sort((a, b) => Number(a?.order || 0) - Number(b?.order || 0))
-    return arr
+
+    // ✅ NEW: keep old data working (if isEnabled missing => show)
+    const filtered = arr.filter((h) => h?.isEnabled !== false)
+
+    filtered.sort((a, b) => Number(a?.order || 0) - Number(b?.order || 0))
+    return filtered
   }, [hotspots])
 
   return (

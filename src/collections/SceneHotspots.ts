@@ -70,7 +70,14 @@ const SceneHotspots: CollectionConfig = {
       type: 'number',
       defaultValue: 0,
     },
+    {
+      name: 'isEnabled',
+      label: 'Enabled',
+      type: 'checkbox',
+      defaultValue: true,
+    },
   ],
+
   defaultSort: 'order',
 }
 

@@ -18,6 +18,7 @@ import AboutSardNewestProduction from '@/components/AboutSard/AboutSardNewestPro
 import AboutSardGrants from '@/components/AboutSard/AboutSardGrants'
 import AboutSardPartners from '@/components/AboutSard/AboutSardPartners'
 import LatestNewsBar from '@/components/layout/LatestNewsBar'
+import ScrollToHash from '@/components/shared/ScrollToHash'
 
 export async function generateMetadata({ params }) {
   const { lang } = await params
@@ -55,6 +56,9 @@ export default async function AboutSardPage({ params }) {
       {/* <AboutSardWork works={pageData?.sardAboutSard?.docs} bgImage={sard_milston} /> */}
       <AboutSardVisionMission data={pageData?.visionMission} bgImage={marim_bg} />
       <AboutSardAwards awards={pageData?.awards} bgImage={marim_bg} />
+
+      <ScrollToHash enabled={true} offset={0} />
+
       <AboutSardTeam members={pageData?.team} bgImage={marim_bg} brandMark={brand_mark} />
 
       <AboutSardGrants

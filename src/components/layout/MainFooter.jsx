@@ -118,7 +118,39 @@ export default function MainFooter({ footer, bgImage }) {
             </div>
           ))}
         </nav>
+        {Array.isArray(footer?.socialLinks) && footer.socialLinks.length ? (
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            {footer.socialLinks
+              .filter((x) => x?.isEnabled !== false)
+              .map((x, i) => {
+                const src = imgUrl(x?.icon)
+                console.log('social link icon src:', src)
 
+                if (!x?.url) return null
+                return (
+                  <a
+                    key={x?.id || i}
+                    href={x.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center  rounded-full border border-black/10 bg-white/40 p-2 transition hover:bg-white/60"
+                  >
+                    {src ? (
+                      <Image
+                        src={src}
+                        alt={x?.alt || 'social'}
+                        width={20}
+                        height={20}
+                        className="object-contain"
+                      />
+                    ) : (
+                      <span className="text-[12px] text-black/60">link</span>
+                    )}
+                  </a>
+                )
+              })}
+          </div>
+        ) : null}
         <div className="h-px w-full bg-black/20 m-0 mb-8" />
 
         {/* Copyright */}

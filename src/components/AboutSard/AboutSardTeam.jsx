@@ -23,21 +23,20 @@ const UI = {
     header: 'Our Team',
     uploadPhoto: 'Upload photo in CMS',
     member: 'Team member',
+    prevWorks: 'Previous Works',
   },
   ar: {
     header: 'فريقنا',
     uploadPhoto: 'ارفع الصورة من الـ CMS',
     member: 'عضو الفريق',
+    prevWorks: 'الأعمال السابقة',
   },
 }
 
 const pickText = (en, ar, lang) => (lang === 'ar' ? ar || en || '' : en || ar || '')
 const pickRich = (enVal, arVal, lang) =>
   lang === 'ar' ? arVal || enVal || null : enVal || arVal || null
-const pickUploadUrl = (enFile, arFile, lang) => {
-  const chosen = lang === 'ar' ? arFile || enFile : enFile || arFile
-  return chosen ? imgUrl(chosen) : null
-}
+
 const pickUploadObj = (enFile, arFile, lang) =>
   lang === 'ar' ? arFile || enFile : enFile || arFile
 
@@ -56,6 +55,25 @@ function plainTextFromRich(value) {
   return walk(nodes).replace(/\s+/g, ' ').trim()
 }
 
+const typeLabel = (lang, v) => {
+  if (!v) return ''
+  const mapEn = {
+    series: 'Series',
+    film: 'Film',
+    short: 'Short',
+    program: 'Program',
+    other: 'Other',
+  }
+  const mapAr = {
+    series: 'مسلسل',
+    film: 'فيلم',
+    short: 'فيلم قصير',
+    program: 'برنامج',
+    other: 'أخرى',
+  }
+  return lang === 'ar' ? mapAr[v] || v : mapEn[v] || v
+}
+
 export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: langProp }) {
   const pathname = usePathname()
   const lang = langProp || getLangFromPath(pathname || '')
@@ -72,7 +90,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
   const [active, setActive] = useState(null)
 
   if (!list.length) return null
-  // variant="scrollFlip"
+
   return (
     <SectionReveal delay={0.1}>
       <section className="bg-black px-3 pb-5 max-w-[1490px] mx-auto">
@@ -85,7 +103,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
           {/* Header */}
           <div className="space-y-4 mb-6">
             <div className="flex flex-wrap items-end gap-4">
-              <div className="h-px flex-1 bg-black/70" />
+              <div className="h-px flex-1 bg-black/50" />
 
               <h2 className="w-full italic text-2xl md:text-4xl font-semibold text-[#252525] whitespace-nowrap">
                 {t.header}
@@ -119,6 +137,8 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
               >
                 {list.map((m, i) => {
                   const name = pickText(m?.nameEn, m?.nameAr, lang) || t.member
+                  const jobTitle = pickText(m?.jobTitleEn, m?.jobTitleAr, lang)
+                  const shortBio = pickText(m?.shortBioEn, m?.shortBioAr, lang)
                   const details = pickRich(m?.detailsEn, m?.detailsAr, lang)
 
                   const photoObj = pickUploadObj(m?.photoEn, m?.photoAr, lang)
@@ -127,7 +147,9 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
                   const photoSrc = photoObj ? imgUrl(photoObj) : null
                   const badgeSrc = badgeObj ? imgUrl(badgeObj) : null
 
-                  const excerpt = plainTextFromRich(details || '').slice(0, 220)
+                  // ✅ prefer shortBio, fallback to details excerpt
+                  const teaserSource = shortBio || plainTextFromRich(details || '')
+                  const excerpt = String(teaserSource || '').slice(0, 220)
 
                   const roundTL = i % 2 === 1
                   const roundTR = i % 2 === 0
@@ -143,7 +165,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
                           {/* Photo */}
                           <div
                             className={[
-                              'relative w-full h-[260px] md:h-[290px]',
+                              'relative w-full h-[260px] md:h-[440px]',
                               roundTR ? 'rounded-tr-[28px]' : '',
                               roundTL ? 'rounded-tl-[28px]' : '',
                             ].join(' ')}
@@ -173,10 +195,17 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
                               backgroundPosition: 'center',
                             }}
                           >
-                            <div className="flex items-center justify-between gap-3">
-                              <h3 className="italic text-2xl md:text-3xl font-semibold text-[#252525] leading-none">
-                                {name}
-                              </h3>
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0">
+                                <h3 className="italic text-lg md:text-3xl font-semibold text-[#252525] leading-none">
+                                  {name}
+                                </h3>
+                                {jobTitle ? (
+                                  <div className="mt-2 text-[13px] md:text-[14px] text-[#252525]/75 truncate">
+                                    {jobTitle}
+                                  </div>
+                                ) : null}
+                              </div>
 
                               {badgeSrc ? (
                                 <Image
@@ -229,7 +258,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
                 backgroundPosition: 'center',
               }}
             >
-              <div className="grid gap-6 md:grid-cols-2">
+              <div className="grid gap-6 md:grid-cols-2 items-start">
                 {/* Photo */}
                 <div className="rounded-[22px] overflow-hidden bg-black/90">
                   {active ? (
@@ -260,6 +289,7 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
                   {active
                     ? (() => {
                         const name = pickText(active?.nameEn, active?.nameAr, lang) || t.member
+                        const jobTitle = pickText(active?.jobTitleEn, active?.jobTitleAr, lang)
                         const details = pickRich(active?.detailsEn, active?.detailsAr, lang)
 
                         const badgeObj = pickUploadObj(
@@ -269,10 +299,14 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
                         )
                         const badgeSrc = badgeObj ? imgUrl(badgeObj) : null
 
+                        const works = Array.isArray(active?.previousWorks)
+                          ? active.previousWorks
+                          : []
+
                         return (
                           <>
                             <div className="flex items-center gap-3">
-                              <h3 className="italic text-3xl md:text-5xl font-semibold">{name}</h3>
+                              <h3 className="italic text-2xl md:text-4xl font-semibold">{name}</h3>
 
                               {badgeSrc ? (
                                 <Image
@@ -285,10 +319,69 @@ export default function AboutSardTeam({ members = [], bgImage, brandMark, lang: 
                               ) : null}
                             </div>
 
+                            {jobTitle ? (
+                              <div className="mt-2 text-[14px] md:text-[15px] text-black/70">
+                                {jobTitle}
+                              </div>
+                            ) : null}
+
                             <div className="h-px bg-black/35 mt-4 mb-5" />
 
                             {details ? (
                               <RichColumn value={details} textColor="text-[#252525]" />
+                            ) : null}
+
+                            {/* ✅ Previous works list */}
+                            {works.length ? (
+                              <div className="mt-8">
+                                <div className="text-black font-semibold tracking-[0.08em] text-[14px] md:text-[16px]">
+                                  {t.prevWorks}
+                                </div>
+                                <div className="mt-3 h-[1px] w-full bg-black/10" />
+
+                                <ul
+                                  className={`mt-4 space-y-2 ${lang === 'ar' ? 'text-right' : ''}`}
+                                >
+                                  {works.map((w, i) => {
+                                    const title = pickText(w?.titleEn, w?.titleAr, lang)
+                                    if (!title) return null
+
+                                    const meta = [
+                                      w?.year ? String(w.year) : '',
+                                      w?.type ? typeLabel(lang, w.type) : '',
+                                    ].filter(Boolean)
+
+                                    return (
+                                      <li
+                                        key={w?.id || i}
+                                        className="text-black/75 text-[14px] leading-relaxed"
+                                      >
+                                        <span className="text-black/80">• </span>
+
+                                        {w?.link ? (
+                                          <a
+                                            href={w.link}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="underline decoration-black/20 hover:decoration-black/40"
+                                          >
+                                            {title}
+                                          </a>
+                                        ) : (
+                                          <span>{title}</span>
+                                        )}
+
+                                        {meta.length ? (
+                                          <span className="text-black/45">
+                                            {' '}
+                                            — {meta.join(' • ')}
+                                          </span>
+                                        ) : null}
+                                      </li>
+                                    )
+                                  })}
+                                </ul>
+                              </div>
                             ) : null}
                           </>
                         )
